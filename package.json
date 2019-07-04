@@ -4,7 +4,17 @@
   "main": "index.js",
   "author": "Steven Levine (https://github.com/slevine111)",
   "license": "MIT",
+  "scripts": {
+    "tsc:watch": "npx tsc --w",
+    "server:watch": "yarn run tsc:watch & nodemon ./js/server --ignore src --ignore ./js/client"
+  },
   "dependencies": {
+    "dotenv": "^8.0.0",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.18",
     "typescript": "^3.5.2"
+  },
+  "devDependencies": {
+    "ts-node": "^8.3.0"
   }
 }

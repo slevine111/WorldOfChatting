@@ -1,5 +1,5 @@
 {
-  "name": "WorldOfChatting",
+  "name": "worldofchatting",
   "version": "1.0.0",
   "main": "index.js",
   "author": "Steven Levine (https://github.com/slevine111)",
@@ -10,11 +10,15 @@
   },
   "dependencies": {
     "dotenv": "^8.0.0",
+    "pg": "^7.11.0",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.18",
     "typescript": "^3.5.2"
   },
   "devDependencies": {
+    "@types/dotenv": "^6.1.1",
+    "@types/node": "^12.0.12",
+    "@types/pg": "^7.4.14",
     "ts-node": "^8.3.0"
   }
 }

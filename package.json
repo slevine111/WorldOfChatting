@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "author": "Steven Levine (https://github.com/slevine111)",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "^3.5.2"
+  }
 }

@@ -5,7 +5,9 @@
   "author": "Steven Levine (https://github.com/slevine111)",
   "license": "MIT",
   "scripts": {
+    "build": "npx tsc",
     "tsc:watch": "npx tsc --w",
+    "seed": "node ./js/bin/runSeed",
     "server:watch": "yarn run tsc:watch & nodemon ./js/server --ignore src --ignore ./js/client"
   },
   "dependencies": {

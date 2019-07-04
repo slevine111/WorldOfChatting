@@ -6,7 +6,10 @@ export class ChatGroup {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column('varchar')
+  language: string
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
   name: string
 
   @OneToMany(type => UserChatGroup, userChatGroup => userChatGroup.chatGroup)

@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm'
 import { User } from './User'
 import { ChatGroup } from './ChatGroup'
+import { Message } from './Message'
 
 @Entity()
 export class UserChatGroup {
@@ -12,4 +13,7 @@ export class UserChatGroup {
 
   @ManyToOne(type => ChatGroup, chatGroup => chatGroup.userChatGroups)
   chatGroup: ChatGroup
+
+  @OneToMany(type => Message, message => message.userChatGroup)
+  messages: Message[]
 }

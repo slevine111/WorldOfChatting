@@ -1,5 +1,4 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
-import { Message } from './Message'
 import { UserLanguage } from './UserLanguage'
 import { UserChatGroup } from './UserChatGroup'
 
@@ -9,10 +8,10 @@ export class User {
   id: string
 
   @Column('varchar')
-  firatName: string
+  firstName: string
 
   @Column('varchar')
-  laatName: string
+  lastName: string
 
   @Column({ type: 'varchar', unique: true })
   username: string
@@ -23,8 +22,8 @@ export class User {
   @Column({ type: 'varchar', unique: true })
   password: string
 
-  @OneToMany(type => Message, message => message.user)
-  messages: Message[]
+  @Column({ type: 'boolean', default: false })
+  loggedIn: boolean
 
   @OneToMany(type => UserLanguage, userLanguage => userLanguage.user)
   userLanguages: UserLanguage[]

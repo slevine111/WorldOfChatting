@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn
 } from 'typeorm'
-import { User } from './User'
+import { UserChatGroup } from './UserChatGroup'
 
 @Entity()
 export class Message {
@@ -19,7 +19,6 @@ export class Message {
   @CreateDateColumn()
   createdAt: Date
 
-  @ManyToOne(type => User, user => user.messages)
-  @JoinColumn({ name: 'authorId' })
-  user: User
+  @ManyToOne(type => UserChatGroup, userChatGroup => userChatGroup.messages)
+  userChatGroup: UserChatGroup
 }

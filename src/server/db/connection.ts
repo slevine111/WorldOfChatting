@@ -11,5 +11,5 @@ export default createConnection({
   username: process.env.USERNAME,
   password: process.env.PASSWORD,
   database: process.env.DATABASE,
-  entities: [resolve(__dirname, 'entity/*.ts')]
+  entities: [resolve(__dirname, 'entity/*.js')]
 })

@@ -1,0 +1,7 @@
+{
+  "name": "WorldOfChatting",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Steven Levine (https://github.com/slevine111)",
+  "license": "MIT"
+}

@@ -14,6 +14,7 @@ interface IUserSubset {
   username: string
   email: string
   password: string
+  loggedIn: boolean
 }
 
 interface IUserLanguageSubset {
@@ -47,21 +48,24 @@ const createUsers = (): Promise<User[]> => {
       lastName: 'Roberts',
       username: 'jroberts',
       email: 'jroberts@gmail.com',
-      password: '12345'
+      password: '12345',
+      loggedIn: true
     },
     {
       firstName: 'Kim',
       lastName: 'Levine',
       username: 'klevine',
       email: 'klevine@gmail.com',
-      password: '1234'
+      password: '1234',
+      loggedIn: true
     },
     {
       firstName: 'Mike',
       lastName: 'Anderson',
       username: 'manderson',
       email: 'manderson@gmail.com',
-      password: '123'
+      password: '123',
+      loggedIn: true
     }
   ]
 

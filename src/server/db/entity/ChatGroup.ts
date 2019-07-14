@@ -12,6 +12,6 @@ export class ChatGroup {
   @Column({ type: 'varchar', length: 100, nullable: true })
   name: string
 
-  @OneToMany(type => UserChatGroup, userChatGroup => userChatGroup.chatGroup)
+  @OneToMany(() => UserChatGroup, userChatGroup => userChatGroup.chatGroup)
   userChatGroups: UserChatGroup[]
 }

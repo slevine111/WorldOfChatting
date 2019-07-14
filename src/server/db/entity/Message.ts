@@ -3,8 +3,7 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  ManyToOne,
-  JoinColumn
+  ManyToOne
 } from 'typeorm'
 import { UserChatGroup } from './UserChatGroup'
 
@@ -19,6 +18,6 @@ export class Message {
   @CreateDateColumn()
   createdAt: Date
 
-  @ManyToOne(type => UserChatGroup, userChatGroup => userChatGroup.messages)
+  @ManyToOne(() => UserChatGroup, userChatGroup => userChatGroup.messages)
   userChatGroup: UserChatGroup
 }

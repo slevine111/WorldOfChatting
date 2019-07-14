@@ -8,12 +8,12 @@ export class UserChatGroup {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @ManyToOne(type => User, user => user.userChatGroups)
+  @ManyToOne(() => User, user => user.userChatGroups)
   user: User
 
-  @ManyToOne(type => ChatGroup, chatGroup => chatGroup.userChatGroups)
+  @ManyToOne(() => ChatGroup, chatGroup => chatGroup.userChatGroups)
   chatGroup: ChatGroup
 
-  @OneToMany(type => Message, message => message.userChatGroup)
+  @OneToMany(() => Message, message => message.userChatGroup)
   messages: Message[]
 }

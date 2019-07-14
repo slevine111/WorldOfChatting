@@ -25,9 +25,9 @@ export class User {
   @Column({ type: 'boolean', default: false })
   loggedIn: boolean
 
-  @OneToMany(type => UserLanguage, userLanguage => userLanguage.user)
+  @OneToMany(() => UserLanguage, userLanguage => userLanguage.user)
   userLanguages: UserLanguage[]
 
-  @OneToMany(type => UserChatGroup, userChatGroup => userChatGroup.user)
+  @OneToMany(() => UserChatGroup, userChatGroup => userChatGroup.user)
   userChatGroups: UserChatGroup[]
 }

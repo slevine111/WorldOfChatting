@@ -15,6 +15,6 @@ export class UserLanguage {
   @Column({ type: 'int', nullable: true })
   numberOfYears: number
 
-  @ManyToOne(type => User, user => user.userLanguages)
+  @ManyToOne(() => User, user => user.userLanguages)
   user: User
 }

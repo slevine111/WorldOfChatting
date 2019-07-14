@@ -7,7 +7,7 @@ config({ path: resolve(__dirname, '..', '..', '..', '.env') })
 export default createConnection({
   type: 'postgres',
   host: process.env.HOST,
-  port: Number(process.env.PORT),
+  port: Number(process.env.PORTDB),
   username: process.env.USERNAME,
   password: process.env.PASSWORD,
   database: process.env.DATABASE,

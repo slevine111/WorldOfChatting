@@ -1,4 +1,3 @@
-import dbInit from '../server/db'
 import {
   ChatGroup,
   User,
@@ -6,7 +5,7 @@ import {
   UserChatGroup,
   Message
 } from '../server/db/entity'
-import { getRepository, Repository } from 'typeorm'
+import { createConnection, getConnection, Connection } from 'typeorm'
 
 interface IUserSubset {
   firstName: string
@@ -39,9 +38,11 @@ interface IMessageSubset {
   userChatGroup: UserChatGroup
 }
 
-const createUsers = (): Promise<User[]> => {
-  const userRepository: Repository<User> = getRepository(User)
+const returnRepository = (model: any): any => {
+  return getConnection('seed').getRepository(model)
+}
 
+const createUsers = (): Promise<User[]> => {
   const usersArray: IUserSubset[] = [
     {
       firstName: 'Joe',
@@ -69,7 +70,7 @@ const createUsers = (): Promise<User[]> => {
     }
   ]
 
-  return userRepository.save(usersArray)
+  return returnRepository(User).save(usersArray)
 }
 
 const createChatGroups = (): Promise<ChatGroup[]> => {
@@ -83,7 +84,7 @@ const createChatGroups = (): Promise<ChatGroup[]> => {
     if (i == 3) createdChatGroup.name = 'Vamos a la playa'
     chatGroupsArray.push(createdChatGroup)
   }
-  return getRepository(ChatGroup).save(chatGroupsArray)
+  return returnRepository(ChatGroup).save(chatGroupsArray)
 }
 
 const createUserLanguages = (users: User[]): Promise<UserLanguage[]> => {
@@ -107,8 +108,7 @@ const createUserLanguages = (users: User[]): Promise<UserLanguage[]> => {
       userLanguagesArray.push(createdUserLanguage)
     }
   }
-  const repository: Repository<UserLanguage> = getRepository(UserLanguage)
-  return repository.save(userLanguagesArray)
+  return returnRepository(UserLanguage).save(userLanguagesArray)
 }
 
 const createUserChatGroups = (
@@ -148,7 +148,7 @@ const createUserChatGroups = (
     }
     userChatGroupsArray.push(createdUserChatGroup)
   }
-  return getRepository(UserChatGroup).save(userChatGroupsArray)
+  return returnRepository(UserChatGroup).save(userChatGroupsArray)
 }
 
 const createMessages = (
@@ -162,12 +162,13 @@ const createMessages = (
     })
   }
 
-  return getRepository(Message).save(messages)
+  return returnRepository(Message).save(messages)
 }
 
 const refreshDBWithSeedData = async (): Promise<void> => {
   try {
-    await dbInit(true)
+    const connection: Connection = await createConnection('seed')
+    await connection.synchronize(true)
     const [users, chatGroups]: [User[], ChatGroup[]] = await Promise.all([
       createUsers(),
       createChatGroups()
@@ -181,10 +182,11 @@ const refreshDBWithSeedData = async (): Promise<void> => {
       createMessages(userChatGroups)
     ])
     console.log('database successfully refreshed with seed data')
+    return connection.close()
   } catch (err) {
     console.log('seeding of data failed')
     console.error(err)
   }
 }
 
-export default refreshDBWithSeedData
+refreshDBWithSeedData()

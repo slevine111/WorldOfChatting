@@ -7,9 +7,10 @@
   "scripts": {
     "build": "npx tsc",
     "tsc:watch": "npx tsc --w",
-    "seed": "npx ts-node ./src/bin/seed",
+    "seed": "docker exec worldofchatting_api npx ts-node ./src/bin/seed",
     "server:watch": "yarn run tsc:watch & nodemon ./js/server --ignore src --ignore ./js/client",
-    "test": "jest ./test/*.ts"
+    "test": "jest ./test/*.ts",
+    "docker-psql": "docker exec -it my_postgres psql -U postgres"
   },
   "dependencies": {
     "@nestjs/common": "^6.5.0",

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+  labels:
+    tier: backend
+    app: node
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      tier: backend
+      app: node
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        tier: backend
+        app: node
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_USERNAME
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_PASSWORD
+          envFrom:
+            - configMapRef:
+                name: db-config
+          name: api
+          image: slevine1893/worldofchatting
+          #  imagePullPolicy: Always
+          ports:
+            - containerPort: 3000

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployment
+  labels:
+    tier: backend
+    app: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: backend
+      app: db
+  template:
+    metadata:
+      labels:
+        tier: backend
+        app: db
+    spec:
+      containers:
+        - name: db
+          image: postgres:11-alpine
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: data
+              mountPath: /data/db
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_USERNAME
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_PASSWORD
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: postgresql-pv-claim

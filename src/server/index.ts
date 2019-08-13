@@ -8,7 +8,7 @@ config({ path: resolve(__dirname, '..', '..', '.env') })
 const bootstrap = async (): Promise<void> => {
   try {
     const app = await NestFactory.create(ApplicationModule)
-    await app.listen(Number(process.env.PORT), () =>
+    await app.listen(3000, () =>
       console.log(`listening on PORT ${process.env.PORT}`)
     )
   } catch (err) {

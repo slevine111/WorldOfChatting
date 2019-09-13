@@ -1,14 +1,15 @@
 {
   "name": "worldofchatting",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "",
   "author": "Steven Levine (https://github.com/slevine111)",
   "license": "MIT",
   "scripts": {
     "build": "npx tsc",
-    "tsc:watch": "npx tsc --w",
-    "seed": "docker exec worldofchatting_api npx ts-node ./src/bin/seed",
-    "server:watch": "yarn run tsc:watch & nodemon ./js/server --ignore src --ignore ./js/client",
+    "tsc:watch": "npx tsc -w",
+    "seed": "ts-node ./src/bin/seed.ts",
+    "server:dev": "ts-node ./src/server/index.ts",
+    "server:watch": "nodemon",
     "test": "jest ./test/*.ts",
     "docker-psql": "docker exec -it my_postgres psql -U postgres"
   },

@@ -66,7 +66,7 @@ const createUsers = (): Promise<User[]> => {
       username: 'manderson',
       email: 'manderson@gmail.com',
       password: '123',
-      loggedIn: true
+      loggedIn: false
     }
   ]
 

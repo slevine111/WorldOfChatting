@@ -11,7 +11,7 @@ export default class UserService {
   ) {}
 
   findAll(): Promise<User[]> {
-    return this.userRepository.find()
+    return this.userRepository.find({ loggedIn: false })
   }
 
   findLoggedInUsers(): Promise<User[]> {

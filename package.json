@@ -10,7 +10,7 @@
     "client:dev": "tsc -w & webpack -w",
     "server:start:dev": "ts-node ./src/server/index.ts",
     "server:dev": "nodemon",
-    "start:dev": "yarn run server:dev & yarn run client:dev",
+    "start:dev": "NODE_ENV=development yarn run server:dev & yarn run client:dev",
     "test": "jest ./test/*.ts"
   },
   "dependencies": {

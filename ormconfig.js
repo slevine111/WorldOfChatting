@@ -3,30 +3,36 @@ const { config } = require('dotenv')
 
 config()
 
+const {
+  DB_SERVICE_SERVICE_HOST,
+  POSTGRES_USERNAME,
+  POSTGRES_PASSWORD,
+  DATABASE,
+  DATABASE_TEST,
+  NODE_ENV
+} = process.env
 const commonFields = {
   type: 'postgres',
-  host: process.env.DB_SERVICE_SERVICE_HOST,
+  host: DB_SERVICE_SERVICE_HOST,
   port: 5432,
-  username: process.env.POSTGRES_USERNAME,
-  password: process.env.POSTGRES_PASSWORD
+  username: POSTGRES_USERNAME,
+  password: POSTGRES_PASSWORD
 }
 
 module.exports = [
   {
-    database: process.env.DATABASE,
+    database: DATABASE,
     ...commonFields,
-    entities: [resolve(__dirname, 'src', 'server', 'db', 'entity', '*.ts')]
+    entities: [
+      NODE_ENV === 'development'
+        ? resolve(__dirname, 'src', 'server', 'db', 'entity', '*.ts')
+        : resolve(__dirname, 'js', 'server', 'db', 'entity', '*.js')
+    ]
   },
   {
     name: 'test',
     ...commonFields,
-    database: process.env.DATABASE_TEST,
-    entities: [resolve(__dirname, 'src', 'server', 'db', 'entity', '*.ts')]
-  },
-  {
-    name: 'seed',
-    ...commonFields,
-    database: process.env.DATABASE,
+    database: DATABASE_TEST,
     entities: [resolve(__dirname, 'src', 'server', 'db', 'entity', '*.ts')]
   }
 ]

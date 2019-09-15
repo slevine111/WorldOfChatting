@@ -1,8 +1,22 @@
+import { join } from 'path'
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { ServeStaticModule } from '@nestjs/serve-static'
 import UserModule from './users/users.module'
+import WebpageController from './webpage.controller'
 
 @Module({
-  imports: [UserModule, TypeOrmModule.forRoot()]
+  imports: [
+    UserModule,
+    TypeOrmModule.forRoot(),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'public'),
+      renderPath: '/public',
+      serveStaticOptions: {
+        index: false
+      }
+    })
+  ],
+  controllers: [WebpageController]
 })
 export default class ApplicationModule {}

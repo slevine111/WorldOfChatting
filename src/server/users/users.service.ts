@@ -11,10 +11,10 @@ export default class UserService {
   ) {}
 
   findAll(): Promise<User[]> {
-    return this.userRepository.find({ loggedIn: false })
+    return this.userRepository.find()
   }
 
   findLoggedInUsers(): Promise<User[]> {
-    return this.userRepository.find({ loggedIn: true })
+    return this.userRepository.find({ loggedIn: false })
   }
 }

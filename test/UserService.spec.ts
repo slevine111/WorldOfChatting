@@ -15,7 +15,7 @@ describe('User Service', () => {
         lastName: 'Roberts',
         username: 'jroberts',
         email: 'jroberts@gmail.com',
-        password: '12345',
+        password: '123',
         loggedIn: true
       },
       {

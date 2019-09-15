@@ -5,21 +5,24 @@
   "author": "Steven Levine (https://github.com/slevine111)",
   "license": "MIT",
   "scripts": {
-    "build": "npx tsc",
-    "tsc:watch": "npx tsc -w",
-    "seed": "ts-node ./src/bin/seed.ts",
-    "server:dev": "ts-node ./src/server/index.ts",
-    "server:watch": "nodemon",
-    "test": "jest ./test/*.ts",
-    "docker-psql": "docker exec -it my_postgres psql -U postgres"
+    "seed": "node ./js/bin/seed.js",
+    "client:build": "tsc && webpack",
+    "client:dev": "tsc -w & webpack -w",
+    "server:start:dev": "ts-node ./src/server/index.ts",
+    "server:dev": "nodemon",
+    "start:dev": "yarn run server:dev & yarn run client:dev",
+    "test": "jest ./test/*.ts"
   },
   "dependencies": {
     "@nestjs/common": "^6.5.0",
     "@nestjs/core": "^6.5.0",
     "@nestjs/platform-express": "^6.5.2",
+    "@nestjs/serve-static": "^1.0.1",
     "@nestjs/typeorm": "^6.1.3",
     "dotenv": "^8.0.0",
     "pg": "^7.11.0",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.2",
     "typeorm": "^0.2.18",
@@ -28,12 +31,17 @@
   "devDependencies": {
     "@nestjs/testing": "^6.5.2",
     "@types/dotenv": "^6.1.1",
+    "@types/express": "^4.17.1",
     "@types/jest": "^24.0.15",
     "@types/node": "^12.0.12",
     "@types/pg": "^7.4.14",
+    "@types/react": "^16.9.2",
+    "@types/react-dom": "^16.9.0",
     "jest": "^24.8.0",
     "nodemon": "^1.19.1",
     "ts-jest": "^24.0.2",
-    "ts-node": "^8.3.0"
+    "ts-node": "^8.3.0",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.8"
   }
 }

@@ -1,4 +1,7 @@
 const { resolve } = require('path')
+const { config } = require('dotenv')
+
+config()
 
 const commonFields = {
   type: 'postgres',
@@ -27,5 +30,3 @@ module.exports = [
     entities: [resolve(__dirname, 'src', 'server', 'db', 'entity', '*.ts')]
   }
 ]
-
-//RepositoryNotFoundError: No repository for "User" was found. Looks like this entity is not registered in current "default" connection?

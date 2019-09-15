@@ -39,7 +39,7 @@ interface IMessageSubset {
 }
 
 const returnRepository = (model: any): any => {
-  return getConnection('seed').getRepository(model)
+  return getConnection().getRepository(model)
 }
 
 const createUsers = (): Promise<User[]> => {
@@ -167,7 +167,7 @@ const createMessages = (
 
 const refreshDBWithSeedData = async (): Promise<void> => {
   try {
-    const connection: Connection = await createConnection('seed')
+    const connection: Connection = await createConnection()
     await connection.synchronize(true)
     const [users, chatGroups]: [User[], ChatGroup[]] = await Promise.all([
       createUsers(),

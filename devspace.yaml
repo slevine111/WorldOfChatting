@@ -1,0 +1,6 @@
+version: v1beta2
+deployments:
+- name: worldofchatting
+  kubectl:
+    manifests:
+    - k8s

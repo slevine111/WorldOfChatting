@@ -1,13 +1,14 @@
 import { NestFactory } from '@nestjs/core'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import ApplicationModule from './app'
-import { config } from 'dotenv'
-import { resolve } from 'path'
-
-config({ path: resolve(__dirname, '..', '..', '.env') })
+import { join } from 'path'
 
 const bootstrap = async (): Promise<void> => {
   try {
-    const app = await NestFactory.create(ApplicationModule)
+    const app: NestExpressApplication = await NestFactory.create<
+      NestExpressApplication
+    >(ApplicationModule)
+    app.useStaticAssets(join(__dirname, 'public'))
     await app.listen(3000, () => console.log('listening on PORT 3000'))
   } catch (err) {
     console.log('app failed to connect for following reasons')

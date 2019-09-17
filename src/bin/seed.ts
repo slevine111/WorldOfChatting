@@ -3,14 +3,15 @@ import {
   User,
   UserLanguage,
   UserChatGroup,
-  Message
+  Message,
+  CountryLanguage
 } from '../server/db/entity'
+import scrapeAndProcessLanguageData from './languages-scraper'
 import { createConnection, getConnection, Connection } from 'typeorm'
 
 interface IUserSubset {
   firstName: string
   lastName: string
-  username: string
   email: string
   password: string
   loggedIn: boolean
@@ -38,6 +39,14 @@ interface IMessageSubset {
   userChatGroup: UserChatGroup
 }
 
+interface ICountryLanguageSubset {
+  country: string
+  language: string
+  official: boolean
+  usersApproved?: string[]
+  userSubmitted?: User
+}
+
 const returnRepository = (model: any): any => {
   return getConnection().getRepository(model)
 }
@@ -47,7 +56,6 @@ const createUsers = (): Promise<User[]> => {
     {
       firstName: 'Joe',
       lastName: 'Roberts',
-      username: 'jroberts',
       email: 'jroberts@gmail.com',
       password: '12345',
       loggedIn: true
@@ -55,7 +63,6 @@ const createUsers = (): Promise<User[]> => {
     {
       firstName: 'Kim',
       lastName: 'Levine',
-      username: 'klevine',
       email: 'klevine@gmail.com',
       password: '1234',
       loggedIn: true
@@ -63,7 +70,6 @@ const createUsers = (): Promise<User[]> => {
     {
       firstName: 'Mike',
       lastName: 'Anderson',
-      username: 'manderson',
       email: 'manderson@gmail.com',
       password: '123',
       loggedIn: false
@@ -165,13 +171,28 @@ const createMessages = (
   return returnRepository(Message).save(messages)
 }
 
+const createCountryLanguages = async (): Promise<CountryLanguage[]> => {
+  const scrapedData = await scrapeAndProcessLanguageData()
+  const countryLanguages: ICountryLanguageSubset[] = scrapedData.map(item => ({
+    ...item,
+    official: true
+  }))
+  const repository = returnRepository(CountryLanguage)
+  return repository.save(countryLanguages)
+}
+
 const refreshDBWithSeedData = async (): Promise<void> => {
   try {
     const connection: Connection = await createConnection()
     await connection.synchronize(true)
-    const [users, chatGroups]: [User[], ChatGroup[]] = await Promise.all([
+    const [users, chatGroups]: [
+      User[],
+      ChatGroup[],
+      CountryLanguage[]
+    ] = await Promise.all([
       createUsers(),
-      createChatGroups()
+      createChatGroups(),
+      createCountryLanguages()
     ])
     const userChatGroups: UserChatGroup[] = await createUserChatGroups(
       users,

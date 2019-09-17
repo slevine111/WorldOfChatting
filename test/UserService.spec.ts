@@ -13,7 +13,6 @@ describe('User Service', () => {
       {
         firstName: 'Joe',
         lastName: 'Roberts',
-        username: 'jroberts',
         email: 'jroberts@gmail.com',
         password: '123',
         loggedIn: true
@@ -21,7 +20,6 @@ describe('User Service', () => {
       {
         firstName: 'Kim',
         lastName: 'Levine',
-        username: 'klevine',
         email: 'klevine@gmail.com',
         password: '1234',
         loggedIn: false

@@ -23,11 +23,7 @@ module.exports = [
   {
     database: DATABASE,
     ...commonFields,
-    entities: [
-      NODE_ENV === 'development'
-        ? resolve(__dirname, 'src', 'server', 'db', 'entity', '*.ts')
-        : resolve(__dirname, 'js', 'server', 'db', 'entity', '*.js')
-    ]
+    entities: [resolve(__dirname, 'js', 'server', 'db', 'entity', '*.js')]
   },
   {
     name: 'test',

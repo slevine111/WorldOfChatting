@@ -5,12 +5,14 @@
   "author": "Steven Levine (https://github.com/slevine111)",
   "license": "MIT",
   "scripts": {
+    "initialize": "mkdir js && yarn run build && yarn run seed",
     "seed": "node ./js/bin/seed.js",
+    "ts:build": "tsc",
+    "ts:build:ifnotbuilt": "[ -d ./js/server ] || tsc",
     "client:build": "tsc && webpack",
-    "client:dev": "tsc -w & webpack -w",
-    "server:start:dev": "ts-node ./src/server/index.ts",
-    "server:dev": "nodemon",
-    "start:dev": "NODE_ENV=development yarn run server:dev & yarn run client:dev",
+    "client:dev": "yarn run ts:build:ifnotbuilt && (tsc -w & webpack -w)",
+    "server:dev": "yarn run ts:build:ifnotbuilt && (tsc -w & nodemon ./js/server --watch ./js/server -e js)",
+    "start:dev": "yarn run ts:build:ifnotbuilt && (tsc -w & webpack -w & nodemon ./js/server --watch ./js/server -e js)",
     "test": "jest ./test/*.ts"
   },
   "dependencies": {
@@ -32,7 +34,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.2",
     "typeorm": "^0.2.18",
-    "typescript": "^3.5.2"
+    "typescript": "^3.6.3"
   },
   "devDependencies": {
     "@nestjs/testing": "^6.5.2",

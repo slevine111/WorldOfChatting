@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { load } from 'cheerio'
 
-interface ICountryAndLanguage {
+export interface ICountryAndLanguage {
   country: string
   language: string
 }

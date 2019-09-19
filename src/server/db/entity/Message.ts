@@ -5,10 +5,11 @@ import {
   CreateDateColumn,
   ManyToOne
 } from 'typeorm'
-import { UserChatGroup } from './UserChatGroup'
+import User from './User'
+import ChatGroup from './ChatGroup'
 
 @Entity()
-export class Message {
+export default class Message {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
@@ -18,6 +19,9 @@ export class Message {
   @CreateDateColumn()
   createdAt: Date
 
-  @ManyToOne(() => UserChatGroup, userChatGroup => userChatGroup.messages)
-  userChatGroup: UserChatGroup
+  @ManyToOne(() => User, user => user.messages)
+  user: User
+
+  @ManyToOne(() => ChatGroup, chatGroup => chatGroup.messages)
+  chatGroup: ChatGroup
 }

@@ -8,15 +8,17 @@ COPY ./package.json ./yarn.* ./
 
 RUN yarn install --network-timeout 1000000 && yarn cache clean
 
-COPY tsconfig.json ormconfig.js nodemon.json ./
+COPY tsconfig.json ormconfig.js ./
 
 COPY ./src ./src
 
-#RUN yarn run build
+#RUN yarn run ts:build
+
+#RUN ls js
 
 EXPOSE 3000
 
-CMD ["yarn","run","server:watch"]
+CMD ["yarn","run","start:dev"]
 
 
 

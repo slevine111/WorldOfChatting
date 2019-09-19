@@ -6,12 +6,14 @@
   "license": "MIT",
   "scripts": {
     "initialize": "mkdir js && yarn run build && yarn run seed",
+    "compile-and-start": "tsc && webpack && node ./js/server",
     "seed": "node ./js/bin/seed.js",
-    "ts:build": "tsc",
-    "ts:build:ifnotbuilt": "[ -d ./js/server ] || tsc",
+    "ts:clean-and-build": "rm -rf js && tsc",
+    "ts:build:ifnotbuilt": "[ -d ./js/bin ] || tsc",
     "client:build": "tsc && webpack",
-    "client:dev": "yarn run ts:build:ifnotbuilt && (tsc -w & webpack -w)",
-    "server:dev": "yarn run ts:build:ifnotbuilt && (tsc -w & nodemon ./js/server --watch ./js/server -e js)",
+    "client:dev": "[ -d ./js/client ] || tsc && (tsc -w & webpack -w)",
+    "server": "tsc && node ./js/server",
+    "server:dev": "[ -d ./js/server ] || tsc && (tsc -w & nodemon ./js/server --watch ./js/server -e js)",
     "start:dev": "yarn run ts:build:ifnotbuilt && (tsc -w & webpack -w & nodemon ./js/server --watch ./js/server -e js)",
     "test": "jest ./test/*.ts"
   },

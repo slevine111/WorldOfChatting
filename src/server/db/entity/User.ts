@@ -1,10 +1,17 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
-import { UserLanguage } from './UserLanguage'
-import { UserChatGroup } from './UserChatGroup'
-import CountryLanguage from './CountryLanguage'
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  ManyToMany
+} from 'typeorm'
+import UserLanguage from './UserLanguage'
+import ChatGroup from './ChatGroup'
+import Message from './Message'
+import Language from './Language'
 
 @Entity()
-export class User {
+export default class User {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
@@ -26,12 +33,12 @@ export class User {
   @OneToMany(() => UserLanguage, userLanguage => userLanguage.user)
   userLanguages: UserLanguage[]
 
-  @OneToMany(() => UserChatGroup, userChatGroup => userChatGroup.user)
-  userChatGroups: UserChatGroup[]
+  @OneToMany(() => Message, message => message.user)
+  messages: Message[]
 
-  @OneToMany(
-    () => CountryLanguage,
-    countryLanguage => countryLanguage.userSubmitted
-  )
-  countryLanguages: CountryLanguage[]
+  @OneToMany(() => Language, language => language.userSubmitted)
+  languages: Language[]
+
+  @ManyToMany(() => ChatGroup, chatGroup => chatGroup.users)
+  chatGroups: ChatGroup[]
 }

@@ -3,11 +3,13 @@ import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import UserModule from './users/users.module'
+import LanguageModule from './languages/languages.module'
 import WebpageController from './webpage.controller'
 
 @Module({
   imports: [
     UserModule,
+    LanguageModule,
     TypeOrmModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'public'),

@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common'
 import UserService from './users.service'
-import { User } from '../db/entity'
+import { User } from '../../entities'
 
 @Controller('/api/user')
 export default class UserController {
@@ -8,7 +8,7 @@ export default class UserController {
 
   @Get()
   index(): Promise<User[]> {
-    return this.userService.findAll()
+    return this.userService.getAll()
   }
 
   @Get('/loggedin')

@@ -1,6 +1,8 @@
 //React related imports
-import React, { ReactElement, Fragment } from 'react'
+import React, { ReactElement, Fragment, useEffect } from 'react'
 import { HashRouter, Route } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { getAllLanguagesThunk } from '../store/language/actions'
 
 //Material-UI style imports
 import { makeStyles } from '@material-ui/core/styles'
@@ -14,7 +16,14 @@ const useStyles: Style = makeStyles((theme: any) => ({
   toolbar: theme.mixins.toolbar
 }))
 
-const App: React.FC<{}> = (): ReactElement => {
+interface IAppProps {
+  getAllLanguages: () => void
+}
+
+const App: React.FC<IAppProps> = ({ getAllLanguages }): ReactElement => {
+  useEffect(() => {
+    getAllLanguages()
+  })
   const classes = useStyles()
   return (
     <div>
@@ -31,4 +40,13 @@ const App: React.FC<{}> = (): ReactElement => {
   )
 }
 
-export default App
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getAllLanguages: () => dispatch(getAllLanguagesThunk())
+  }
+}
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(App)

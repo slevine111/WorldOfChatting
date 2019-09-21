@@ -15,7 +15,7 @@
     "server": "tsc && node ./js/server",
     "server:dev": "[ -d ./js/server ] || tsc && (tsc -w & nodemon ./js/server --watch ./js/server -e js)",
     "start:dev": "yarn run ts:build:ifnotbuilt && (tsc -w & webpack -w & nodemon ./js/server --watch ./js/server -e js)",
-    "test": "jest ./test/*.ts"
+    "test": "jest ./tests/**/*.ts"
   },
   "dependencies": {
     "@material-ui/core": "^4.4.2",
@@ -32,7 +32,10 @@
     "pg": "^7.11.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-redux": "^7.1.1",
     "react-router-dom": "^5.0.1",
+    "redux": "^4.0.4",
+    "redux-thunk": "^2.3.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.2",
     "typeorm": "^0.2.18",
@@ -49,6 +52,7 @@
     "@types/pg": "^7.4.14",
     "@types/react": "^16.9.2",
     "@types/react-dom": "^16.9.0",
+    "@types/react-redux": "^7.1.2",
     "@types/react-router-dom": "^4.3.5",
     "jest": "^24.8.0",
     "nodemon": "^1.19.1",

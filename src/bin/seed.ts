@@ -1,14 +1,8 @@
-import {
-  ChatGroup,
-  User,
-  UserLanguage,
-  Message,
-  Language
-} from '../server/db/entity'
+import { ChatGroup, User, UserLanguage, Message, Language } from '../entities'
 import scrapeAndProcessLanguageData, {
   ICountryAndLanguage
 } from './languages-scraper'
-import { createConnection, getConnection, Connection } from 'typeorm'
+import { getConnection, Connection } from 'typeorm'
 
 interface IUserSubset {
   firstName: string
@@ -44,7 +38,7 @@ interface IMessageSubset {
   chatGroup: ChatGroup
 }
 
-interface ISelectedLanguages {
+export interface ISelectedLanguages {
   English: Language
   Swahili: Language
   French: Language
@@ -55,40 +49,41 @@ interface ISelectedLanguages {
   [key: string]: Language
 }
 
-const returnRepository = (model: any): any => {
-  return getConnection().getRepository(model)
+const returnRepository = (
+  model: any,
+  connectionName: string = 'default'
+): any => {
+  return getConnection(connectionName).getRepository(model)
 }
 
-const createUsers = (): Promise<User[]> => {
-  //const [swahiliGroup, frenchGroup, japaneseGroup, spanishGroup] = chatGroups
+export function createUsers(
+  connectionName: string = 'default'
+): Promise<User[]> {
   const usersArray: IUserSubset[] = [
     {
       firstName: 'Joe',
       lastName: 'Roberts',
       email: 'jroberts@gmail.com',
       password: '12345',
-      loggedIn: true //,
-      // chatGroups: [swahiliGroup, frenchGroup, spanishGroup]
+      loggedIn: true
     },
     {
       firstName: 'Kim',
       lastName: 'Levine',
       email: 'klevine@gmail.com',
       password: '1234',
-      loggedIn: true //,
-      //  chatGroups: [swahiliGroup, frenchGroup, japaneseGroup]
+      loggedIn: true
     },
     {
       firstName: 'Mike',
       lastName: 'Anderson',
       email: 'manderson@gmail.com',
       password: '123',
-      loggedIn: false //,
-      //  chatGroups: [swahiliGroup, japaneseGroup, spanishGroup]
+      loggedIn: false
     }
   ]
 
-  return returnRepository(User).save(usersArray)
+  return returnRepository(User, connectionName).save(usersArray)
 }
 
 const createLanguages = async (): Promise<Language[]> => {
@@ -110,7 +105,10 @@ const createLanguages = async (): Promise<Language[]> => {
   ) as unknown) as ICountryAndLanguage
   return returnRepository(Language).save(languages)
 }
-const getSelectedLanguages = (allLanguages: Language[]): ISelectedLanguages => {
+
+export const getSelectedLanguages = (
+  allLanguages: Language[]
+): ISelectedLanguages => {
   let selectedLanguages: string[] = [
     'Swahili',
     'French',
@@ -128,10 +126,11 @@ const getSelectedLanguages = (allLanguages: Language[]): ISelectedLanguages => {
   }, {})
 }
 
-const createChatGroups = (
+export function createChatGroups(
   users: User[],
-  languages: ISelectedLanguages
-): Promise<ChatGroup[]> => {
+  languages: ISelectedLanguages,
+  connectionName: string = 'default'
+): Promise<ChatGroup[]> {
   let chatGroupsArray: IChatGroupSubset[] = []
   const [joe, kim, mike] = users
   const languagesToUse: string[] = ['Swahili', 'French', 'Japanese', 'Spanish']
@@ -150,13 +149,14 @@ const createChatGroups = (
     if (i == 3) createdChatGroup.name = 'Vamos a la playa'
     chatGroupsArray.push(createdChatGroup)
   }
-  return returnRepository(ChatGroup).save(chatGroupsArray)
+  return returnRepository(ChatGroup, connectionName).save(chatGroupsArray)
 }
 
-const createUserLanguages = (
+export function createUserLanguages(
   users: User[],
-  languages: ISelectedLanguages
-): Promise<UserLanguage[]> => {
+  languages: ISelectedLanguages,
+  connectionName: string = 'default'
+): Promise<UserLanguage[]> {
   let userLanguagesArray: IUserLanguageSubset[] = []
   const {
     Swahili,
@@ -186,10 +186,13 @@ const createUserLanguages = (
       userLanguagesArray.push(createdUserLanguage)
     }
   }
-  return returnRepository(UserLanguage).save(userLanguagesArray)
+  return returnRepository(UserLanguage, connectionName).save(userLanguagesArray)
 }
 
-const createMessages = (chatGroups: ChatGroup[]): Promise<Message[]> => {
+export function createMessages(
+  chatGroups: ChatGroup[],
+  connectionName: string = 'default'
+): Promise<Message[]> {
   const messages: IMessageSubset[] = []
   chatGroups.forEach((chatGroup: ChatGroup) => {
     chatGroup.users.forEach((user: User) => {
@@ -201,12 +204,11 @@ const createMessages = (chatGroups: ChatGroup[]): Promise<Message[]> => {
     })
   })
 
-  return returnRepository(Message).save(messages)
+  return returnRepository(Message, connectionName).save(messages)
 }
 
-const refreshDBWithSeedData = async (): Promise<void> => {
+export default async (connection: Connection): Promise<void> => {
   try {
-    const connection: Connection = await createConnection()
     await connection.synchronize(true)
     const users: User[] = await createUsers()
     const languages: Language[] = await createLanguages()
@@ -229,5 +231,3 @@ const refreshDBWithSeedData = async (): Promise<void> => {
     console.error(err)
   }
 }
-
-refreshDBWithSeedData()

@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm'
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { User } from '../db/entity'
+import { User } from '../../entities'
 
 @Injectable()
 export default class UserService {
@@ -10,11 +10,11 @@ export default class UserService {
     private readonly userRepository: Repository<User>
   ) {}
 
-  findAll(): Promise<User[]> {
+  getAll(): Promise<User[]> {
     return this.userRepository.find()
   }
 
   findLoggedInUsers(): Promise<User[]> {
-    return this.userRepository.find({ loggedIn: false })
+    return this.userRepository.find({ loggedIn: true })
   }
 }

@@ -8,23 +8,14 @@ import TableRow from '@material-ui/core/TableRow'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 import Typography from '@material-ui/core/Typography'
-
-interface ITemp {
-  id: string
-  language: string
-}
-
-let temp: ITemp[] = []
-for (let i = 0; i < 30; ++i) {
-  temp.push({ id: `b${i}`, language: `b${i}` })
-}
-temp.push({ id: 'dfsg', language: 'aedsdrgf' })
+import { connect } from 'react-redux'
+import { Language } from '../../../../entities'
 
 const sortLanguages = (
   orderBy: 'asc' | 'desc',
-  languages: ITemp[]
-): ITemp[] => {
-  return languages.sort((a: ITemp, b: ITemp) => {
+  languages: Language[]
+): Language[] => {
+  return languages.sort((a: Language, b: Language) => {
     return (orderBy === 'desc' ? 1 : -1) * b.language.localeCompare(a.language)
   })
 }
@@ -37,12 +28,14 @@ interface ILanguageSelectorProps {
   ) => void
   languagesToLearn: string[]
   languagesToTeach: string[]
+  languages: Language[]
 }
 
 const LanguageSelector: React.FC<ILanguageSelectorProps> = ({
   handleChange,
   languagesToLearn,
-  languagesToTeach
+  languagesToTeach,
+  languages
 }): ReactElement => {
   let [showOnly10, setShowOnly10] = useState(true)
   let [orderDirection, setOrderDirection]: [
@@ -50,7 +43,7 @@ const LanguageSelector: React.FC<ILanguageSelectorProps> = ({
     any
   ] = useState('asc')
   let [selectedAndLetterFilter, setSelectedAndLetterFilter] = useState('')
-  let languagesToDisplay: ITemp[] = sortLanguages(orderDirection, temp)
+  let languagesToDisplay: Language[] = sortLanguages(orderDirection, languages)
   if (showOnly10) languagesToDisplay = languagesToDisplay.slice(0, 10)
   if (selectedAndLetterFilter === 'Selected Languages') {
     languagesToDisplay = languagesToDisplay.filter(language =>
@@ -91,7 +84,7 @@ const LanguageSelector: React.FC<ILanguageSelectorProps> = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {languagesToDisplay.map((languageEl: ITemp) => {
+          {languagesToDisplay.map((languageEl: Language) => {
             const { id, language } = languageEl
             const selectedToTeach: boolean = languagesToTeach.includes(language)
             const selectedToLearn: boolean = languagesToLearn.includes(language)
@@ -135,7 +128,7 @@ const LanguageSelector: React.FC<ILanguageSelectorProps> = ({
               className="far fa-plus-square"
               onClick={() => setShowOnly10(false)}
             />
-            {`And ${temp.length - 10} more!!`}
+            {`And ${languages.length - 10} more!!`}
           </Typography>
         </div>
       )}{' '}
@@ -155,4 +148,6 @@ const LanguageSelector: React.FC<ILanguageSelectorProps> = ({
   )
 }
 
-export default LanguageSelector
+const mapStateToProps = ({ languages }: any) => ({ languages })
+
+export default connect(mapStateToProps)(LanguageSelector)

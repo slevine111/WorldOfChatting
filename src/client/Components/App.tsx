@@ -3,6 +3,7 @@ import React, { ReactElement, Fragment, useEffect } from 'react'
 import { HashRouter, Route } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { getAllLanguagesThunk } from '../store/language/actions'
+import { LanguageDispatch } from '../store/language/types'
 
 //Material-UI style imports
 import { makeStyles } from '@material-ui/core/styles'
@@ -16,9 +17,11 @@ const useStyles: Style = makeStyles((theme: any) => ({
   toolbar: theme.mixins.toolbar
 }))
 
-interface IAppProps {
+interface IDispatchProps {
   getAllLanguages: () => void
 }
+
+interface IAppProps extends IDispatchProps {}
 
 const App: React.FC<IAppProps> = ({ getAllLanguages }): ReactElement => {
   useEffect(() => {
@@ -40,7 +43,7 @@ const App: React.FC<IAppProps> = ({ getAllLanguages }): ReactElement => {
   )
 }
 
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (dispatch: LanguageDispatch): IDispatchProps => {
   return {
     getAllLanguages: () => dispatch(getAllLanguagesThunk())
   }

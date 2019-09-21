@@ -7,9 +7,10 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 import Checkbox from '@material-ui/core/Checkbox'
-import Typography from '@material-ui/core/Typography'
 import { connect } from 'react-redux'
 import { Language } from '../../../../entities'
+import { ReduxState } from '../../../store'
+import useStyles from './styles'
 
 const sortLanguages = (
   orderBy: 'asc' | 'desc',
@@ -37,14 +38,12 @@ const LanguageSelector: React.FC<ILanguageSelectorProps> = ({
   languagesToTeach,
   languages
 }): ReactElement => {
-  let [showOnly10, setShowOnly10] = useState(true)
   let [orderDirection, setOrderDirection]: [
     'desc' | 'asc' | undefined,
     any
   ] = useState('asc')
   let [selectedAndLetterFilter, setSelectedAndLetterFilter] = useState('')
   let languagesToDisplay: Language[] = sortLanguages(orderDirection, languages)
-  if (showOnly10) languagesToDisplay = languagesToDisplay.slice(0, 10)
   if (selectedAndLetterFilter === 'Selected Languages') {
     languagesToDisplay = languagesToDisplay.filter(language =>
       [...languagesToLearn, ...languagesToTeach].includes(language.language)
@@ -58,96 +57,78 @@ const LanguageSelector: React.FC<ILanguageSelectorProps> = ({
   const onFilterChange = ({
     target
   }: ChangeEvent<{ name?: string; value: unknown }>): void => {
-    setShowOnly10(false)
     setSelectedAndLetterFilter(target.value as string)
   }
 
+  const { tableSize } = useStyles()
   return (
     <div>
       <DropdownFilter {...{ selectedAndLetterFilter, onFilterChange }} />
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>
-              <TableSortLabel
-                direction={orderDirection}
-                active={true}
-                onClick={() =>
-                  setOrderDirection(orderDirection === 'asc' ? 'desc' : 'asc')
-                }
-              >
-                Language
-              </TableSortLabel>
-            </TableCell>
-            <TableCell>Want to Learn</TableCell>
-            <TableCell>Want to Teach</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {languagesToDisplay.map((languageEl: Language) => {
-            const { id, language } = languageEl
-            const selectedToTeach: boolean = languagesToTeach.includes(language)
-            const selectedToLearn: boolean = languagesToLearn.includes(language)
-            return (
-              <TableRow key={id}>
-                <TableCell component="th" scope="row">
-                  {language}
-                </TableCell>
-                <TableCell>
-                  <Checkbox
-                    checked={selectedToLearn}
-                    disabled={selectedToTeach}
-                    onChange={event =>
-                      handleChange(event, language, 'languagesToLearn')
-                    }
-                    color="default"
-                    inputProps={{ 'aria-label': 'want to learn checkbox' }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Checkbox
-                    checked={selectedToTeach}
-                    disabled={selectedToLearn}
-                    onChange={event =>
-                      handleChange(event, language, 'languagesToTeach')
-                    }
-                    color="default"
-                    inputProps={{ 'aria-label': 'want to teach checkbox' }}
-                  />
-                </TableCell>
-              </TableRow>
-            )
-          })}
-        </TableBody>
-      </Table>
-      {selectedAndLetterFilter === '' && showOnly10 && (
-        <div>
-          <Typography variant="body1">
-            {' '}
-            <i
-              className="far fa-plus-square"
-              onClick={() => setShowOnly10(false)}
-            />
-            {`And ${languages.length - 10} more!!`}
-          </Typography>
-        </div>
-      )}{' '}
-      {selectedAndLetterFilter === '' && !showOnly10 && (
-        <Typography variant="body1">
-          <i
-            className="far fa-minus-square"
-            onClick={() => {
-              setOrderDirection('asc')
-              setShowOnly10(true)
-            }}
-          />
-          Show fewer
-        </Typography>
-      )}
+      <div className={tableSize}>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <TableSortLabel
+                  direction={orderDirection}
+                  active={true}
+                  onClick={() =>
+                    setOrderDirection(orderDirection === 'asc' ? 'desc' : 'asc')
+                  }
+                >
+                  Language
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>Want to Learn</TableCell>
+              <TableCell>Want to Teach</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {languagesToDisplay.map((languageEl: Language) => {
+              const { id, language } = languageEl
+              const selectedToTeach: boolean = languagesToTeach.includes(
+                language
+              )
+              const selectedToLearn: boolean = languagesToLearn.includes(
+                language
+              )
+              return (
+                <TableRow key={id}>
+                  <TableCell component="th" scope="row">
+                    {language}
+                  </TableCell>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedToLearn}
+                      disabled={selectedToTeach}
+                      onChange={event =>
+                        handleChange(event, language, 'languagesToLearn')
+                      }
+                      color="default"
+                      inputProps={{ 'aria-label': 'want to learn checkbox' }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedToTeach}
+                      disabled={selectedToLearn}
+                      onChange={event =>
+                        handleChange(event, language, 'languagesToTeach')
+                      }
+                      color="default"
+                      inputProps={{ 'aria-label': 'want to teach checkbox' }}
+                    />
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 }
 
-const mapStateToProps = ({ languages }: any) => ({ languages })
+const mapStateToProps = ({ languages }: ReduxState) => ({ languages })
 
 export default connect(mapStateToProps)(LanguageSelector)

@@ -24,11 +24,11 @@ const sortLanguages = (
 interface ILanguageSelectorProps {
   handleChange: (
     event: ChangeEvent<HTMLInputElement>,
-    language: string,
+    language: Language,
     signupInfoKey: 'languagesToLearn' | 'languagesToTeach'
   ) => void
-  languagesToLearn: string[]
-  languagesToTeach: string[]
+  languagesToLearn: Language[]
+  languagesToTeach: Language[]
   languages: Language[]
 }
 
@@ -46,7 +46,7 @@ const LanguageSelector: React.FC<ILanguageSelectorProps> = ({
   let languagesToDisplay: Language[] = sortLanguages(orderDirection, languages)
   if (selectedAndLetterFilter === 'Selected Languages') {
     languagesToDisplay = languagesToDisplay.filter(language =>
-      [...languagesToLearn, ...languagesToTeach].includes(language.language)
+      [...languagesToLearn, ...languagesToTeach].includes(language)
     )
   } else if (selectedAndLetterFilter !== '') {
     languagesToDisplay = languagesToDisplay.filter(
@@ -87,10 +87,10 @@ const LanguageSelector: React.FC<ILanguageSelectorProps> = ({
             {languagesToDisplay.map((languageEl: Language) => {
               const { id, language } = languageEl
               const selectedToTeach: boolean = languagesToTeach.includes(
-                language
+                languageEl
               )
               const selectedToLearn: boolean = languagesToLearn.includes(
-                language
+                languageEl
               )
               return (
                 <TableRow key={id}>
@@ -102,7 +102,7 @@ const LanguageSelector: React.FC<ILanguageSelectorProps> = ({
                       checked={selectedToLearn}
                       disabled={selectedToTeach}
                       onChange={event =>
-                        handleChange(event, language, 'languagesToLearn')
+                        handleChange(event, languageEl, 'languagesToLearn')
                       }
                       color="default"
                       inputProps={{ 'aria-label': 'want to learn checkbox' }}
@@ -113,7 +113,7 @@ const LanguageSelector: React.FC<ILanguageSelectorProps> = ({
                       checked={selectedToTeach}
                       disabled={selectedToLearn}
                       onChange={event =>
-                        handleChange(event, language, 'languagesToTeach')
+                        handleChange(event, languageEl, 'languagesToTeach')
                       }
                       color="default"
                       inputProps={{ 'aria-label': 'want to teach checkbox' }}

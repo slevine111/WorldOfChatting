@@ -1,16 +1,42 @@
 import React, { useState, ReactElement, ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
+import { History } from 'history'
 import PersonalInfoForm from './PersonalInfoForm'
 import LanguageSelector from '../_shared/LanguageSelector/LanguageSelector'
 import SignupStepButtons from './SignupStepButtons'
 import useStyles from './styles'
 import { ISignupInfo } from './index'
+import { connect } from 'react-redux'
+import { ThunkDispatch } from 'redux-thunk'
+import {
+  signupNewUserProcess,
+  signupNewUserDTOs,
+  signupNewUserEntites,
+  signupNewUserPureActions
+} from '../../store/shared-actions'
+import { IUserPostDTO } from '../../../server/users/users.dto'
+import { IUserLanguagePostDTOSubset } from '../../../server/userlanguages/userlanguages.dto'
+import { Language } from '../../../entities'
 
 //Material-UI
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 
-const Signup: React.FC<{}> = (): ReactElement => {
+interface IDispatchProps {
+  signupNewUserProcess: (
+    newUser: IUserPostDTO,
+    newUserLanguages: IUserLanguagePostDTOSubset[]
+  ) => void
+}
+
+interface ISignupProps extends IDispatchProps {
+  history: History
+}
+
+const Signup: React.FC<ISignupProps> = ({
+  signupNewUserProcess,
+  history
+}): ReactElement => {
   let [signupInfo, setSignupFields] = useState<ISignupInfo>({
     firstName: '',
     lastName: '',
@@ -29,7 +55,7 @@ const Signup: React.FC<{}> = (): ReactElement => {
 
   const handleLanguageChange = (
     { target }: ChangeEvent<HTMLInputElement>,
-    language: string,
+    language: Language,
     signupInfoKey: 'languagesToLearn' | 'languagesToTeach'
   ): void => {
     if (target.checked) {
@@ -45,10 +71,16 @@ const Signup: React.FC<{}> = (): ReactElement => {
     }
   }
 
-  /*const dummyFunction = (event: ChangeEvent<HTMLFormElement>): void => {
+  const onSubmit = (event: ChangeEvent<HTMLFormElement>): void => {
     event.preventDefault()
-    console.log('clicked')
-  }*/
+    const { languagesToLearn, languagesToTeach, ...otherUserInfo } = signupInfo
+    const userLanguagePayload: IUserLanguagePostDTOSubset[] = [
+      ...languagesToLearn.map(language => ({ type: 'learner', language })),
+      ...languagesToTeach.map(language => ({ type: 'teacher', language }))
+    ]
+    signupNewUserProcess(otherUserInfo, userLanguagePayload)
+    history.push('/about')
+  }
 
   const { languagesToLearn, languagesToTeach } = signupInfo
   const { signupContainer } = useStyles()
@@ -57,7 +89,7 @@ const Signup: React.FC<{}> = (): ReactElement => {
       <Typography variant="caption">
         <i>Ready to become a citizen of the world?</i>
       </Typography>
-      <form>
+      <form onSubmit={onSubmit}>
         {currentStep === 'personal info' ? (
           <PersonalInfoForm {...{ signupInfo, handleChange }} />
         ) : (
@@ -88,4 +120,22 @@ const Signup: React.FC<{}> = (): ReactElement => {
   )
 }
 
-export default Signup
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<
+    signupNewUserEntites,
+    signupNewUserDTOs,
+    signupNewUserPureActions
+  >
+): IDispatchProps => {
+  return {
+    signupNewUserProcess: (
+      newUser: IUserPostDTO,
+      newUserLanguages: IUserLanguagePostDTOSubset[]
+    ) => dispatch(signupNewUserProcess(newUser, newUserLanguages))
+  }
+}
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Signup)

@@ -1,7 +1,11 @@
 import { createStore, combineReducers, applyMiddleware, Reducer } from 'redux'
-import { Language } from '../../entities'
+import { Language, User, UserLanguage } from '../../entities'
 import languageReducer from './language/reducer'
+import userReducer from './user/reducer'
+import userLanguageReducer from './userlanguage/reducer'
 import { LanguageActionTypes } from './language/types'
+import { UserActionTypes } from './user/types'
+import { UserLanguageActionTypes } from './userlanguage/types'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 
@@ -13,15 +17,19 @@ declare global {
   }
 }
 
-interface ICombineReducer {
+interface ICombinedReducer {
   languages: Language[]
+  users: User[]
+  userLanguages: UserLanguage[]
 }
 
 const rootReducer: Reducer<
-  ICombineReducer,
-  LanguageActionTypes
+  ICombinedReducer,
+  LanguageActionTypes | UserActionTypes | UserLanguageActionTypes
 > = combineReducers({
-  languages: languageReducer
+  languages: languageReducer,
+  users: userReducer,
+  userLanguages: userLanguageReducer
 })
 
 export type ReduxState = ReturnType<typeof rootReducer>

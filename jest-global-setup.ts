@@ -47,8 +47,6 @@ export default async () => {
   let connection = await createConnection('test')
   global.__POSTGRES__ = connection
   await connection.synchronize(true)
-
-  await connection.synchronize(true)
   const users: User[] = await createUsers('test')
   const languages: Language[] = await createLanguages()
   const selectedLanguages: ISelectedLanguages = getSelectedLanguages(languages)

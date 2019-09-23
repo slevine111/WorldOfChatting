@@ -13,6 +13,9 @@ export default class UserLanguage {
   @Column({ type: 'int', nullable: true })
   numberOfYears: number
 
+  @Column({ enum: [true, false], default: true })
+  active: Boolean
+
   @ManyToOne(() => User, user => user.userLanguages)
   user: User
 

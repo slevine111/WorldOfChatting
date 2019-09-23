@@ -2,6 +2,7 @@ import { Repository } from 'typeorm'
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'
+import { IUserPostDTO } from './users.dto'
 
 @Injectable()
 export default class UserService {
@@ -16,5 +17,9 @@ export default class UserService {
 
   findLoggedInUsers(): Promise<User[]> {
     return this.userRepository.find({ loggedIn: true })
+  }
+
+  addNewUser(user: IUserPostDTO): Promise<User> {
+    return this.userRepository.save(user)
   }
 }

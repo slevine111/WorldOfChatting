@@ -10,7 +10,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Style } from 'jss'
 
 //Components imports
-import Signup from './Signup/Signup'
+import Signup from './Login_Signup/Signup'
+import Login from './Login_Signup/Login'
 import Navbar from './Navbar'
 
 const useStyles: Style = makeStyles((theme: any) => ({
@@ -34,9 +35,10 @@ const App: React.FC<IAppProps> = ({ getAllLanguages }): ReactElement => {
         <Fragment>
           <Route component={Navbar} />
           <div className={classes.toolbar} />
-          <Route path="/" exact render={() => <h5>another page</h5>} />
+          <Route path="/" exact component={Login} />
           <Route path="/about" exact render={() => <h4>the about page</h4>} />
           <Route path="/signup" exact component={Signup} />
+          <Route path="/login" exact component={Login} />
         </Fragment>
       </HashRouter>
     </div>

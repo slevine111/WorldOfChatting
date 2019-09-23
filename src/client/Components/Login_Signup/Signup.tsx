@@ -1,13 +1,17 @@
+//Packages
 import React, { useState, ReactElement, ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { History } from 'history'
+import { connect } from 'react-redux'
+import { ThunkDispatch } from 'redux-thunk'
+
+//Components
 import PersonalInfoForm from './PersonalInfoForm'
 import LanguageSelector from '../_shared/LanguageSelector/LanguageSelector'
 import SignupStepButtons from './SignupStepButtons'
-import useStyles from './styles'
+
+//My modules
 import { ISignupInfo } from './index'
-import { connect } from 'react-redux'
-import { ThunkDispatch } from 'redux-thunk'
 import {
   signupNewUserProcess,
   signupNewUserDTOs,
@@ -21,6 +25,8 @@ import { Language } from '../../../entities'
 //Material-UI
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
+import Paper from '@material-ui/core/Paper'
+import useStyles from './styles'
 
 interface IDispatchProps {
   signupNewUserProcess: (
@@ -83,13 +89,13 @@ const Signup: React.FC<ISignupProps> = ({
   }
 
   const { languagesToLearn, languagesToTeach } = signupInfo
-  const { signupContainer } = useStyles()
+  const { formContainer, topMargin, topMarginButton } = useStyles()
   return (
-    <div className={signupContainer}>
-      <Typography variant="caption">
-        <i>Ready to become a citizen of the world?</i>
+    <Paper className={formContainer} square={true}>
+      <Typography variant="body1">
+        <i>Ready to become a citizen of the world?!</i>
       </Typography>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} className={topMargin}>
         {currentStep === 'personal info' ? (
           <PersonalInfoForm {...{ signupInfo, handleChange }} />
         ) : (
@@ -100,23 +106,27 @@ const Signup: React.FC<ISignupProps> = ({
         )}
 
         {currentStep === 'personal info' ? (
-          <Button
-            type="button"
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={() => setCurrentStep('language selector')}
-          >
-            Next
-          </Button>
+          <div className={topMarginButton}>
+            <Button
+              type="button"
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={() => setCurrentStep('language selector')}
+            >
+              Next
+            </Button>
+          </div>
         ) : (
           <SignupStepButtons {...{ setCurrentStep }} />
         )}
       </form>
-      <Typography>
-        Have an account? <Link to="/">Log in</Link>
-      </Typography>
-    </div>
+      <div className={topMargin}>
+        <Typography>
+          Already have an account? <Link to="/login">Log in</Link>
+        </Typography>
+      </div>
+    </Paper>
   )
 }
 

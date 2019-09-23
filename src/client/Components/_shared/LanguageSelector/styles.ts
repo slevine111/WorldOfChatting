@@ -3,7 +3,7 @@ import { Style } from 'jss'
 
 const useStyles: Style = makeStyles({
   tableSize: {
-    height: '800px',
+    maxHeight: '800px',
     overflow: 'scroll'
   }
 })

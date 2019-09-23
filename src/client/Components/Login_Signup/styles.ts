@@ -6,10 +6,13 @@ const useStyles: Style = makeStyles({
     display: 'flex',
     justifyContent: 'space-between'
   },
-  signupContainer: {
+  formContainer: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
+    width: '50%',
+    margin: '40px auto 0',
+    padding: '10px 0'
   },
   firstNameInput: {
     marginRight: '15px'
@@ -18,7 +21,10 @@ const useStyles: Style = makeStyles({
     width: '30%'
   },
   topMargin: {
-    marginTop: '15px'
+    marginTop: '16px'
+  },
+  topMarginButton: {
+    marginTop: '10px'
   }
 })
 

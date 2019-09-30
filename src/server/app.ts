@@ -5,6 +5,7 @@ import { ServeStaticModule } from '@nestjs/serve-static'
 import UserModule from './users/users.module'
 import LanguageModule from './languages/languages.module'
 import UserLanguageModule from './userlanguages/userlanguages.module'
+import AuthModule from './auth/auth.module'
 import WebpageController from './webpage.controller'
 
 @Module({
@@ -12,6 +13,7 @@ import WebpageController from './webpage.controller'
     UserModule,
     LanguageModule,
     UserLanguageModule,
+    AuthModule,
     TypeOrmModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'public'),

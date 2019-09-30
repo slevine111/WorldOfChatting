@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import ApplicationModule from './app'
 import { join } from 'path'
+import cookieParser from 'cookie-parser'
 
 const bootstrap = async (): Promise<void> => {
   try {
@@ -9,6 +10,7 @@ const bootstrap = async (): Promise<void> => {
       NestExpressApplication
     >(ApplicationModule)
     app.useStaticAssets(join(__dirname, 'public'))
+    app.use(cookieParser())
     await app.listen(3000, () => console.log('listening on PORT 3000'))
   } catch (err) {
     console.log('app failed to connect for following reasons')

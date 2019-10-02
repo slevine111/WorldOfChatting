@@ -12,3 +12,9 @@ export interface IGetTokenResult {
 export interface ITokenAndUser extends IGetTokenResult {
   user: User
 }
+
+export interface IAccessTokenClaims {
+  sub: string
+  iat: number
+  exp: number
+}

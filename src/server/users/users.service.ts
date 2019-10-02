@@ -15,8 +15,12 @@ export default class UserService {
     return this.userRepository.find()
   }
 
-  findSingleUser(username: string, password: string): Promise<User> {
-    return this.userRepository.findOneOrFail({ where: { username, password } })
+  findSingleUser(email: string, password: string): Promise<User | undefined> {
+    return this.userRepository.findOne({ where: { email, password } })
+  }
+
+  findSingleUserById(id: string): Promise<User | undefined> {
+    return this.userRepository.findOne({ where: { id } })
   }
 
   findLoggedInUsers(): Promise<User[]> {

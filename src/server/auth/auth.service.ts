@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, HttpException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import UserService from '../users/users.service'
 import { User } from '../../entities'
-import { IGetTokenResult, ITokenAndUser } from './auth.dto'
+import { IGetTokenResult, ITokenAndUser, IAccessTokenClaims } from './auth.dto'
 
 @Injectable()
 export default class AuthService {
@@ -11,23 +11,65 @@ export default class AuthService {
     private readonly userService: UserService
   ) {}
 
+  createToken(user: User): string {
+    return this.jwtService.sign({ sub: user.id }, { expiresIn: '1hr' })
+  }
+
   getToken(email: string, password: string): Promise<IGetTokenResult> {
     return this.userService.findSingleUser(email, password).then(
-      (user: User): IGetTokenResult => ({
-        accessToken: this.jwtService.sign(
-          { sub: user.id },
-          { expiresIn: '1sec' }
-        )
-      })
+      (user: User | undefined): IGetTokenResult => {
+        if (user === undefined) {
+          throw new HttpException('username and/or password invalid', 404)
+        }
+        return {
+          accessToken: this.createToken(<User>user)
+        }
+      }
     )
   }
 
   getTokenAndUser(email: string, password: string): Promise<ITokenAndUser> {
     return this.userService.findSingleUser(email, password).then(
-      (user: User): ITokenAndUser => ({
-        accessToken: this.jwtService.sign({ sub: user.id }),
-        user
-      })
+      (user: User | undefined): ITokenAndUser => {
+        if (user === undefined) {
+          throw new HttpException('username and/or password invalid', 404)
+        }
+        return {
+          accessToken: this.createToken(<User>user),
+          user: <User>user
+        }
+      }
     )
+  }
+
+  createAndThrow401Error(): void {
+    throw new HttpException('authorization token invalid', 401)
+  }
+
+  exchangeTokenForUser(accessToken: string): Promise<ITokenAndUser> {
+    return this.jwtService
+      .verifyAsync(accessToken, { ignoreExpiration: true })
+      .catch((err: Error) => {
+        console.log(err)
+        this.createAndThrow401Error()
+      })
+      .then(async (accessTokenClaims: IAccessTokenClaims) => {
+        if (typeof accessTokenClaims.exp !== 'number') {
+          this.createAndThrow401Error()
+        }
+        if (Date.now() / 1000 > accessTokenClaims.exp + 2 * 24 * 3600 * 1000) {
+          this.createAndThrow401Error()
+        }
+        let user: User | undefined = await this.userService.findSingleUserById(
+          accessTokenClaims.sub
+        )
+        if (user === undefined) {
+          this.createAndThrow401Error()
+        }
+        return {
+          accessToken: this.createToken(<User>user),
+          user: <User>user
+        }
+      })
   }
 }

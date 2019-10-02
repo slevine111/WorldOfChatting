@@ -12,8 +12,6 @@ describe('User Service', () => {
     userService = new UserService(userRepo)
   })
 
-  //afterAll(() => connection.close())
-
   test('getAll returns all users', async () => {
     const [, numberUsers]: [User[], number] = await userRepo.findAndCount()
     return userService.getAll().then(users => {

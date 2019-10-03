@@ -11,14 +11,6 @@ import { LoggedInUserActionTypes } from './loggedinuser/types'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv {
-      NODE_ENV: string
-    }
-  }
-}
-
 interface ICombinedReducer {
   languages: Language[]
   users: User[]
@@ -41,7 +33,7 @@ const rootReducer: Reducer<
 
 export type ReduxState = ReturnType<typeof rootReducer>
 
-const getMiddlewareArray = (environmentMode: string): any[] => {
+const getMiddlewareArray = (environmentMode: string | undefined): any[] => {
   return [thunk, ...(environmentMode === 'development' ? [logger] : [])]
 }
 

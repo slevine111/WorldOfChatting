@@ -57,7 +57,9 @@ const LanguageSelector: React.FC<ILanguageSelectorProps> = ({
   const onFilterChange = ({
     target
   }: ChangeEvent<{ name?: string; value: unknown }>): void => {
-    setSelectedAndLetterFilter(target.value as string)
+    if (typeof target.value === 'string') {
+      setSelectedAndLetterFilter(target.value)
+    }
   }
 
   const { tableSize } = useStyles()

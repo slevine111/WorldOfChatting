@@ -11,6 +11,10 @@ export default class AuthService {
     private readonly userService: UserService
   ) {}
 
+  verifyToken(accessToken: string): IAccessTokenClaims {
+    return this.jwtService.verify(accessToken)
+  }
+
   createToken(user: User): string {
     return this.jwtService.sign({ sub: user.id }, { expiresIn: '1hr' })
   }
@@ -19,10 +23,10 @@ export default class AuthService {
     return this.userService.findSingleUser(email, password).then(
       (user: User | undefined): IGetTokenResult => {
         if (user === undefined) {
-          throw new HttpException('username and/or password invalid', 404)
+          throw new HttpException('username and/or password invalid', 400)
         }
         return {
-          accessToken: this.createToken(<User>user)
+          accessToken: this.createToken(user!)
         }
       }
     )
@@ -32,11 +36,11 @@ export default class AuthService {
     return this.userService.findSingleUser(email, password).then(
       (user: User | undefined): ITokenAndUser => {
         if (user === undefined) {
-          throw new HttpException('username and/or password invalid', 404)
+          throw new HttpException('username and/or password invalid', 400)
         }
         return {
-          accessToken: this.createToken(<User>user),
-          user: <User>user
+          accessToken: this.createToken(user!),
+          user: user!
         }
       }
     )
@@ -49,8 +53,7 @@ export default class AuthService {
   exchangeTokenForUser(accessToken: string): Promise<ITokenAndUser> {
     return this.jwtService
       .verifyAsync(accessToken, { ignoreExpiration: true })
-      .catch((err: Error) => {
-        console.log(err)
+      .catch(() => {
         this.createAndThrow401Error()
       })
       .then(async (accessTokenClaims: IAccessTokenClaims) => {
@@ -67,8 +70,8 @@ export default class AuthService {
           this.createAndThrow401Error()
         }
         return {
-          accessToken: this.createToken(<User>user),
-          user: <User>user
+          accessToken: this.createToken(user!),
+          user: user!
         }
       })
   }

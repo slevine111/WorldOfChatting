@@ -6,6 +6,7 @@ import UserModule from './users/users.module'
 import LanguageModule from './languages/languages.module'
 import UserLanguageModule from './userlanguages/userlanguages.module'
 import AuthModule from './auth/auth.module'
+import MyJWTModule from './MyJWTModule'
 import WebpageController from './webpage.controller'
 
 @Module({
@@ -14,6 +15,7 @@ import WebpageController from './webpage.controller'
     LanguageModule,
     UserLanguageModule,
     AuthModule,
+    MyJWTModule,
     TypeOrmModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'public'),

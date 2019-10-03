@@ -31,7 +31,7 @@ export default class AuthController {
       this.authService.createAndThrow401Error()
     }
     return this.authService
-      .exchangeTokenForUser(<string>accessToken)
+      .exchangeTokenForUser(accessToken!)
       .then(({ accessToken, user }: ITokenAndUser) => {
         res.cookie('accessToken', accessToken, { httpOnly: true }).json(user)
       })

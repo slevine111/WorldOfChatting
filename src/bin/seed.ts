@@ -14,7 +14,7 @@ interface IUserSubset {
 
 interface ILanguageSubset {
   language: string
-  countries?: string[]
+  countries: string[]
   usersApproved?: string[]
   userSubmitted?: string[]
 }
@@ -47,6 +47,10 @@ export interface ISelectedLanguages {
   Turkish: Language
   Mandarin: Language
   [key: string]: Language
+}
+
+interface ICountriesByLanguageObject {
+  [key: string]: ILanguageSubset
 }
 
 const returnRepository = (
@@ -88,11 +92,11 @@ export function createUsers(
 
 const createLanguages = async (): Promise<Language[]> => {
   const scrapedData: ICountryAndLanguage[] = await scrapeAndProcessLanguageData()
-  const languagesAsObject: object = scrapedData.reduce(
-    (acc: any, el: ICountryAndLanguage) => {
-      const languageFound = acc[el.language]
-      if (languageFound) {
-        acc[el.language].countries.push(el.country)
+  const languagesAsObject: ICountriesByLanguageObject = scrapedData.reduce(
+    (acc: ICountriesByLanguageObject, el: ICountryAndLanguage) => {
+      const languageFound: ILanguageSubset | undefined = acc[el.language]
+      if ('countries' in languageFound) {
+        languageFound.countries.push(el.country)
       } else {
         acc[el.language] = { language: el.language, countries: [el.country] }
       }
@@ -100,9 +104,7 @@ const createLanguages = async (): Promise<Language[]> => {
     },
     {}
   )
-  const languages: ILanguageSubset = (Object.values(
-    languagesAsObject
-  ) as unknown) as ICountryAndLanguage
+  const languages: ILanguageSubset[] = Object.values(languagesAsObject)
   return returnRepository(Language).save(languages)
 }
 

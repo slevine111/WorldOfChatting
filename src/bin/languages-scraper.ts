@@ -39,7 +39,7 @@ const processDataIntoCountryAndLanguageArray = (
             const myRegEx: RegExp = /^.+?(?= \(|\[)/
             return {
               country,
-              language: myRegEx.exec(el) ? (myRegEx.exec(el) as any[])[0] : el
+              language: myRegEx.exec(el) ? myRegEx.exec(el)![0] : el
             }
           }
         )

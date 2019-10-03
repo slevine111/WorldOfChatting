@@ -4,7 +4,7 @@ import { User } from '../../src/entities'
 import { IUserPostDTO } from '../../src/server/users/users.dto'
 
 describe('User Service', () => {
-  let userRepo: Repository<User>
+  let userRepo: RepositoryUser>
   let userService: UserService
   beforeAll(async () => {
     const connection: Connection = await createConnection('test')

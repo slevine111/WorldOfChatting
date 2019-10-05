@@ -17,4 +17,5 @@ export interface IAccessTokenClaims {
   sub: string
   iat: number
   exp: number
+  jti: string
 }

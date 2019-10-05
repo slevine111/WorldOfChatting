@@ -22,7 +22,12 @@ export default class GlobalHttpExceptionFilter implements ExceptionFilter {
 
     const { message } = exception
     const errorBody =
-      typeof message === 'string' ? { statusCode: status, message } : message
+      typeof message === 'string'
+        ? {
+            statusCode: status,
+            message: message !== '' ? message : 'internal server error'
+          }
+        : message
     response.status(status).json(errorBody)
   }
 }

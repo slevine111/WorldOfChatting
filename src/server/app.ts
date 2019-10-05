@@ -7,6 +7,7 @@ import LanguageModule from './languages/languages.module'
 import UserLanguageModule from './userlanguages/userlanguages.module'
 import AuthModule from './auth/auth.module'
 import MyJWTModule from './MyJWTModule'
+import MyCacheModule from './MyCacheModule'
 import WebpageController from './webpage.controller'
 
 @Module({
@@ -23,7 +24,8 @@ import WebpageController from './webpage.controller'
       serveStaticOptions: {
         index: false
       }
-    })
+    }),
+    MyCacheModule
   ],
   controllers: [WebpageController]
 })

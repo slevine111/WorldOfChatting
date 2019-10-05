@@ -1,11 +1,34 @@
-import { Controller, Get, Post, Body, Res, Req } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Body,
+  Res,
+  Req,
+  Inject,
+  UseGuards,
+  CACHE_MANAGER,
+  HttpStatus
+} from '@nestjs/common'
 import { Response, Request } from 'express'
 import AuthService from './auth.service'
-import { IUSerSignInDTO, IGetTokenResult, ITokenAndUser } from './auth.dto'
+import AuthGuard from './auth.guard'
+import {
+  IUSerSignInDTO,
+  IGetTokenResult,
+  ITokenAndUser,
+  IAccessTokenClaims
+} from './auth.dto'
+import { ACCESS_TOKEN_COOKIE_NAME } from '../constants'
+import { Cache } from 'cache-manager'
 
 @Controller('/api/auth')
 export default class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
+  ) {}
 
   @Post('/getToken')
   getToken(@Body() userSignIn: IUSerSignInDTO): Promise<IGetTokenResult> {
@@ -20,7 +43,9 @@ export default class AuthController {
     return this.authService
       .getTokenAndUser(userSignIn.email, userSignIn.password)
       .then(({ accessToken, user }: ITokenAndUser) => {
-        res.cookie('accessToken', accessToken, { httpOnly: true }).json(user)
+        res
+          .cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, { httpOnly: true })
+          .json(user)
       })
   }
 
@@ -33,7 +58,24 @@ export default class AuthController {
     return this.authService
       .exchangeTokenForUser(accessToken!)
       .then(({ accessToken, user }: ITokenAndUser) => {
-        res.cookie('accessToken', accessToken, { httpOnly: true }).json(user)
+        res
+          .cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, { httpOnly: true })
+          .json(user)
       })
+  }
+
+  @Delete('')
+  @UseGuards(AuthGuard)
+  logoutUser(@Req() req: Request, @Res() res: Response): void {
+    const accessTokenClaims: IAccessTokenClaims = this.authService.decodeToken(
+      req.cookies[ACCESS_TOKEN_COOKIE_NAME]
+    )
+    this.cacheManager.set(
+      accessTokenClaims.jti,
+      'revoke',
+      (accessTokenClaims.exp - Date.now() * 1000) / 1000
+    )
+    res.clearCookie(ACCESS_TOKEN_COOKIE_NAME)
+    res.sendStatus(HttpStatus.NO_CONTENT)
   }
 }

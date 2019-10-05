@@ -11,12 +11,15 @@ export default class AuthService {
     private readonly userService: UserService
   ) {}
 
-  verifyToken(accessToken: string): IAccessTokenClaims {
-    return this.jwtService.verify(accessToken)
+  decodeToken(accessToken: string): IAccessTokenClaims {
+    return <IAccessTokenClaims>this.jwtService.decode(accessToken)
   }
 
   createToken(user: User): string {
-    return this.jwtService.sign({ sub: user.id }, { expiresIn: '1hr' })
+    return this.jwtService.sign(
+      { sub: user.id },
+      { expiresIn: '1hr', jwtid: `${Date.now()}${user.id}` }
+    )
   }
 
   getToken(email: string, password: string): Promise<IGetTokenResult> {

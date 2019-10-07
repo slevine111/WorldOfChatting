@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core'
 import { NestExpressApplication } from '@nestjs/platform-express'
-import ApplicationModule from './app'
 import { join } from 'path'
+import volleyball from 'volleyball'
 import cookieParser from 'cookie-parser'
+import ApplicationModule from './app'
 import GlobalHttpExceptionFilter from './GlobalExceptionFilter'
 
 const bootstrap = async (): Promise<void> => {
@@ -11,6 +12,7 @@ const bootstrap = async (): Promise<void> => {
       NestExpressApplication
     >(ApplicationModule)
     app.useStaticAssets(join(__dirname, 'public'))
+    app.use(volleyball)
     app.use(cookieParser())
     app.useGlobalFilters(new GlobalHttpExceptionFilter())
     await app.listen(3000, () => console.log('listening on PORT 3000'))

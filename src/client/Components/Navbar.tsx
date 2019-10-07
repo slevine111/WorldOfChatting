@@ -1,5 +1,11 @@
 import React, { ReactElement } from 'react'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { ReduxState } from '../store/index'
+import { User } from '../../entities'
+import { logoutUserThunk } from '../store/loggedinuser/actions'
+import { ISetLoggedInUserAction } from '../store/loggedinuser/types'
+import { ThunkDispatch } from 'redux-thunk'
 
 //Material-UI components
 import AppBar from '@material-ui/core/AppBar'
@@ -10,6 +16,16 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import { Style } from 'jss'
 
+interface IReduxStateProps {
+  user: User
+}
+
+interface IDispatchProps {
+  logoutUser: () => void
+}
+
+interface INavbarProps extends IReduxStateProps, IDispatchProps {}
+
 const useStyles: Style = makeStyles({
   aboutLink: {
     textDecoration: 'none',
@@ -18,7 +34,7 @@ const useStyles: Style = makeStyles({
   }
 })
 
-const Navbar: React.FC<{}> = (): ReactElement => {
+const Navbar: React.FC<INavbarProps> = ({ user, logoutUser }): ReactElement => {
   const classes = useStyles()
   return (
     <AppBar position="fixed">
@@ -27,9 +43,33 @@ const Navbar: React.FC<{}> = (): ReactElement => {
         <Link to="/about" className={classes.aboutLink}>
           About
         </Link>
+        {user.id && (
+          <Link
+            to="/"
+            className={classes.aboutLink}
+            onClick={() => logoutUser()}
+          >
+            Logout
+          </Link>
+        )}
       </Toolbar>
     </AppBar>
   )
 }
 
-export default Navbar
+const mapStateToProps = ({ loggedInUser }: ReduxState): IReduxStateProps => ({
+  user: loggedInUser
+})
+
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<void, null, ISetLoggedInUserAction>
+): IDispatchProps => {
+  return {
+    logoutUser: () => dispatch(logoutUserThunk())
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Navbar)

@@ -1,6 +1,6 @@
 import { User } from '../../entities'
 
-export interface IUSerSignInDTO {
+export interface IUserSignInDTO {
   email: string
   password: string
 }

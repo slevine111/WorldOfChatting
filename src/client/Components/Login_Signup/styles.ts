@@ -11,6 +11,7 @@ const useStyles: Style = makeStyles({
     flexDirection: 'column',
     alignItems: 'center',
     width: '50%',
+    minWidth: '400px',
     margin: '40px auto 0',
     padding: '10px 0'
   },

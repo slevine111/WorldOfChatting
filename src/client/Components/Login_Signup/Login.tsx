@@ -5,21 +5,39 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import useStyles from './styles'
+import { connect } from 'react-redux'
+import { loginUserThunk } from '../../store/loggedinuser/actions'
+import { ISetLoggedInUserAction } from '../../store/loggedinuser/types'
+import { User } from '../../../entities'
+import { IUserSignInDTO } from '../../../server/auth/auth.dto'
+import { ThunkDispatch } from 'redux-thunk'
+import { History } from 'history'
 
-interface ILoginInfo {
-  email: string
-  password: string
+interface IDispatchProps {
+  loginUser: (userLoginInfo: IUserSignInDTO) => Promise<void>
 }
 
-const Login: React.FC<{}> = (): ReactElement => {
-  const [loginInfo, setLoginInfo] = useState<ILoginInfo>({
+interface ILoginProps extends IDispatchProps {
+  history: History
+}
+
+const Login: React.FC<ILoginProps> = ({ loginUser, history }): ReactElement => {
+  const [loginInfo, setLoginInfo] = useState<IUserSignInDTO>({
     email: '',
     password: ''
   })
+  const [error, setError] = useState<string>('')
 
   const handleChange = ({ target }: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = target
     setLoginInfo({ ...loginInfo, [name]: value })
+  }
+
+  const onSubmit = (event: ChangeEvent<HTMLFormElement>): void => {
+    event.preventDefault()
+    loginUser(loginInfo)
+      .then(() => history.push('/home'))
+      .catch(({ response }) => setError(response.data.message))
   }
 
   const { formContainer, topMargin, topMarginButton } = useStyles()
@@ -28,7 +46,7 @@ const Login: React.FC<{}> = (): ReactElement => {
       <Typography variant="body1">
         <i>Ready to keep chatting with the world?!</i>
       </Typography>
-      <form>
+      <form onSubmit={onSubmit}>
         <TextField
           id="email"
           name="email"
@@ -49,6 +67,11 @@ const Login: React.FC<{}> = (): ReactElement => {
           fullWidth
           variant="outlined"
         />
+        {error !== '' && (
+          <Typography variant="caption" style={{ color: 'red' }}>
+            {error}
+          </Typography>
+        )}
         <div className={topMarginButton}>
           <Button
             type="submit"
@@ -70,4 +93,16 @@ const Login: React.FC<{}> = (): ReactElement => {
   )
 }
 
-export default Login
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<User, IUserSignInDTO, ISetLoggedInUserAction>
+): IDispatchProps => {
+  return {
+    loginUser: (userLoginInfo: IUserSignInDTO) =>
+      dispatch(loginUserThunk(userLoginInfo))
+  }
+}
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Login)

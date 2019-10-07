@@ -3,11 +3,12 @@ import {
   CanActivate,
   ExecutionContext,
   HttpStatus,
-  HttpException
+  HttpException,
+  CACHE_MANAGER,
+  Inject
 } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { Request } from 'express'
-import { CACHE_MANAGER, Inject } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants'
 import { IAccessTokenClaims } from './auth.dto'
@@ -37,7 +38,6 @@ export default class AuthGuard implements CanActivate {
       if (accessToken === '') rej('not authorized')
       const { jti }: IAccessTokenClaims = this.jwtService.verify(accessToken)
       return this.cacheManager.get(jti).then(jtiBacklisted => {
-        rej('not authorized')
         if (jtiBacklisted) rej('not authorized')
         res(true)
       })

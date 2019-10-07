@@ -32,7 +32,7 @@ interface IDispatchProps {
   signupNewUserProcess: (
     newUser: IUserPostDTO,
     newUserLanguages: IUserLanguagePostDTOSubset[]
-  ) => void
+  ) => Promise<void>
 }
 
 interface ISignupProps extends IDispatchProps {

@@ -3,7 +3,8 @@ import React, { ReactElement, Fragment, useEffect } from 'react'
 import { HashRouter, Route } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { getAllLanguagesThunk } from '../store/language/actions'
-import { LanguageDispatch } from '../store/language/types'
+import { checkIfUserLoggedInThunk } from '../store/loggedinuser/actions'
+import { ThunkDispatch } from 'redux-thunk'
 
 //Material-UI style imports
 import { makeStyles } from '@material-ui/core/styles'
@@ -13,6 +14,7 @@ import { Style } from 'jss'
 import Signup from './Login_Signup/Signup'
 import Login from './Login_Signup/Login'
 import Navbar from './Navbar'
+import { AnyAction } from 'redux'
 
 const useStyles: Style = makeStyles((theme: any) => ({
   toolbar: theme.mixins.toolbar
@@ -20,13 +22,17 @@ const useStyles: Style = makeStyles((theme: any) => ({
 
 interface IDispatchProps {
   getAllLanguages: () => void
+  checkIfUserLoggedIn: () => void
 }
 
 interface IAppProps extends IDispatchProps {}
 
-const App: React.FC<IAppProps> = ({ getAllLanguages }): ReactElement => {
+const App: React.FC<IAppProps> = ({
+  getAllLanguages,
+  checkIfUserLoggedIn
+}): ReactElement => {
   useEffect(() => {
-    getAllLanguages()
+    Promise.all([getAllLanguages(), checkIfUserLoggedIn()])
   })
   const classes = useStyles()
   return (
@@ -36,6 +42,11 @@ const App: React.FC<IAppProps> = ({ getAllLanguages }): ReactElement => {
           <Route component={Navbar} />
           <div className={classes.toolbar} />
           <Route path="/" exact component={Login} />
+          <Route
+            path="/home"
+            exact
+            render={() => <h4>your lovely home page</h4>}
+          />
           <Route path="/about" exact render={() => <h4>the about page</h4>} />
           <Route path="/signup" exact component={Signup} />
           <Route path="/login" exact component={Login} />
@@ -45,9 +56,12 @@ const App: React.FC<IAppProps> = ({ getAllLanguages }): ReactElement => {
   )
 }
 
-const mapDispatchToProps = (dispatch: LanguageDispatch): IDispatchProps => {
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<any, any, AnyAction>
+): IDispatchProps => {
   return {
-    getAllLanguages: () => dispatch(getAllLanguagesThunk())
+    getAllLanguages: () => dispatch(getAllLanguagesThunk()),
+    checkIfUserLoggedIn: () => dispatch(checkIfUserLoggedInThunk())
   }
 }
 

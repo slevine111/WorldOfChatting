@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { ReduxState } from '../store/index'
 import { User } from '../../entities'
-import { logoutUserThunk } from '../store/loggedinuser/actions'
-import { ISetLoggedInUserAction } from '../store/loggedinuser/types'
+import { logoutUserThunk } from '../store/auth/thunks'
 import { ThunkDispatch } from 'redux-thunk'
 
 //Material-UI components
@@ -15,6 +14,7 @@ import Typography from '@material-ui/core/Typography'
 //MaterIal-UI style imports
 import { makeStyles } from '@material-ui/core/styles'
 import { Style } from 'jss'
+import { AnyAction } from 'redux'
 
 interface IReduxStateProps {
   user: User
@@ -57,12 +57,12 @@ const Navbar: React.FC<INavbarProps> = ({ user, logoutUser }): ReactElement => {
   )
 }
 
-const mapStateToProps = ({ loggedInUser }: ReduxState): IReduxStateProps => ({
-  user: loggedInUser
+const mapStateToProps = ({ auth: { user } }: ReduxState): IReduxStateProps => ({
+  user
 })
 
 const mapDispatchToProps = (
-  dispatch: ThunkDispatch<void, null, ISetLoggedInUserAction>
+  dispatch: ThunkDispatch<any, any, AnyAction>
 ): IDispatchProps => {
   return {
     logoutUser: () => dispatch(logoutUserThunk())

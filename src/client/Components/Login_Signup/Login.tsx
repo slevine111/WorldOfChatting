@@ -6,9 +6,9 @@ import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import useStyles from './styles'
 import { connect } from 'react-redux'
-import { loginUserThunk } from '../../store/loggedinuser/actions'
-import { ISetLoggedInUserAction } from '../../store/loggedinuser/types'
-import { User } from '../../../entities'
+import { loginUserProcess } from '../../store/auth/thunks'
+import { SetUserAndAccessTokenFieldsActionType } from '../../store/auth/actions'
+import { IUserAndExpireTime } from '../../store/auth/types'
 import { IUserSignInDTO } from '../../../server/auth/auth.dto'
 import { ThunkDispatch } from 'redux-thunk'
 import { History } from 'history'
@@ -94,11 +94,15 @@ const Login: React.FC<ILoginProps> = ({ loginUser, history }): ReactElement => {
 }
 
 const mapDispatchToProps = (
-  dispatch: ThunkDispatch<User, IUserSignInDTO, ISetLoggedInUserAction>
+  dispatch: ThunkDispatch<
+    IUserAndExpireTime,
+    IUserSignInDTO,
+    SetUserAndAccessTokenFieldsActionType
+  >
 ): IDispatchProps => {
   return {
     loginUser: (userLoginInfo: IUserSignInDTO) =>
-      dispatch(loginUserThunk(userLoginInfo))
+      dispatch(loginUserProcess(userLoginInfo))
   }
 }
 

@@ -3,7 +3,7 @@ import React, { ReactElement, Fragment, useEffect } from 'react'
 import { HashRouter, Route } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { getAllLanguagesThunk } from '../store/language/actions'
-import { checkIfUserLoggedInThunk } from '../store/loggedinuser/actions'
+import { checkIfUserLoggedInProcess } from '../store/auth/thunks'
 import { ThunkDispatch } from 'redux-thunk'
 
 //Material-UI style imports
@@ -61,7 +61,7 @@ const mapDispatchToProps = (
 ): IDispatchProps => {
   return {
     getAllLanguages: () => dispatch(getAllLanguagesThunk()),
-    checkIfUserLoggedIn: () => dispatch(checkIfUserLoggedInThunk())
+    checkIfUserLoggedIn: () => dispatch(checkIfUserLoggedInProcess())
   }
 }
 

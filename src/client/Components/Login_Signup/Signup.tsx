@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { History } from 'history'
 import { connect } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
+import { AnyAction } from 'redux'
 
 //Components
 import PersonalInfoForm from './PersonalInfoForm'
@@ -12,12 +13,7 @@ import SignupStepButtons from './SignupStepButtons'
 
 //My modules
 import { ISignupInfo } from './index'
-import {
-  signupNewUserProcess,
-  signupNewUserDTOs,
-  signupNewUserEntites,
-  signupNewUserPureActions
-} from '../../store/shared-actions'
+import { signupNewUserProcess } from '../../store/shared-actions'
 import { IUserPostDTO } from '../../../server/users/users.dto'
 import { IUserLanguagePostDTOSubset } from '../../../server/userlanguages/userlanguages.dto'
 import { Language } from '../../../entities'
@@ -85,7 +81,7 @@ const Signup: React.FC<ISignupProps> = ({
       ...languagesToTeach.map(language => ({ type: 'teacher', language }))
     ]
     signupNewUserProcess(otherUserInfo, userLanguagePayload)
-    history.push('/about')
+    history.push('/login')
   }
 
   const { languagesToLearn, languagesToTeach } = signupInfo
@@ -131,11 +127,7 @@ const Signup: React.FC<ISignupProps> = ({
 }
 
 const mapDispatchToProps = (
-  dispatch: ThunkDispatch<
-    signupNewUserEntites,
-    signupNewUserDTOs,
-    signupNewUserPureActions
-  >
+  dispatch: ThunkDispatch<any, any, AnyAction>
 ): IDispatchProps => {
   return {
     signupNewUserProcess: (

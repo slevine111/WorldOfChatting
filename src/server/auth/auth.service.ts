@@ -7,7 +7,11 @@ import {
 import { JwtService } from '@nestjs/jwt'
 import UserService from '../users/users.service'
 import { User } from '../../entities'
-import { IGetTokenResult, ITokenAndUser, IAccessTokenClaims } from './auth.dto'
+import {
+  IGetTokenResult,
+  ITokenAndRelatedInfo,
+  IAccessTokenClaims
+} from './auth.dto'
 import { Cache } from 'cache-manager'
 
 @Injectable()
@@ -37,12 +41,20 @@ export default class AuthService {
     )
   }
 
-  getTokenAndUser(email: string, password: string): Promise<ITokenAndUser> {
+  getTokenAndUser(
+    email: string,
+    password: string
+  ): Promise<ITokenAndRelatedInfo> {
     return this.userService.findSingleUser(email, password).then(
-      (user: User): ITokenAndUser => ({
-        accessToken: this.createToken(user),
-        user
-      })
+      (user: User): ITokenAndRelatedInfo => {
+        const accessToken: string = this.createToken(user)
+        const expireTime: number = this.decodeToken(accessToken).exp
+        return {
+          accessToken,
+          user,
+          expireTime
+        }
+      }
     )
   }
 
@@ -50,18 +62,23 @@ export default class AuthService {
     throw new HttpException('authorization token invalid', 401)
   }
 
-  exchangeTokenForUser(accessToken: string): Promise<ITokenAndUser> {
+  exchangeTokenForUser(
+    accessToken: string,
+    checkExpireTime: boolean
+  ): Promise<ITokenAndRelatedInfo> {
     return this.jwtService
       .verifyAsync(accessToken, { ignoreExpiration: true })
       .catch(() => {
         this.createAndThrow401Error()
       })
       .then(async (accessTokenClaims: IAccessTokenClaims) => {
-        if (typeof accessTokenClaims.exp !== 'number') {
-          this.createAndThrow401Error()
-        }
-        if (Date.now() / 1000 > accessTokenClaims.exp + 2 * 24 * 3600) {
-          this.createAndThrow401Error()
+        if (checkExpireTime) {
+          if (typeof accessTokenClaims.exp !== 'number') {
+            this.createAndThrow401Error()
+          }
+          if (Date.now() / 1000 > accessTokenClaims.exp + 2 * 24 * 3600) {
+            this.createAndThrow401Error()
+          }
         }
         let user: User | undefined = await this.userService.findSingleUserById(
           accessTokenClaims.sub
@@ -69,14 +86,18 @@ export default class AuthService {
         if (user === undefined) {
           this.createAndThrow401Error()
         }
+        const accessToken: string = this.createToken(user!)
+        const expireTime: number = this.decodeToken(accessToken).exp
         return {
-          accessToken: this.createToken(user!),
-          user: user!
+          accessToken,
+          user: user!,
+          expireTime
         }
       })
   }
 
-  addTokenToBlacklist(accessTokenClaims: IAccessTokenClaims): void {
+  addTokenToBlacklist(accessToken: string): void {
+    const accessTokenClaims: IAccessTokenClaims = this.decodeToken(accessToken)
     this.cacheManager.set(accessTokenClaims.jti, 'revoke', {
       ttl: Math.ceil(accessTokenClaims.exp - Date.now() / 1000)
     })

@@ -13,6 +13,10 @@ export interface ITokenAndUser extends IGetTokenResult {
   user: User
 }
 
+export interface ITokenAndRelatedInfo extends ITokenAndUser {
+  expireTime: number
+}
+
 export interface IAccessTokenClaims {
   sub: string
   iat: number

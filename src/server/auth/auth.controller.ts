@@ -15,8 +15,7 @@ import AuthGuard from './auth.guard'
 import {
   IUserSignInDTO,
   IGetTokenResult,
-  ITokenAndUser,
-  IAccessTokenClaims
+  ITokenAndRelatedInfo
 } from './auth.dto'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants'
 
@@ -36,10 +35,10 @@ export default class AuthController {
   ): Promise<void> {
     return this.authService
       .getTokenAndUser(userSignIn.email, userSignIn.password)
-      .then(({ accessToken, user }: ITokenAndUser) => {
+      .then(({ accessToken, user, expireTime }: ITokenAndRelatedInfo) => {
         res
           .cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, { httpOnly: true })
-          .json(user)
+          .json({ user, expireTime })
       })
   }
 
@@ -51,22 +50,29 @@ export default class AuthController {
       this.authService.createAndThrow401Error()
     }
     return this.authService
-      .exchangeTokenForUser(accessToken!)
-      .then(({ accessToken, user }: ITokenAndUser) => {
+      .exchangeTokenForUser(accessToken!, true)
+      .then(({ accessToken, user, expireTime }: ITokenAndRelatedInfo) => {
         res
           .cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, { httpOnly: true })
-          .json(user)
+          .json({ user, expireTime })
       })
   }
 
   @Delete('')
   @UseGuards(AuthGuard)
   logoutUser(@Req() req: Request, @Res() res: Response): void {
-    const accessTokenClaims: IAccessTokenClaims = this.authService.decodeToken(
-      req.cookies[ACCESS_TOKEN_COOKIE_NAME]
-    )
-    this.authService.addTokenToBlacklist(accessTokenClaims)
-    res.clearCookie(ACCESS_TOKEN_COOKIE_NAME)
-    res.sendStatus(HttpStatus.NO_CONTENT)
+    this.authService.addTokenToBlacklist(req.cookies[ACCESS_TOKEN_COOKIE_NAME])
+    res.clearCookie(ACCESS_TOKEN_COOKIE_NAME).sendStatus(HttpStatus.NO_CONTENT)
+  }
+
+  @Get('/refreshToken')
+  refreshToken(@Req() req: Request, @Res() res: Response): Promise<void> {
+    return this.authService
+      .exchangeTokenForUser(req.cookies[ACCESS_TOKEN_COOKIE_NAME], false)
+      .then(({ accessToken, expireTime }: ITokenAndRelatedInfo) => {
+        res
+          .cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, { httpOnly: true })
+          .json(expireTime)
+      })
   }
 }

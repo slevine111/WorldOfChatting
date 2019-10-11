@@ -1,8 +1,9 @@
-import { Repository } from 'typeorm'
+import { Repository, UpdateResult } from 'typeorm'
 import { Injectable, HttpException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'
-import { IUserPostDTO } from './users.dto'
+import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
+import bcrypt from 'bcrypt'
 
 @Injectable()
 export default class UserService {
@@ -15,14 +16,28 @@ export default class UserService {
     return this.userRepository.find()
   }
 
-  findSingleUser(email: string, password: string): Promise<User> {
+  findSingleUser(email: string, inputPassword: string): Promise<User> {
     return this.userRepository
-      .findOne({ where: { email } })
-      .then((user: User | undefined) => {
+      .findOne({
+        select: [
+          'id',
+          'firstName',
+          'lastName',
+          'email',
+          'password',
+          'loggedIn'
+        ],
+        where: { email }
+      })
+      .then(async (user: User | undefined) => {
         if (user === undefined) throw new HttpException('username invalid', 400)
-        if (user.password !== password)
-          throw new HttpException('password invalid', 400)
-        return user
+        const passwordCorrect: boolean = await bcrypt.compare(
+          inputPassword,
+          user.password!
+        )
+        if (!passwordCorrect) throw new HttpException('password invalid', 400)
+        const { password, ...otherUserFields } = user
+        return otherUserFields
       })
   }
 
@@ -34,7 +49,22 @@ export default class UserService {
     return this.userRepository.find({ loggedIn: true })
   }
 
-  addNewUser(user: IUserPostDTO): Promise<User> {
-    return this.userRepository.save(user)
+  async addNewUser(user: IUserPostDTO): Promise<User> {
+    const { password, ...otherUserFields } = user
+    const hashedPassword: string = await bcrypt.hash(password, 5)
+    const { id, loggedIn } = await this.userRepository.save({
+      ...otherUserFields,
+      password: hashedPassword
+    })
+    return { ...otherUserFields, id, loggedIn }
+  }
+
+  updateUser(
+    userId: string,
+    updatedUser: IUserUpdateDTO
+  ): Promise<User | undefined> {
+    return this.userRepository.update(userId, updatedUser).then(() => {
+      return this.findSingleUserById(userId)
+    })
   }
 }

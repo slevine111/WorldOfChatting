@@ -29,7 +29,7 @@ export default class AuthService {
   createToken(user: User): string {
     return this.jwtService.sign(
       { sub: user.id },
-      { expiresIn: '1hr', jwtid: `${Date.now()}${user.id}` }
+      { expiresIn: '3h', jwtid: `${Date.now()}${user.id}` }
     )
   }
 

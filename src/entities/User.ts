@@ -2,13 +2,13 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  OneToMany,
+  //OneToMany,
   ManyToMany
 } from 'typeorm'
-import UserLanguage from './UserLanguage'
+//import UserLanguage from './UserLanguage'
 import ChatGroup from './ChatGroup'
-import Message from './Message'
-import Language from './Language'
+//import Message from './Message'
+//import Language from './Language'
 
 @Entity()
 export default class User {
@@ -24,21 +24,21 @@ export default class User {
   @Column({ type: 'varchar', unique: true })
   email: string
 
-  @Column({ type: 'varchar', unique: true })
-  password: string
+  @Column({ type: 'varchar', unique: true, select: false })
+  password?: string
 
   @Column({ type: 'boolean', default: true })
   loggedIn: boolean
 
-  @OneToMany(() => UserLanguage, userLanguage => userLanguage.user)
-  userLanguages: UserLanguage[]
+  /*@OneToMany(() => UserLanguage, userLanguage => userLanguage.user)
+  userLanguages?: UserLanguage[]
 
   @OneToMany(() => Message, message => message.user)
-  messages: Message[]
+  messages?: Message[]
 
   @OneToMany(() => Language, language => language.userSubmitted)
-  languages: Language[]
+  languages?: Language[]*/
 
   @ManyToMany(() => ChatGroup, chatGroup => chatGroup.users)
-  chatGroups: ChatGroup[]
+  chatGroups?: ChatGroup[]
 }

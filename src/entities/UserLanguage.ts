@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm'
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn
+} from 'typeorm'
 import User from './User'
 import Language from './Language'
 
@@ -16,9 +22,11 @@ export default class UserLanguage {
   @Column({ enum: [true, false], default: true })
   active: Boolean
 
-  @ManyToOne(() => User, user => user.userLanguages)
-  user: User
+  @ManyToOne(() => User /*, user => user.userLanguages*/)
+  @JoinColumn({ name: 'userId' })
+  userId: string
 
-  @ManyToOne(() => Language, language => language.userLanguages)
-  language: Language
+  @ManyToOne(() => Language /*, language => language.userLanguages*/)
+  @JoinColumn({ name: 'languageId' })
+  languageId: string
 }

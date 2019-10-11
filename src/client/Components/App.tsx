@@ -14,6 +14,7 @@ import { Style } from 'jss'
 import Signup from './Login_Signup/Signup'
 import Login from './Login_Signup/Login'
 import Navbar from './Navbar'
+import Home from './Home'
 import { AnyAction } from 'redux'
 
 const useStyles: Style = makeStyles((theme: any) => ({
@@ -42,11 +43,7 @@ const App: React.FC<IAppProps> = ({
           <Route component={Navbar} />
           <div className={classes.toolbar} />
           <Route path="/" exact component={Login} />
-          <Route
-            path="/home"
-            exact
-            render={() => <h4>your lovely home page</h4>}
-          />
+          <Route path="/home" exact component={Home} />
           <Route path="/about" exact render={() => <h4>the about page</h4>} />
           <Route path="/signup" exact component={Signup} />
           <Route path="/login" exact component={Login} />

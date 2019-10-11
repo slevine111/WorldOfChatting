@@ -3,6 +3,7 @@ import scrapeAndProcessLanguageData, {
   ICountryAndLanguage
 } from './languages-scraper'
 import { getConnection, Connection } from 'typeorm'
+import bcrypt from 'bcrypt'
 
 interface IUserSubset {
   firstName: string
@@ -53,49 +54,49 @@ interface ICountriesByLanguageObject {
   [key: string]: ILanguageSubset
 }
 
-const returnRepository = (
-  model: any,
-  connectionName: string = 'default'
-): any => {
+const returnRepository = (model: any, connectionName: string): any => {
   return getConnection(connectionName).getRepository(model)
 }
 
-export function createUsers(
-  connectionName: string = 'default'
-): Promise<User[]> {
-  const usersArray: IUserSubset[] = [
-    {
-      firstName: 'Joe',
-      lastName: 'Roberts',
-      email: 'jroberts@gmail.com',
-      password: '12345',
-      loggedIn: true
-    },
-    {
-      firstName: 'Kim',
-      lastName: 'Levine',
-      email: 'klevine@gmail.com',
-      password: '1234',
-      loggedIn: true
-    },
-    {
-      firstName: 'Mike',
-      lastName: 'Anderson',
-      email: 'manderson@gmail.com',
-      password: '123',
-      loggedIn: false
-    }
-  ]
-
-  return returnRepository(User, connectionName).save(usersArray)
+export function createUsers(connectionName: string): Promise<User[]> {
+  return Promise.all([
+    bcrypt.hash('12345', 5),
+    bcrypt.hash('1234', 5),
+    bcrypt.hash('123', 5)
+  ]).then((hashedPasswords: string[]) => {
+    const usersArray: IUserSubset[] = [
+      {
+        firstName: 'Joe',
+        lastName: 'Roberts',
+        email: 'jroberts@gmail.com',
+        password: hashedPasswords[0],
+        loggedIn: true
+      },
+      {
+        firstName: 'Kim',
+        lastName: 'Levine',
+        email: 'klevine@gmail.com',
+        password: hashedPasswords[1],
+        loggedIn: true
+      },
+      {
+        firstName: 'Mike',
+        lastName: 'Anderson',
+        email: 'manderson@gmail.com',
+        password: hashedPasswords[2],
+        loggedIn: false
+      }
+    ]
+    return returnRepository(User, connectionName).save(usersArray)
+  })
 }
 
-const createLanguages = async (): Promise<Language[]> => {
+const createLanguages = async (connectionName: string): Promise<Language[]> => {
   const scrapedData: ICountryAndLanguage[] = await scrapeAndProcessLanguageData()
   const languagesAsObject: ICountriesByLanguageObject = scrapedData.reduce(
     (acc: ICountriesByLanguageObject, el: ICountryAndLanguage) => {
       const languageFound: ILanguageSubset | undefined = acc[el.language]
-      if ('countries' in languageFound) {
+      if (typeof languageFound === 'object') {
         languageFound.countries.push(el.country)
       } else {
         acc[el.language] = { language: el.language, countries: [el.country] }
@@ -105,7 +106,7 @@ const createLanguages = async (): Promise<Language[]> => {
     {}
   )
   const languages: ILanguageSubset[] = Object.values(languagesAsObject)
-  return returnRepository(Language).save(languages)
+  return returnRepository(Language, connectionName).save(languages)
 }
 
 export const getSelectedLanguages = (
@@ -131,7 +132,7 @@ export const getSelectedLanguages = (
 export function createChatGroups(
   users: User[],
   languages: ISelectedLanguages,
-  connectionName: string = 'default'
+  connectionName: string
 ): Promise<ChatGroup[]> {
   let chatGroupsArray: IChatGroupSubset[] = []
   const [joe, kim, mike] = users
@@ -157,7 +158,7 @@ export function createChatGroups(
 export function createUserLanguages(
   users: User[],
   languages: ISelectedLanguages,
-  connectionName: string = 'default'
+  connectionName: string
 ): Promise<UserLanguage[]> {
   let userLanguagesArray: IUserLanguageSubset[] = []
   const {
@@ -193,7 +194,7 @@ export function createUserLanguages(
 
 export function createMessages(
   chatGroups: ChatGroup[],
-  connectionName: string = 'default'
+  connectionName: string
 ): Promise<Message[]> {
   const messages: IMessageSubset[] = []
   chatGroups.forEach((chatGroup: ChatGroup) => {
@@ -212,19 +213,21 @@ export function createMessages(
 export default async (connection: Connection): Promise<void> => {
   try {
     await connection.synchronize(true)
-    const users: User[] = await createUsers()
-    const languages: Language[] = await createLanguages()
+    const { name } = connection
+    const users: User[] = await createUsers(name)
+    const languages: Language[] = await createLanguages(name)
     const selectedLanguages: ISelectedLanguages = getSelectedLanguages(
       languages
     )
     const chatGroups: ChatGroup[] = await createChatGroups(
       users,
-      selectedLanguages
+      selectedLanguages,
+      name
     )
 
     await Promise.all([
-      createUserLanguages(users, selectedLanguages),
-      createMessages(chatGroups)
+      createUserLanguages(users, selectedLanguages, name),
+      createMessages(chatGroups, name)
     ])
     console.log('database successfully refreshed with seed data')
     return connection.close()

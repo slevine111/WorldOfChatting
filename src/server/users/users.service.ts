@@ -1,4 +1,4 @@
-import { Repository, UpdateResult } from 'typeorm'
+import { Repository } from 'typeorm'
 import { Injectable, HttpException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'

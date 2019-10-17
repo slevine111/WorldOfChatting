@@ -7,3 +7,7 @@ public/bundle.*
 
 # Exclude .devspace generated files
 .devspace/
+
+
+# Ignore DevSpace cache and log folder
+.devspace/

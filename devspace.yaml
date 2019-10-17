@@ -1,6 +1,21 @@
-version: v1beta2
+version: v1beta3
+images:
+  webserver:
+    image: dscr.io/slevine111/worldofchatting
+    createPullSecret: true
 deployments:
-- name: worldofchatting
-  kubectl:
-    manifests:
-    - k8s
+  - name: worldofchatting
+    kubectl:
+      manifests:
+        - k8s
+dev:
+  sync:
+    - imageName: default
+      excludePaths:
+        - node_modules
+        - npm-debug.log
+        - .git
+        - .gitignore
+        - Dockerfile
+        - k8s
+        - devspace.yaml/

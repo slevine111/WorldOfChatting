@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getAllLanguagesThunk } from '../store/language/actions'
 
-const Home = ({ langs }) => {
+const Home = ({ langs }: any) => {
   return (
     <div>
       23
@@ -13,7 +13,7 @@ const Home = ({ langs }) => {
   )
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: any) => {
   return {
     langs: () => dispatch(getAllLanguagesThunk())
   }

@@ -5,3 +5,7 @@ npm-debug.log
 Dockerfile
 k8s
 
+
+
+# Ignore devspace.yaml file to prevent image rebuilding after config changes
+devspace.yaml/

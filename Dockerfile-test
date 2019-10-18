@@ -1,0 +1,20 @@
+FROM node:lts-alpine AS build
+RUN apk --no-cache add --virtual builds-deps build-base python
+WORKDIR /user/src/app
+COPY ./package*.json  ./
+RUN npm install
+
+FROM node:lts-alpine
+WORKDIR /user/src/app
+RUN mkdir node_modules
+COPY --from=build  /user/src/app/node_modules ./node_modules
+COPY package.json jest.config.js ormconfig.js jest-global-setup.ts jest-global-teardown.ts ./
+COPY ./@types ./@types
+COPY ./src ./src
+COPY ./tests ./tests
+CMD ["npm","run","test"]
+
+
+
+
+

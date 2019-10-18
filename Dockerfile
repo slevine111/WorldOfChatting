@@ -1,29 +1,29 @@
-FROM node:lts-alpine
-
-RUN apk add --no-cache python make g++
-
-RUN mkdir -p /user/src/app && mkdir /user/src/app/js
-
+FROM node:lts-alpine AS base
+RUN apk --no-cache add --virtual builds-deps build-base python
+#RUN apk add --no-cache python make g++
+RUN mkdir -p /user/src/app
 WORKDIR /user/src/app
+COPY ./package*.json  ./
 
-COPY ./package.json ./yarn.* ./
+FROM base as test-install
+RUN npm install
+COPY tsconfig.json jest.config.js ./
+CMD ["sh","-c","echo 'hello'"]
 
-RUN yarn install --network-timeout 1000000 && yarn cache clean
+FROM test-install as after-install
 
-COPY tsconfig.json ormconfig.js webpack.config.js index.html ./
-
-COPY ./@types ./@types
-
-COPY ./src ./src
-
-RUN yarn tsc
-
-RUN yarn webpack
-
-EXPOSE 3000
-
-CMD ["node","./js/server"]
+COPY
 
 
+#&& yarn cache clean
+
+#COPY tsconfig.json jest.config.js ./
+
+#COPY ./@types ./@types
+
+#COPY ./src ./src
+
+#COPY ./tests-fake ./tests-fake
 
 
+#CMD ["yarn","run","test"]

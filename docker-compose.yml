@@ -1,0 +1,21 @@
+version: '3'
+services:
+  webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile-test
+    container_name: worldofchatting-webserver-test
+    environment:
+      - DB_SERVICE_SERVICE_HOST=db
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    depends_on:
+      - db
+  db:
+    image: postgres:11-alpine
+    container_name: worldofchatting-db-test
+    ports:
+      - '54320:5432'
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}

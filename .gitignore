@@ -11,3 +11,4 @@ public/bundle.*
 
 # Ignore DevSpace cache and log folder
 .devspace/
+.vscode

@@ -7,33 +7,28 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/node:lts-jessie
+      - image: node:lts-alpine
+      - image: postgres:11-alpine
         environment:
-          HOST: localhost
-          USERNAME: root
-          DATABASE_TEST: circle_test
-      - image: circleci/postgres:9.6.5-alpine-ram
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-
-    working_directory: ~/repo
+          POSTGRES_USER: ${POSTGRES_USER}
+          POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
     steps:
       - checkout
-
-      # Download and cache dependencies
+      - run:
+          name: install compile tools
+          command: apk --no-cache add --virtual builds-deps build-base python
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-
-      - run: yarn install
-
+      - run:
+          name: install dependencies
+          command: npm install
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-
-      # run tests!
-      - run: yarn test
+          key: v1-dependencies-{{ checksum "package.json" }
+      - run:
+          name: run tests
+          command: npm run test

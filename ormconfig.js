@@ -2,7 +2,7 @@ const { resolve } = require('path')
 const { config } = require('dotenv')
 
 config()
-console.log(process.env.TEST_VARIABLE)
+console.log(process.env)
 
 const commonFields = {
   type: 'postgres',

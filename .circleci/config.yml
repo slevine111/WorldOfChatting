@@ -8,6 +8,8 @@ jobs:
     docker:
       # specify the version you desire here
       - image: node:lts-alpine
+        environment:
+          TEST_VARIABLE: something
       - image: postgres:11-alpine
         environment:
           POSTGRES_USER: $POSTGRES_USERNAME

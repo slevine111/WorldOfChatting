@@ -11,10 +11,6 @@ jobs:
         environment:
           TEST_VARIABLE: something
       - image: postgres:11-alpine
-        environment:
-          POSTGRES_USER: $POSTGRES_USERNAME
-          POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-          TEST_VARIABLE: something
 
     steps:
       - checkout

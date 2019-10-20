@@ -7,9 +7,9 @@ services:
     container_name: worldofchatting-webserver-test
     environment:
       - DB_SERVICE_SERVICE_HOST=db
-      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - DATABASE_TEST=${POSTGRES_USER}
+      - DATABASE_TEST=${POSTGRES_USERNAME}
     depends_on:
       - db
   db:

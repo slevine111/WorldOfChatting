@@ -19,12 +19,7 @@ jobs:
 
       - run:
           name: test
-          command: docker-compose run \
-            -e DB_SERVICE_SERVICE_HOST=db \
-            -e POSTGRES_USER=$POSTGRES_USER \
-            -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
-            -e DATABSE_TEST=$POSTGRES_USER \
-            webserver npm run test
+          command: DB_SERVICE_SERVICE_HOST=db docker-compose run webserver npm run test
     #   - run:
     #      name: Waiting for Postgres to be ready
     #     command: |

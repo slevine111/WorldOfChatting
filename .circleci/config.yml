@@ -14,6 +14,10 @@ jobs:
       - setup_remote_docker
 
       - run:
+          name: build
+          command: docker-compose build
+
+      - run:
           name: test
           command: docker-compose exec webserver npm run test
     #   - run:

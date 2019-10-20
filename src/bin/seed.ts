@@ -3,7 +3,7 @@ import scrapeAndProcessLanguageData, {
   ICountryAndLanguage
 } from './languages-scraper'
 import { getConnection, Connection } from 'typeorm'
-import bcrypt from 'bcrypt'
+import {hash} from 'bcrypt'
 
 interface IUserSubset {
   firstName: string
@@ -60,9 +60,9 @@ const returnRepository = (model: any, connectionName: string): any => {
 
 export function createUsers(connectionName: string): Promise<User[]> {
   return Promise.all([
-    bcrypt.hash('12345', 5),
-    bcrypt.hash('1234', 5),
-    bcrypt.hash('123', 5)
+    hash('12345', 5),
+    hash('1234', 5),
+    hash('123', 5)
   ]).then((hashedPasswords: string[]) => {
     const usersArray: IUserSubset[] = [
       {

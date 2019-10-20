@@ -7,35 +7,22 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: postgres:11-alpine
-      - image: node:lts-alpine
+      - image: circleci/buildpack-deps:jessie
 
     steps:
       - checkout
+      - setup_remote_docker
+
       - run:
-          name: install compile tools
-          command: apk --no-cache add --virtual builds-deps build-base python
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-      - run:
-          name: install dependencies
-          command: npm install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }
-      - run:
-          name: Waiting for Postgres to be ready
-          command: |
-            for i in `seq 1 10`;
-            do
-              nc -z localhost 5432 && echo Success && exit 0
-              echo -n .
-              sleep 1
-            done
-            echo Failed waiting for Postgres && exit 1
-      - run:
-          name: run tests
-          command: npm run test
+          name: test
+          command: docker-compose up
+    #   - run:
+    #      name: Waiting for Postgres to be ready
+    #     command: |
+    #      for i in `seq 1 10`;
+    #     do
+    #      nc -z localhost 5432 && echo Success && exit 0
+    #     echo -n .
+    #    sleep 1
+    #  done
+    #  echo Failed waiting for Postgres && exit 1

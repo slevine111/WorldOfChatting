@@ -7,8 +7,8 @@ jobs:
   build:
     docker:
       # specify the version you desire here
+       - image: postgres:11-alpine
       - image: node:lts-alpine
-      - image: postgres:11-alpine
 
     steps:
       - checkout

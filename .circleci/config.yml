@@ -15,7 +15,7 @@ jobs:
 
       - run:
           name: test
-          command: docker-compose exec web npm run test
+          command: docker-compose exec webserver npm run test
     #   - run:
     #      name: Waiting for Postgres to be ready
     #     command: |

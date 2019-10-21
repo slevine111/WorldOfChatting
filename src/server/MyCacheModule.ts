@@ -4,7 +4,7 @@ import RedisStore from 'cache-manager-redis-store'
 
 const cacheStore: CacheModuleOptions = {
   store: RedisStore,
-  host: '10.192.16.137'
+  host: process.env.REDIS_SERVICE_SERVICE_HOST
 }
 @Global()
 @Module({

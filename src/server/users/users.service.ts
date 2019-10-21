@@ -3,7 +3,7 @@ import { Injectable, HttpException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
-import bcrypt from 'bcrypt'
+import { compare, hash } from 'bcrypt'
 
 @Injectable()
 export default class UserService {
@@ -31,7 +31,7 @@ export default class UserService {
       })
       .then(async (user: User | undefined) => {
         if (user === undefined) throw new HttpException('username invalid', 400)
-        const passwordCorrect: boolean = await bcrypt.compare(
+        const passwordCorrect: boolean = await compare(
           inputPassword,
           user.password!
         )
@@ -51,7 +51,7 @@ export default class UserService {
 
   async addNewUser(user: IUserPostDTO): Promise<User> {
     const { password, ...otherUserFields } = user
-    const hashedPassword: string = await bcrypt.hash(password, 5)
+    const hashedPassword: string = await hash(password, 5)
     const { id, loggedIn } = await this.userRepository.save({
       ...otherUserFields,
       password: hashedPassword

@@ -4,6 +4,7 @@ k8s/secret.yaml
 js
 .env
 public/bundle.*
+redis.conf
 
 # Exclude .devspace generated files
 .devspace/
@@ -12,3 +13,4 @@ public/bundle.*
 # Ignore DevSpace cache and log folder
 .devspace/
 .vscode
+

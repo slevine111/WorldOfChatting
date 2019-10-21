@@ -4,7 +4,7 @@ import { User } from '../../src/entities'
 import { IUserPostDTO } from '../../src/server/users/users.dto'
 
 describe('User Service', () => {
-  let userRepo: RepositoryUser>
+  let userRepo: Repository<User>
   let userService: UserService
   beforeAll(async () => {
     const connection: Connection = await createConnection('test')
@@ -50,7 +50,6 @@ describe('User Service', () => {
         expect(user.firstName).toBe('kim')
         expect(user.lastName).toBe('cooper')
         expect(user.email).toBe('k@gmail.com')
-        expect(user.password).toBe('12345x')
       })
   })
 })

@@ -17,7 +17,7 @@ export default class UserLanguage {
   type: string
 
   @Column({ type: 'int', nullable: true })
-  numberOfYears: number
+  numberOfYears: number | null
 
   @Column({ enum: [true, false], default: true })
   active: Boolean

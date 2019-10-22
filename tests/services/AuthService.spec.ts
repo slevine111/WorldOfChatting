@@ -51,7 +51,7 @@ describe('AuthService', () => {
         message = 'failure'
       })
       .then(() => {
-        expect(message).toBe('success')
+        expect(message).toBe('suss')
       })
   })
 

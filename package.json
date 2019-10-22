@@ -16,7 +16,7 @@
     "server": "tsc && node ./js/server",
     "server:dev": "NODE_ENV=development [ -d ./js/server ] || tsc && (tsc -w & nodemon ./js/server --watch ./js/server -e js)",
     "start:dev": "NODE_ENV=development yarn run tsc:build:ifnotbuilt && (tsc -w & webpack -w & nodemon ./js/server --watch ./js/server -e js)",
-    "test": "jest --runInBand --detectOpenHandles"
+    "test": "jest --runInBand --detectOpenHandles --forceExit"
   },
   "dependencies": {
     "@material-ui/core": "^4.4.2",

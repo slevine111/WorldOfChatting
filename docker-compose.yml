@@ -8,9 +8,10 @@ services:
     environment:
       - DB_SERVICE_SERVICE_HOST=db
       - REDIS_SERVCE_SERVICE_HOST=redis
-      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - POSTGRES_USERNAME=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - DATABASE_TEST=${POSTGRES_USERNAME}
+      - DATABASE_TEST=${POSTGRES_USER}
       - JWT_SECRET_TESTING=${JWT_SECRET_TESTING}
     depends_on:
       - db
@@ -25,8 +26,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
   redis:
     image: redis:5-alpine
-    container_name: redis-db-test
+    container_name: redis-test
     ports:
       - '6379:6379'
-    environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: redis-server --requirepass ${REDIS_PASSWORD}

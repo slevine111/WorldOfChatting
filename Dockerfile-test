@@ -8,7 +8,7 @@ FROM node:lts-alpine
 WORKDIR /user/src/app
 RUN mkdir node_modules
 COPY --from=build  /user/src/app/node_modules ./node_modules
-COPY tsconfig.json package.json jest.config.js ormconfig.js jest-global-setup.ts jest-global-teardown.ts ./
+COPY wait-for-postgres.sh tsconfig.json package.json jest.config.js ormconfig.js jest-global-setup.ts jest-global-teardown.ts ./
 COPY ./@types ./@types
 COPY ./src ./src
 COPY ./tests ./tests

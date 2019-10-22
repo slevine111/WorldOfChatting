@@ -33,9 +33,8 @@ describe('AuthService', () => {
       caching({
         store: RedisStore,
         ttl: Number.POSITIVE_INFINITY,
-        host: process.env.REDIS_SERVICE_SERVICE_HOST
-        //,
-        // password: process.env.REDIS_PASSWORD
+        host: process.env.REDIS_SERVCE_SERVICE_HOST,
+        password: process.env.REDIS_PASSWORD
       })
     )
   })
@@ -119,8 +118,16 @@ describe('AuthService', () => {
   })
 
   test("exchangeTokenForUser with invalid sub (user id) value returns error with 'authorization token invalid' message", () => {
+    const joeIdLastCharacter: string = joe.id[joe.id.length - 1]
+    let replacement: string = ''
+    for (let i: number = 0; i <= 9; ++i) {
+      if (String(i) !== joeIdLastCharacter) {
+        replacement = String(i)
+        break
+      }
+    }
     const token: string = jwtService.sign(
-      { sub: `${joe.id.slice(0, joe.id.length - 1)}1` },
+      { sub: `${joe.id.slice(0, joe.id.length - 1)}${replacement}` },
       { expiresIn: '1hr' }
     )
     let response: any

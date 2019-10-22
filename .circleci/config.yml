@@ -28,9 +28,9 @@ jobs:
       - run:
           name: build
           command: docker-compose build
-    #  - run:
-    #     name: test
-    #    command: docker-compose run --rm webserver npm run test
+    - run:
+         name: test
+        command: docker-compose up --abort-on-container-exit
     #   - run:
     #      name: Waiting for Postgres to be ready
     #     command: |

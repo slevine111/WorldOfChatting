@@ -42,16 +42,18 @@ describe('AuthService', () => {
   test('createToken creates a verified token', () => {
     let message: string = ''
     const token: string = authService.createToken(<User>joe)
+    const SUCCESS_MESSAGE: string = <const>'success'
+    const FAILURE_MESSAGE: string = <const>'failure'
     return jwtService
       .verifyAsync(token)
       .then(() => {
-        message = 'success'
+        message = SUCCESS_MESSAGE
       })
       .catch(() => {
-        message = 'failure'
+        message = FAILURE_MESSAGE
       })
       .then(() => {
-        expect(message).toBe('suss')
+        expect(message).toBe(SUCCESS_MESSAGE)
       })
   })
 

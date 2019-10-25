@@ -29,12 +29,12 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: db-secret
-                  key: POSTGRES_USERNAME
+                  name: world-of-chatting-secrets
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db-secret
+                  name: world-of-chatting-secrets
                   key: POSTGRES_PASSWORD
       volumes:
         - name: data

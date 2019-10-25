@@ -5,6 +5,8 @@
   "author": "Steven Levine (https://github.com/slevine111)",
   "license": "MIT",
   "scripts": {
+    "tsc": "tsc",
+    "webpack": "webpack",
     "initialize": "mkdir js && yarn run seed",
     "compile-and-start": "tsc && webpack && node ./js/server",
     "build": "tsc",

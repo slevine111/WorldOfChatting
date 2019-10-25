@@ -24,19 +24,26 @@ spec:
     spec:
       containers:
         - env:
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: world-of-chatting-secrets
+                  key: JWT_SECRET
+            - name: DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: world-of-chatting-secrets
+                  key: POSTGRES_USER
             - name: POSTGRES_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: db-secret
-                  key: POSTGRES_USERNAME
+                  name: world-of-chatting-secrets
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db-secret
+                  name: world-of-chatting-secrets
                   key: POSTGRES_PASSWORD
-          envFrom:
-            - configMapRef:
-                name: db-config
           name: api
           image: dscr.io/slevine111/worldofchatting
           ports:

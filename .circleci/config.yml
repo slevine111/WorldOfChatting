@@ -4,19 +4,42 @@
 #
 version: 2
 jobs:
-  # deploy:
-  #  docker:
-  #    - image: circleci/buildpack-deps:jessie
+  build_and_deploy:
+    docker:
+      # specify the version you desire here
+      - image: circleci/buildpack-deps:jessie
 
-  #steps:
-  # - checkout
-  #- run:
-  #   name: install devspace
-  #  command: |
-  #curl -s -L "https://github.com/devspace-cloud/devspace/releases/latest" |\
-  #sed -nE 's!.*"([^"]*devspace-linux-amd64)".*!https://github.com\1!p' | xargs -n 1 curl -L -o devspace && chmod +x devspace;
-  #sudo mv devspace /usr/local/bin;
-  build:
+    steps:
+      - checkout
+
+      - run:
+          name: install devspace
+          command: |
+            curl -s -L "https://github.com/devspace-cloud/devspace/releases/latest" |\
+            sed -nE 's!.*"([^"]*devspace-linux-amd64)".*!https://github.com\1!p' | xargs -n 1 curl -L -o devspace && chmod +x devspace;
+            sudo mv devspace /usr/local/bin;
+
+      - run
+          name: put environment variables in secrets
+          command: |
+            sed -i "" "s/ENV-VAR-POSTGRES-USER/$(echo $POSTGRES_USER | base64)/" ./k8s/secret.yaml
+            sed -i "" "s/ENV-VAR-POSTGRES-PASSWORD/$(echo $POSTGRES_PASSWORD | base64)/" ./k8s/secret.yaml
+            sed -i "" "s/ENV-VAR-REDIS-PASSWORD/$(echo $REDIS_PASSWORD | base64)/" ./k8s/secret.yaml
+            sed -i "" "s/ENV-VAR-JWT-SECRET/$(echo $JWT_SECRET | base64)/" ./k8s/secret.yaml
+
+
+      - run:
+          name: set up space to use
+          command: devspace use space worldofchatting
+
+      - run:
+          name: test
+          command: |
+            ls .
+            ls ./k8s
+            cat ./k8s/secret.yaml
+
+  test:
     docker:
       # specify the version you desire here
       - image: circleci/buildpack-deps:jessie
@@ -26,26 +49,34 @@ jobs:
       - setup_remote_docker
 
       - run:
-          name: build
+          name: build test image
           command: docker-compose build
 
       - run:
           name: test
           command: docker-compose run --rm webserver npm run test
+workflows:
+  version: 2
+  test:
+    triggers:
+      - filters:
+          branches:
+            ignore: develop
+    jobs:
+      - test
+  test_build_and_deploy:
+    triggers:
+      - filters:
+          branches:
+            only: develop
+    jobs:
+      - test
+      - build_and_deploy
+          requires:
+            - test
 
-      - run:
-          name: install devspace
-          command: |
-            curl -s -L "https://github.com/devspace-cloud/devspace/releases/latest" |\
-            sed -nE 's!.*"([^"]*devspace-linux-amd64)".*!https://github.com\1!p' | xargs -n 1 curl -L -o devspace && chmod +x devspace;
-            sudo mv devspace /usr/local/bin;
-    #   - run:
-    #      name: Waiting for Postgres to be ready
-    #     command: |
-    #      for i in `seq 1 10`;
-    #     do
-    #      nc -z localhost 5432 && echo Success && exit 0
-    #     echo -n .
-    #    sleep 1
-    #  done
-    #  echo Failed waiting for Postgres && exit 1
+
+
+
+
+

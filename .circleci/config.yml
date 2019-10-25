@@ -29,7 +29,8 @@ jobs:
       - run:
           name: put environment variables in secrets
           command: |
-            echo $POSTGRES_USER | base64
+            POSTGRES_USER_ENCODED=$(echo $POSTGRES_USER | base64)
+            echo $POSTGRES_USER_ENCODED
             sed -i "s/ENV-VAR-POSTGRES-USER/$(echo $POSTGRES_USER | base64)/" ./k8s/secret.yaml
             sed -i "s/ENV-VAR-POSTGRES-PASSWORD/$(echo $POSTGRES_PASSWORD | base64)/" ./k8s/secret.yaml
             sed -i "s/ENV-VAR-REDIS-PASSWORD/$(echo $REDIS_PASSWORD | base64)/" ./k8s/secret.yaml
@@ -67,7 +68,8 @@ jobs:
           name: test
           command: docker-compose run --rm webserver npm run test
 
-      # - store_artifacts:
+      - store_artifacts:
+          path: ./test-coverage-results
 
 workflows:
   version: 2

@@ -1,4 +1,9 @@
+const path = require('path')
+
 module.exports = {
+  collectCoverage: true,
+  coverageReporters: ['html'],
+  coverageDirectory: path.join(__dirname, 'test-coverage-results'),
   verbose: true,
   preset: 'ts-jest',
   testEnvironment: 'node',

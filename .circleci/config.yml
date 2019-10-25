@@ -30,11 +30,13 @@ jobs:
           name: put environment variables in secrets
           command: |
             POSTGRES_USER_ENCODED=$(echo $POSTGRES_USER | base64)
-            echo $POSTGRES_USER_ENCODED
-            sed -i "s/ENV-VAR-POSTGRES-USER/$(echo $POSTGRES_USER | base64)/" ./k8s/secret.yaml
-            sed -i "s/ENV-VAR-POSTGRES-PASSWORD/$(echo $POSTGRES_PASSWORD | base64)/" ./k8s/secret.yaml
-            sed -i "s/ENV-VAR-REDIS-PASSWORD/$(echo $REDIS_PASSWORD | base64)/" ./k8s/secret.yaml
-            sed -i "s/ENV-VAR-JWT-SECRET/$(echo $JWT_SECRET | base64)/" ./k8s/secret.yaml
+            POSTGRES_PASSWORD_ENCODED=$(echo $POSTGRES_PASSWORD | base64)
+            REDIS_PASSWORD_ENCODED=$(echo $REDIS_PASSWORD | base64)
+            JWT_SECRET_ENCODED=$(echo $JWT_SECRET | base64)
+            sed -i "s/ENV-VAR-POSTGRES-USER/${POSTGRES_USER_ENCODED}/" ./k8s/secret.yaml
+            sed -i "s/ENV-VAR-POSTGRES-PASSWORD/${POSTGRES_PASSWORD_ENCODED}/" ./k8s/secret.yaml
+            sed -i "s/ENV-VAR-REDIS-PASSWORD/${REDIS_PASSWORD_ENCODED}/" ./k8s/secret.yaml
+            sed -i "s/ENV-VAR-JWT-SECRET/${JWT_SECRET_ENCODED}/" ./k8s/secret.yaml
 
       - run:
           name: set up space to use

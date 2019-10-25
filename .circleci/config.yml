@@ -45,9 +45,9 @@ jobs:
             ls ./k8s
             cat ./k8s/secret.yaml
 
-      - run:
-          name: deploy
-          command: devspace deploy
+      # - run:
+      #    name: deploy
+      #   command: devspace deploy
 
   test:
     docker:

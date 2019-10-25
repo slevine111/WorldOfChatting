@@ -1,6 +1,5 @@
 yarn-error.log
 node_modules
-k8s/secret.yaml
 js
 .env
 public/bundle.*

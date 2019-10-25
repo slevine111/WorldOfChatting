@@ -13,6 +13,13 @@ jobs:
       - checkout
 
       - run:
+          name: test
+          command: |
+            ls .
+            ls ./k8s
+            cat ./k8s/secret.yaml
+
+      - run:
           name: install devspace
           command: |
             curl -s -L "https://github.com/devspace-cloud/devspace/releases/latest" |\
@@ -37,6 +44,10 @@ jobs:
             ls .
             ls ./k8s
             cat ./k8s/secret.yaml
+
+      - run:
+          name: deploy
+          command: devspace deploy
 
   test:
     docker:

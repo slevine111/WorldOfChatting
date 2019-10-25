@@ -56,22 +56,12 @@ jobs:
           command: docker-compose run --rm webserver npm run test
 workflows:
   version: 2
-  test:
-    triggers:
-      - schedule:
-          filters:
-            branches:
-              ignore: develop
-    jobs:
-      - test
   test_build_and_deploy:
-    triggers:
-      - schedule:
-          filters:
-            branches:
-              only: develop
     jobs:
       - test
       - build_and_deploy:
           requires:
             - test
+          filters:
+            branches:
+              ignore: master

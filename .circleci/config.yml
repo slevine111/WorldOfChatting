@@ -29,10 +29,10 @@ jobs:
       - run:
           name: put environment variables in secrets
           command: |
-            sed -i "" "s/ENV-VAR-POSTGRES-USER/$(echo $POSTGRES_USER | base64)/" ./k8s/secret.yaml
-            sed -i "" "s/ENV-VAR-POSTGRES-PASSWORD/$(echo $POSTGRES_PASSWORD | base64)/" ./k8s/secret.yaml
-            sed -i "" "s/ENV-VAR-REDIS-PASSWORD/$(echo $REDIS_PASSWORD | base64)/" ./k8s/secret.yaml
-            sed -i "" "s/ENV-VAR-JWT-SECRET/$(echo $JWT_SECRET | base64)/" ./k8s/secret.yaml
+            sed -i "s/ENV-VAR-POSTGRES-USER/$(echo $POSTGRES_USER | base64)/" ./k8s/secret.yaml
+            sed -i "s/ENV-VAR-POSTGRES-PASSWORD/$(echo $POSTGRES_PASSWORD | base64)/" ./k8s/secret.yaml
+            sed -i "s/ENV-VAR-REDIS-PASSWORD/$(echo $REDIS_PASSWORD | base64)/" ./k8s/secret.yaml
+            sed -i "s/ENV-VAR-JWT-SECRET/$(echo $JWT_SECRET | base64)/" ./k8s/secret.yaml
 
       - run:
           name: set up space to use

@@ -27,7 +27,6 @@ jobs:
             sed -i "" "s/ENV-VAR-REDIS-PASSWORD/$(echo $REDIS_PASSWORD | base64)/" ./k8s/secret.yaml
             sed -i "" "s/ENV-VAR-JWT-SECRET/$(echo $JWT_SECRET | base64)/" ./k8s/secret.yaml
 
-
       - run:
           name: set up space to use
           command: devspace use space worldofchatting
@@ -71,12 +70,6 @@ workflows:
             only: develop
     jobs:
       - test
-      - build_and_deploy
+      - build_and_deploy:
           requires:
             - test
-
-
-
-
-
-

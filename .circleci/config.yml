@@ -19,7 +19,7 @@ jobs:
             sed -nE 's!.*"([^"]*devspace-linux-amd64)".*!https://github.com\1!p' | xargs -n 1 curl -L -o devspace && chmod +x devspace;
             sudo mv devspace /usr/local/bin;
 
-      - run
+      - run:
           name: put environment variables in secrets
           command: |
             sed -i "" "s/ENV-VAR-POSTGRES-USER/$(echo $POSTGRES_USER | base64)/" ./k8s/secret.yaml

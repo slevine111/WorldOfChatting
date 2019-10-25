@@ -67,7 +67,7 @@ jobs:
           name: test
           command: docker-compose run --rm webserver npm run test
 
-      - store_artifacts:
+      # - store_artifacts:
 
 workflows:
   version: 2

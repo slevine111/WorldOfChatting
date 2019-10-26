@@ -37,12 +37,16 @@ jobs:
             POSTGRES_PASSWORD_ENCODED=$(echo $POSTGRES_PASSWORD | base64)
             REDIS_PASSWORD_ENCODED=$(echo $REDIS_PASSWORD | base64)
             JWT_SECRET_ENCODED=$(echo $JWT_SECRET | base64)
-            NO_SPACES=${JWT_SECRET_ENCODED// /}
-            echo $NO_SPACES
+            jwt_secret_lines=$(echo $JWT_SECRET_ENCODED | tr " " "\n")
             sed -i "s/ENV-VAR-POSTGRES-USER/${POSTGRES_USER_ENCODED}/" ./k8s/secret.yaml
             sed -i "s/ENV-VAR-POSTGRES-PASSWORD/${POSTGRES_PASSWORD_ENCODED}/" ./k8s/secret.yaml
             sed -i "s/ENV-VAR-REDIS-PASSWORD/${REDIS_PASSWORD_ENCODED}/" ./k8s/secret.yaml
-            sed -i "s/ENV-VAR-JWT-SECRET/${JWT_SECRET_ENCODED}/" ./k8s/secret.yaml
+            for line in $jwt_secret_lines
+            do
+                echo $line
+                sed -i "s/ENV-VAR-JWT-SECRET/${line}ENV-VAR-JWT-SECRET/" ./k8s/secret.yaml
+            done
+            sed -i "s/ENV-VAR-JWT-SECRET//" ./k8s/secret.yaml
 
       - run:
           name: set up space to use

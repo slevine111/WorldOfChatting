@@ -3,6 +3,10 @@ const path = require('path')
 module.exports = {
   collectCoverage: true,
   coverageReporters: ['html'],
+  coverageDirectory: path.join(
+    __dirname,
+    `coverage${process.env.CI_BUILD === 'true' ? '-circleci' : ''}`
+  ),
   verbose: true,
   preset: 'ts-jest',
   testEnvironment: 'node',

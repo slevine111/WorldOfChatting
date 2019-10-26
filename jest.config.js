@@ -1,5 +1,12 @@
 const path = require('path')
 
+console.log(
+  path.join(
+    __dirname,
+    `coverage${process.env.CI_BUILD === 'true' ? '-circleci' : ''}`
+  )
+)
+
 module.exports = {
   collectCoverage: true,
   coverageReporters: ['html'],

@@ -43,21 +43,20 @@ jobs:
             sed -i "s/ENV-VAR-REDIS-PASSWORD/${REDIS_PASSWORD_ENCODED}/" ./k8s/secret.yaml
             for line in $jwt_secret_lines
             do
-                echo $line
                 sed -i "s/ENV-VAR-JWT-SECRET/${line}ENV-VAR-JWT-SECRET/" ./k8s/secret.yaml
             done
             sed -i "s/ENV-VAR-JWT-SECRET//" ./k8s/secret.yaml
 
-      - run:
-          name: set up space to use
-          command: devspace use space worldofchatting
-
-      - run:
+       - run:
           name: test
           command: |
             ls .
             ls ./k8s
             cat ./k8s/secret.yaml
+
+      - run:
+          name: set up space to use
+          command: devspace use space worldofchatting
 
       - run:
           name: deploy

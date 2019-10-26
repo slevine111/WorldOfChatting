@@ -62,6 +62,16 @@ jobs:
           command: docker-compose run --rm webserver npm run test
 
       - run:
+          name: containers
+          command: |
+            docker container ls
+            docker container ls -a
+
+      - run:
+          name: copy coverage file
+          command: docker cp worldofchatting-webserver-test:/user/src/app/coverage-circleci ./coverage-circleci
+
+      - run:
           name: check
           command: |
             pwd

@@ -3,12 +3,7 @@ node_modules
 js
 .env
 public/bundle.*
-
-# Exclude .devspace generated files
-.devspace/
-
-
-# Ignore DevSpace cache and log folder
 .devspace/
 .vscode
+test-converage-results
 

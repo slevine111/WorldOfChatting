@@ -63,7 +63,9 @@ jobs:
 
       - run:
           name: check
-          command: ls
+          command: |
+            pwd
+            ls
 
       - store_artifacts:
           path: ./coverage-circleci

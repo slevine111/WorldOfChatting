@@ -5,5 +5,5 @@ js
 public/bundle.*
 .devspace/
 .vscode
-test-converage-results
+coverage
 

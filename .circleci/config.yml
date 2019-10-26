@@ -27,6 +27,10 @@ jobs:
             sudo mv devspace /usr/local/bin;
 
       - run:
+          name: devspace login
+          command: devspace login --key ${DEVSPACE_CLOUD_ACCESS_KEY}
+
+      - run:
           name: put environment variables in secrets
           command: |
             POSTGRES_USER_ENCODED=$(echo $POSTGRES_USER | base64)

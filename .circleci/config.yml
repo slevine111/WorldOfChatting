@@ -1,7 +1,3 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
 version: 2
 jobs:
   build_and_deploy:
@@ -11,23 +7,6 @@ jobs:
 
     steps:
       - checkout
-      - run:
-          name: test
-          command: |
-            ls .
-            ls ./k8s
-            cat ./k8s/secret.yaml
-
-      - run:
-          name: install devspace
-          command: |
-            curl -s -L "https://github.com/devspace-cloud/devspace/releases/latest" |\
-            sed -nE 's!.*"([^"]*devspace-linux-amd64)".*!https://github.com\1!p' | xargs -n 1 curl -L -o devspace && chmod +x devspace;
-            sudo mv devspace /usr/local/bin;
-
-      - run:
-          name: devspace login
-          command: devspace login --key ${DEVSPACE_CLOUD_ACCESS_KEY}
 
       - run:
           name: put environment variables in secrets
@@ -47,11 +26,15 @@ jobs:
             sed -i "s/ENV-VAR-JWT-SECRET//" ./k8s/secret.yaml
 
       - run:
-          name: test
+          name: install devspace
           command: |
-            ls .
-            ls ./k8s
-            cat ./k8s/secret.yaml
+            curl -s -L "https://github.com/devspace-cloud/devspace/releases/latest" |\
+            sed -nE 's!.*"([^"]*devspace-linux-amd64)".*!https://github.com\1!p' | xargs -n 1 curl -L -o devspace && chmod +x devspace;
+            sudo mv devspace /usr/local/bin;
+
+      - run:
+          name: devspace login
+          command: devspace login --key ${DEVSPACE_CLOUD_ACCESS_KEY}
 
       - run:
           name: set up space to use
@@ -68,15 +51,15 @@ jobs:
 
     steps:
       - checkout
-      #  - setup_remote_docker
+      - setup_remote_docker
 
-      # - run:
-      #    name: build test image
-      #   command: docker-compose build
+      - run:
+          name: build test image
+          command: docker-compose build
 
-      # - run:
-      #    name: test
-      #   command: docker-compose run --rm webserver npm run test
+      - run:
+          name: test
+          command: docker-compose run --rm webserver npm run test
 
       - run:
           name: check
@@ -96,6 +79,3 @@ workflows:
           filters:
             branches:
               ignore: master
-#            sed -i "s/ENV-VAR-POSTGRES-PASSWORD/${POSTGRES_PASSWORD_ENCODED}/" ./k8s/secret.yaml
-#  sed -i "s/ENV-VAR-REDIS-PASSWORD/${REDIS_PASSWORD_ENCODED}/" ./k8s/secret.yaml
-# sed -i "s/ENV-VAR-JWT-SECRET/${JWT_SECRET_ENCODED}/" ./k8s/secret.yaml

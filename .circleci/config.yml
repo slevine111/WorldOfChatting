@@ -34,9 +34,6 @@ jobs:
             REDIS_PASSWORD_ENCODED=$(echo $REDIS_PASSWORD | base64)
             JWT_SECRET_ENCODED=$(echo $JWT_SECRET | base64)
             sed -i "s/ENV-VAR-POSTGRES-USER/${POSTGRES_USER_ENCODED}/" ./k8s/secret.yaml
-            sed -i "s/ENV-VAR-POSTGRES-PASSWORD/${POSTGRES_PASSWORD_ENCODED}/" ./k8s/secret.yaml
-            sed -i "s/ENV-VAR-REDIS-PASSWORD/${REDIS_PASSWORD_ENCODED}/" ./k8s/secret.yaml
-            sed -i "s/ENV-VAR-JWT-SECRET/${JWT_SECRET_ENCODED}/" ./k8s/secret.yaml
 
       - run:
           name: set up space to use
@@ -60,15 +57,19 @@ jobs:
 
     steps:
       - checkout
-      - setup_remote_docker
+      #  - setup_remote_docker
+
+      # - run:
+      #    name: build test image
+      #   command: docker-compose build
+
+      # - run:
+      #    name: test
+      #   command: docker-compose run --rm webserver npm run test
 
       - run:
-          name: build test image
-          command: docker-compose build
-
-      - run:
-          name: test
-          command: docker-compose run --rm webserver npm run test
+          name: check
+          command: ls
 
       - store_artifacts:
           path: ./test-coverage-results
@@ -84,3 +85,6 @@ workflows:
           filters:
             branches:
               ignore: master
+#            sed -i "s/ENV-VAR-POSTGRES-PASSWORD/${POSTGRES_PASSWORD_ENCODED}/" ./k8s/secret.yaml
+#  sed -i "s/ENV-VAR-REDIS-PASSWORD/${REDIS_PASSWORD_ENCODED}/" ./k8s/secret.yaml
+# sed -i "s/ENV-VAR-JWT-SECRET/${JWT_SECRET_ENCODED}/" ./k8s/secret.yaml

@@ -11,6 +11,7 @@ import { User } from '../../src/entities'
 import { config } from 'dotenv'
 import { caching } from 'cache-manager'
 import RedisStore from 'cache-manager-redis-store'
+import path from 'path'
 
 config()
 
@@ -21,6 +22,13 @@ describe('AuthService', () => {
   let authService: AuthService
   let jwtService: JwtService
   beforeAll(async () => {
+    console.log(
+      path.join(
+        __dirname,
+        `coverage${process.env.CI_BUILD === 'true' ? '-circleci' : ''}`
+      )
+    )
+
     userRepo = await createConnection('test').then((connection: Connection) => {
       return connection.getRepository(User)
     })

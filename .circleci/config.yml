@@ -46,7 +46,7 @@ jobs:
             done
             sed -i "s/ENV-VAR-JWT-SECRET//" ./k8s/secret.yaml
 
-       - run:
+      - run:
           name: test
           command: |
             ls .

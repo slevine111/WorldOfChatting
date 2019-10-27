@@ -8,12 +8,14 @@ import {
 } from '../../src/server/auth/auth.dto'
 import UserService from '../../src/server/users/users.service'
 import { User } from '../../src/entities'
-import { config } from 'dotenv'
 import { caching } from 'cache-manager'
+import { config } from 'dotenv'
 import RedisStore from 'cache-manager-redis-store'
-import path from 'path'
 
-config()
+if (process.env.CI_BUILD === 'false') {
+  console.log('here')
+  config()
+}
 
 describe('AuthService', () => {
   let userRepo: Repository<User>
@@ -22,13 +24,6 @@ describe('AuthService', () => {
   let authService: AuthService
   let jwtService: JwtService
   beforeAll(async () => {
-    console.log(
-      path.join(
-        __dirname,
-        `coverage${process.env.CI_BUILD === 'true' ? '-circleci' : ''}`
-      )
-    )
-
     userRepo = await createConnection('test').then((connection: Connection) => {
       return connection.getRepository(User)
     })

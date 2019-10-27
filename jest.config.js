@@ -1,19 +1,7 @@
-const path = require('path')
-
-console.log(
-  path.join(
-    __dirname,
-    `coverage${process.env.CI_BUILD === 'true' ? '-circleci' : ''}`
-  )
-)
-
-module.exports = {
+let exportObject = {
   collectCoverage: true,
   coverageReporters: ['html'],
-  coverageDirectory: path.join(
-    __dirname,
-    `coverage${process.env.CI_BUILD === 'true' ? '-circleci' : ''}`
-  ),
+  reporters: ['default', 'jest-junit'],
   verbose: true,
   preset: 'ts-jest',
   testEnvironment: 'node',
@@ -22,3 +10,9 @@ module.exports = {
   globalSetup: './jest-global-setup.ts',
   globalTeardown: './jest-global-teardown.ts'
 }
+
+if (process.env.CI_BUILD === 'false') {
+  exportObject.setupFiles = ['dotenv/config']
+}
+
+module.exports = exportObject

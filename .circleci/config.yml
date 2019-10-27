@@ -62,23 +62,21 @@ jobs:
           command: docker-compose run --name worldofchatting-webserver-test webserver npm run test
 
       - run:
-          name: containers
+          name: copy test result files
           command: |
-            docker container ls
-            docker container ls -a
+            docker cp worldofchatting-webserver-test:/user/src/app/coverage ./coverage
+            docker cp worldofchatting-webserver-test:/user/src/app/test-results ./test-results
 
-      - run:
-          name: copy coverage file
-          command: docker cp worldofchatting-webserver-test:/user/src/app/coverage-circleci ./coverage-circleci
-
-      - run:
-          name: check
-          command: |
-            pwd
-            ls
+      - store_test_results:
+          path: ./test-results
 
       - store_artifacts:
-          path: ./coverage-circleci
+          path: ./coverage
+          destination: test-coverage-results
+
+      - store_artifacts:
+          path: ./test-results
+          destination: test-results
 
 workflows:
   version: 2

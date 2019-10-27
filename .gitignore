@@ -6,4 +6,5 @@ public/bundle.*
 .devspace/
 .vscode
 coverage
+test-results
 

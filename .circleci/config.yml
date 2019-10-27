@@ -59,7 +59,7 @@ jobs:
 
       - run:
           name: test
-          command: docker-compose run webserver npm run test
+          command: docker-compose --name worldofchatting-webserver-test run webserver npm run test
 
       - run:
           name: containers

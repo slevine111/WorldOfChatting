@@ -7,4 +7,9 @@ public/bundle.*
 .vscode
 coverage
 test-results
+k8s-dev/secret.yaml
 
+
+
+# Ignore DevSpace cache and log folder
+.devspace/

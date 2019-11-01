@@ -2,7 +2,9 @@ import { JwtModule } from '@nestjs/jwt'
 import { Module, Global } from '@nestjs/common'
 import { config } from 'dotenv'
 
-config()
+if (process.env.LOAD_CONFIG_FILE === 'true') {
+  config()
+}
 
 @Global()
 @Module({

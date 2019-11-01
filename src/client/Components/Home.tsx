@@ -5,7 +5,7 @@ import { getAllLanguagesThunk } from '../store/language/actions'
 const Home = ({ langs }: any) => {
   return (
     <div>
-      23
+      23!
       <button type="button" onClick={() => langs()}>
         click
       </button>

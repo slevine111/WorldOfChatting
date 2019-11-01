@@ -44,7 +44,28 @@ spec:
                 secretKeyRef:
                   name: world-of-chatting-secrets
                   key: POSTGRES_PASSWORD
+            - name: APP_PORT
+              value: '3000'
+            - name: LOAD_CONFIG_FILE
+              value: 'false'
           name: api
-          image: dscr.io/slevine111/worldofchatting
+          image: worldofchattingdev
           ports:
             - containerPort: 3000
+      initContainers:
+        - name: init-redis
+          image: busybox:1.28
+          command:
+            [
+              'sh',
+              '-c',
+              'until nslookup redis-deployment; do echo waiting for redis; sleep 2; done;',
+            ]
+        - name: init-postgres
+          image: busybox:1.28
+          command:
+            [
+              'sh',
+              '-c',
+              'until nslookup db-deployment; do echo waiting for db; sleep 2; done;',
+            ]

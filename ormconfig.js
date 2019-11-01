@@ -1,12 +1,14 @@
 const { resolve } = require('path')
 const { config } = require('dotenv')
 
-config()
+if (process.env.LOAD_CONFIG_FILE === 'true') {
+  config()
+}
 
 const commonFields = {
   type: 'postgres',
   host: process.env.DB_SERVICE_SERVICE_HOST,
-  port: 5432,
+  port: process.env.DB_SERVICE_SERVICE_PORT,
   username: process.env.POSTGRES_USERNAME,
   password: process.env.POSTGRES_PASSWORD
 }

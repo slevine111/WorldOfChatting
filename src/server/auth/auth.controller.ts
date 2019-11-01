@@ -66,15 +66,13 @@ export default class AuthController {
   }
 
   @Get('/refreshToken')
-  refreshToken(@Req() req: Request, @Res() res: Response): void {
-    setTimeout(() => {
-      return this.authService
-        .exchangeTokenForUser(req.cookies[ACCESS_TOKEN_COOKIE_NAME], false)
-        .then(({ accessToken, expireTime }: ITokenAndRelatedInfo) => {
-          res
-            .cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, { httpOnly: true })
-            .json(expireTime)
-        })
-    }, 30 * 1000)
+  refreshToken(@Req() req: Request, @Res() res: Response): Promise<void> {
+    return this.authService
+      .exchangeTokenForUser(req.cookies[ACCESS_TOKEN_COOKIE_NAME], false)
+      .then(({ accessToken, expireTime }: ITokenAndRelatedInfo) => {
+        res
+          .cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, { httpOnly: true })
+          .json(expireTime)
+      })
   }
 }

@@ -27,7 +27,7 @@ export default class User {
   @Column({ type: 'varchar', unique: true, select: false })
   password?: string
 
-  @Column({ type: 'boolean', default: true })
+  @Column({ type: 'boolean', default: false })
   loggedIn: boolean
 
   /*@OneToMany(() => UserLanguage, userLanguage => userLanguage.user)

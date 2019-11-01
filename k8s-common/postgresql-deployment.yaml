@@ -24,7 +24,7 @@ spec:
             - containerPort: 5432
           volumeMounts:
             - name: data
-              mountPath: /data/db
+              mountPath: /var/lib/postgresql/data/pgdata
           env:
             - name: POSTGRES_USER
               valueFrom:
@@ -36,6 +36,8 @@ spec:
                 secretKeyRef:
                   name: world-of-chatting-secrets
                   key: POSTGRES_PASSWORD
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
       volumes:
         - name: data
           persistentVolumeClaim:

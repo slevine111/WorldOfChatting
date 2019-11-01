@@ -12,8 +12,7 @@ import { caching } from 'cache-manager'
 import { config } from 'dotenv'
 import RedisStore from 'cache-manager-redis-store'
 
-if (process.env.CI_BUILD === 'false') {
-  console.log('here')
+if (process.env.LOAD_CONFIG_FILE === 'true') {
   config()
 }
 
@@ -37,6 +36,7 @@ describe('AuthService', () => {
         store: RedisStore,
         ttl: Number.POSITIVE_INFINITY,
         host: process.env.REDIS_SERVCE_SERVICE_HOST,
+        port: process.env.REDIS_SERVICE_SERVICE_PORT,
         password: process.env.REDIS_PASSWORD
       })
     )

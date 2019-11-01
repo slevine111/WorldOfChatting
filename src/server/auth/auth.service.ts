@@ -45,17 +45,26 @@ export default class AuthService {
     email: string,
     password: string
   ): Promise<ITokenAndRelatedInfo> {
-    return this.userService.findSingleUser(email, password).then(
-      (user: User): ITokenAndRelatedInfo => {
-        const accessToken: string = this.createToken(user)
-        const expireTime: number = this.decodeToken(accessToken).exp
-        return {
-          accessToken,
-          user,
-          expireTime
+    return this.userService
+      .findSingleUser(email, password)
+      .then(
+        (user: User): Promise<User> => {
+          return <Promise<User>>(
+            this.userService.updateUser(user.id, { loggedIn: true })
+          )
         }
-      }
-    )
+      )
+      .then(
+        (user: User): ITokenAndRelatedInfo => {
+          const accessToken: string = this.createToken(user)
+          const expireTime: number = this.decodeToken(accessToken).exp
+          return {
+            accessToken,
+            user,
+            expireTime
+          }
+        }
+      )
   }
 
   createAndThrow401Error(): void {

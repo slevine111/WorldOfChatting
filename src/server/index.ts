@@ -15,7 +15,9 @@ const bootstrap = async (): Promise<void> => {
     app.use(volleyball)
     app.use(cookieParser())
     app.useGlobalFilters(new GlobalHttpExceptionFilter())
-    await app.listen(3000, () => console.log('listening on PORT 3000'))
+    await app.listen(<string>process.env.APP_PORT, () =>
+      console.log(`listening on PORT ${process.env.APP_PORT}`)
+    )
   } catch (err) {
     console.log('app failed to connect for following reasons')
     console.error(err)

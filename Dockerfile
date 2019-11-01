@@ -24,6 +24,7 @@ COPY --from=build  /user/src/app/node_modules ./node_modules
 COPY --from=build  /user/src/app/public ./public
 COPY --from=build  /user/src/app/js/entities ./js/entities
 COPY --from=build  /user/src/app/js/server ./js/server
+EXPOSE 3000
 CMD ["node","./js/server"]
 
 

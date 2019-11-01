@@ -10,7 +10,7 @@ let exportObject = {
   globalTeardown: './jest-global-teardown.ts'
 }
 
-if (process.env.CI_BUILD === 'false') {
+if (process.env.LOAD_CONFIG_FILE === 'true') {
   exportObject.setupFiles = ['dotenv/config']
 }
 

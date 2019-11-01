@@ -17,7 +17,7 @@
     "client:dev": "NODE_ENV=development [ -d ./js/client ] || tsc && (tsc -w & webpack -w)",
     "server": "tsc && node ./js/server",
     "server:dev": "NODE_ENV=development [ -d ./js/server ] || tsc && (tsc -w & nodemon ./js/server --watch ./js/server -e js)",
-    "start:dev": "NODE_ENV=development yarn run tsc:build:ifnotbuilt && (tsc -w & webpack -w & nodemon ./js/server --watch ./js/server -e js)",
+    "start:dev": "NODE_ENV=development npm run tsc:build:ifnotbuilt && (tsc -w & webpack -w & nodemon ./js/server --watch ./js/server -e js)",
     "test": "jest --runInBand --detectOpenHandles --forceExit"
   },
   "dependencies": {

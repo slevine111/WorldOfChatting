@@ -46,7 +46,7 @@ export default class UserService {
   }
 
   findLoggedInUsers(): Promise<User[]> {
-    return this.userRepository.find({ loggedIn: true })
+    return this.userRepository.find({ loggedIn: false })
   }
 
   async addNewUser(user: IUserPostDTO): Promise<User> {

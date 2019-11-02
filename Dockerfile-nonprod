@@ -5,7 +5,7 @@ COPY ./package*.json  ./
 RUN npm audit
 RUN npm install
 
-FROM node:lts-alpine
+FROM node:lts-alpine AS test
 WORKDIR /user/src/app
 #RUN mkdir node_modules public js
 COPY --from=build  /user/src/app/node_modules ./node_modules
@@ -15,8 +15,13 @@ COPY ./src ./src
 COPY ./tests ./tests
 CMD ["npm","test"]
 
-
-
-
-
-
+FROM node:lts-alpine AS dev
+WORKDIR /user/src/app
+#RUN mkdir node_modules public
+COPY --from=build  /user/src/app/node_modules ./node_modules
+COPY tsconfig.json package.json  ormconfig.js index.html webpack.config.js entrypoint.sh ./
+COPY ./@types ./@types
+COPY ./src ./src
+COPY ./js ./js
+EXPOSE 3000
+CMD ["npm","run","start:dev"]

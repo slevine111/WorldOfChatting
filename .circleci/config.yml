@@ -63,6 +63,7 @@ jobs:
 
       - run:
           name: copy test result files
+          when: always
           command: |
             docker cp worldofchatting-webserver-test:/user/src/app/coverage ./coverage
             docker cp worldofchatting-webserver-test:/user/src/app/test-results ./test-results

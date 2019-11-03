@@ -34,37 +34,28 @@ export default class AuthService {
   }
 
   getToken(email: string, password: string): Promise<IGetTokenResult> {
-    return this.userService.findSingleUser(email, password).then(
+    return this.userService.findSingleUser(email, password, false).then(
       (user: User): IGetTokenResult => ({
         accessToken: this.createToken(user)
       })
     )
   }
 
-  getTokenAndUser(
+  loginUserAndCreateToken(
     email: string,
     password: string
   ): Promise<ITokenAndRelatedInfo> {
-    return this.userService
-      .findSingleUser(email, password)
-      .then(
-        (user: User): Promise<User> => {
-          return <Promise<User>>(
-            this.userService.updateUser(user.id, { loggedIn: true })
-          )
+    return this.userService.loginUser(email, password).then(
+      (user: User): ITokenAndRelatedInfo => {
+        const accessToken: string = this.createToken(user)
+        const expireTime: number = this.decodeToken(accessToken).exp
+        return {
+          accessToken,
+          user,
+          expireTime
         }
-      )
-      .then(
-        (user: User): ITokenAndRelatedInfo => {
-          const accessToken: string = this.createToken(user)
-          const expireTime: number = this.decodeToken(accessToken).exp
-          return {
-            accessToken,
-            user,
-            expireTime
-          }
-        }
-      )
+      }
+    )
   }
 
   createAndThrow401Error(): void {

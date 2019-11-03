@@ -29,5 +29,5 @@ export default class ChatGroup {
 
   @ManyToMany(() => User, user => user.chatGroups)
   @JoinTable({ name: 'user_chatgroup' })
-  users: User[]
+  userIds: string[]
 }

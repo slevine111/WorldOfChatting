@@ -34,7 +34,7 @@ export default class AuthController {
     @Res() res: Response
   ): Promise<void> {
     return this.authService
-      .getTokenAndUser(userSignIn.email, userSignIn.password)
+      .loginUserAndCreateToken(userSignIn.email, userSignIn.password)
       .then(({ accessToken, user, expireTime }: ITokenAndRelatedInfo) => {
         res
           .cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, { httpOnly: true })

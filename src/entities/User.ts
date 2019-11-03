@@ -39,6 +39,6 @@ export default class User {
   @OneToMany(() => Language, language => language.userSubmitted)
   languages?: Language[]*/
 
-  @ManyToMany(() => ChatGroup, chatGroup => chatGroup.users)
+  @ManyToMany(() => ChatGroup, chatGroup => chatGroup.userIds)
   chatGroups?: ChatGroup[]
 }

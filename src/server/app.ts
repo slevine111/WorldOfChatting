@@ -5,6 +5,7 @@ import { ServeStaticModule } from '@nestjs/serve-static'
 import UserModule from './users/users.module'
 import LanguageModule from './languages/languages.module'
 import UserLanguageModule from './userlanguages/userlanguages.module'
+import ChatGroupModule from './chatgroups/chatgroups.module'
 import AuthModule from './auth/auth.module'
 import MyJWTModule from './MyJWTModule'
 import MyCacheModule from './MyCacheModule'
@@ -15,6 +16,7 @@ import WebpageController from './webpage.controller'
     UserModule,
     LanguageModule,
     UserLanguageModule,
+    ChatGroupModule,
     AuthModule,
     MyJWTModule,
     TypeOrmModule.forRoot(),

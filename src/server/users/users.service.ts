@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm'
+import { Repository, In } from 'typeorm'
 import { Injectable, HttpException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'
@@ -16,7 +16,11 @@ export default class UserService {
     return this.userRepository.find()
   }
 
-  findSingleUser(email: string, inputPassword: string): Promise<User> {
+  findSingleUser(
+    email: string,
+    inputPassword: string,
+    returnPassword: boolean
+  ): Promise<User> {
     return this.userRepository
       .findOne({
         select: [
@@ -36,9 +40,22 @@ export default class UserService {
           user.password!
         )
         if (!passwordCorrect) throw new HttpException('password invalid', 400)
+        if (returnPassword) return user
         const { password, ...otherUserFields } = user
         return otherUserFields
       })
+  }
+
+  loginUser(email: string, inputPassword: string): Promise<User> {
+    return this.findSingleUser(email, inputPassword, true).then(
+      async (user: User) => {
+        user.loggedIn = true
+        const { password, ...otherUserFields } = await this.userRepository.save(
+          user
+        )
+        return otherUserFields
+      }
+    )
   }
 
   findSingleUserById(id: string): Promise<User | undefined> {
@@ -47,6 +64,11 @@ export default class UserService {
 
   findLoggedInUsers(): Promise<User[]> {
     return this.userRepository.find({ loggedIn: false })
+  }
+
+  getLoggedInSpecifiedUsers(userIds: string): Promise<User[]> {
+    const userIdsArray: string[] = userIds.split(',')
+    return this.userRepository.find({ loggedIn: true, id: In(userIdsArray) })
   }
 
   async addNewUser(user: IUserPostDTO): Promise<User> {

@@ -5,7 +5,8 @@ import {
   Put,
   Body,
   Param,
-  UseGuards
+  UseGuards,
+  Query
 } from '@nestjs/common'
 import UserService from './users.service'
 import AuthGuard from '../auth/auth.guard'
@@ -23,8 +24,10 @@ export default class UserController {
   }
 
   @Get('/loggedin')
-  findLoggedInUsers(): Promise<User[]> {
-    return this.userService.findLoggedInUsers()
+  getLoggedInSpecifiedUsers(
+    @Query('userIds') userIds: string
+  ): Promise<User[]> {
+    return this.userService.getLoggedInSpecifiedUsers(userIds)
   }
 
   @Post()

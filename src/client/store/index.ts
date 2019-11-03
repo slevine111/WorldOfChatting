@@ -5,10 +5,11 @@ import {
   Reducer
   //AnyAction
 } from 'redux'
-import { Language, User, UserLanguage } from '../../entities'
+import { Language, User, UserLanguage, ChatGroup } from '../../entities'
 import languageReducer from './language/reducer'
 import userReducer from './user/reducer'
 import userLanguageReducer from './userlanguage/reducer'
+import chatGroupReducer from './chatgroup/reducer'
 import authReducer from './auth/reducer'
 import { IAuthReducerState } from './auth/types'
 //import { LanguageActionTypes } from './language/types'
@@ -24,6 +25,7 @@ interface ICombinedReducer {
   languages: Language[]
   users: User[]
   userLanguages: UserLanguage[]
+  chatGroups: ChatGroup[]
   auth: IAuthReducerState
 }
 
@@ -31,6 +33,7 @@ const rootReducer: Reducer<ICombinedReducer> = combineReducers({
   languages: languageReducer,
   users: userReducer,
   userLanguages: userLanguageReducer,
+  chatGroups: chatGroupReducer,
   auth: authReducer
 })
 

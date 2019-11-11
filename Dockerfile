@@ -2,7 +2,7 @@ FROM node:lts-alpine AS install-dependencies
 RUN apk --no-cache add --virtual builds-deps build-base python
 WORKDIR /user/src/app
 COPY ./package*.json  ./
-RUN npm audit
+#RUN npm audit
 RUN npm ci --only=production
 
 FROM node:lts-alpine AS build

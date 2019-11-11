@@ -74,7 +74,10 @@ describe('AuthService', () => {
     const {
       user,
       accessToken
-    }: ITokenAndUser = await authService.getTokenAndUser(email, JOE_PASSWORD)
+    }: ITokenAndUser = await authService.loginUserAndCreateToken(
+      email,
+      JOE_PASSWORD
+    )
     const payload: any = jwtService.decode(accessToken)
     const userOfAccessTokenId: User | undefined = await userRepo.findOne({
       where: { id: payload.sub }

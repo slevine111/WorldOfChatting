@@ -25,7 +25,8 @@ interface IChatGroupSubset {
   name?: string
   userIds: User[]
 }
-interface IChatGroupSeed extends IChatGroupSubset {
+
+export interface IChatGroupSeed extends IChatGroupSubset {
   id: string
 }
 

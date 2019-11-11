@@ -11,8 +11,8 @@ import {
   createMessages,
   getSelectedLanguages
 } from './src/bin/seed'
-import { User, Language, ChatGroup } from './src/entities'
-import { ISelectedLanguages } from './src/bin/seed'
+import { User, Language } from './src/entities'
+import { ISelectedLanguages, IChatGroupSeed } from './src/bin/seed'
 
 declare global {
   namespace NodeJS {
@@ -50,7 +50,7 @@ export default async () => {
   const users: User[] = await createUsers('test')
   const languages: Language[] = await createLanguages()
   const selectedLanguages: ISelectedLanguages = getSelectedLanguages(languages)
-  const chatGroups: ChatGroup[] = await createChatGroups(
+  const chatGroups: IChatGroupSeed[] = await createChatGroups(
     users,
     selectedLanguages,
     'test'

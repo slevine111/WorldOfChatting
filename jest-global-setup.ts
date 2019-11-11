@@ -34,7 +34,7 @@ const createLanguages = async (): Promise<Language[]> => {
     { language: 'Japanese', countries: ['Japan'] },
     { language: 'Spanish', countries: ['Spain'] },
     { language: 'Turkish', countries: ['Turkey'] },
-    { language: 'Manadarin', countries: ['China'] },
+    { language: 'Mandarin', countries: ['China'] },
     { language: 'English', countries: ['United States'] }
   ]
   const repository: Repository<Language> = await getConnection(

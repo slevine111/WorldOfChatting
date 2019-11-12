@@ -58,7 +58,7 @@ jobs:
             do
                 sed -i "s/ENV-VAR-JWT-SECRET/${line}ENV-VAR-JWT-SECRET/" ./k8s-prod/secret.yaml
             done
-            sed -i "s/ENV-VAR-JWT-SECRET//" ./k8s/secret.yaml
+            sed -i "s/ENV-VAR-JWT-SECRET//" ./k8s-prod/secret.yaml
 
       - run:
           name: install devspace

@@ -61,6 +61,14 @@ jobs:
             sed -i "s/ENV-VAR-JWT-SECRET//" ./k8s-prod/secret.yaml
 
       - run:
+          name: install kubectl
+          command: |
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl \
+          -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          sudo mv ./kubectl /usr/local/bin
+
+      - run:
           name: install devspace
           command: |
             curl -s -L "https://github.com/devspace-cloud/devspace/releases/latest" |\

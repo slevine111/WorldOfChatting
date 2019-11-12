@@ -75,6 +75,8 @@ jobs:
           name: set up space to use
           command: devspace use space worldofchatting
 
+      - setup_remote_docker
+
       - run:
           name: deploy
           command: devspace deploy -p production

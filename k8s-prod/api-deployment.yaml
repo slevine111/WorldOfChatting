@@ -59,7 +59,7 @@ spec:
             [
               'sh',
               '-c',
-              'until nslookup redis-deployment; do echo waiting for redis; sleep 2; done;',
+              'until nslookup redis-service; do echo waiting for redis; sleep 2; done;',
             ]
         - name: init-postgres
           image: busybox:1.28
@@ -67,5 +67,5 @@ spec:
             [
               'sh',
               '-c',
-              'until nslookup db-deployment; do echo waiting for db; sleep 2; done;',
+              'until nslookup db-service; do echo waiting for db; sleep 2; done;',
             ]

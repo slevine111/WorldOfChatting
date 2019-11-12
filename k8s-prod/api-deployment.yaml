@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+  labels:
+    tier: backend
+    app: node
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      tier: backend
+      app: node
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        tier: backend
+        app: node
+    spec:
+      containers:
+        - env:
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: world-of-chatting-secrets
+                  key: JWT_SECRET
+            - name: DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: world-of-chatting-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: world-of-chatting-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: world-of-chatting-secrets
+                  key: POSTGRES_PASSWORD
+            - name: APP_PORT
+              value: '3000'
+            - name: LOAD_CONFIG_FILE
+              value: 'false'
+          name: api
+          image: dscr.io/slevine111/worldofchatting
+          ports:
+            - containerPort: 3000
+      initContainers:
+        - name: init-redis
+          image: busybox:1.28
+          command:
+            [
+              'sh',
+              '-c',
+              'until nslookup redis-deployment; do echo waiting for redis; sleep 2; done;',
+            ]
+        - name: init-postgres
+          image: busybox:1.28
+          command:
+            [
+              'sh',
+              '-c',
+              'until nslookup db-deployment; do echo waiting for db; sleep 2; done;',
+            ]

@@ -1,15 +1,22 @@
 import { NestFactory } from '@nestjs/core'
+import { NestExpressApplication } from '@nestjs/platform-express'
+import { join } from 'path'
+import volleyball from 'volleyball'
+import cookieParser from 'cookie-parser'
 import ApplicationModule from './app'
-import { config } from 'dotenv'
-import { resolve } from 'path'
-
-config({ path: resolve(__dirname, '..', '..', '.env') })
+import GlobalHttpExceptionFilter from './GlobalExceptionFilter'
 
 const bootstrap = async (): Promise<void> => {
   try {
-    const app = await NestFactory.create(ApplicationModule)
-    await app.listen(Number(process.env.PORT), () =>
-      console.log(`listening on PORT ${process.env.PORT}`)
+    const app: NestExpressApplication = await NestFactory.create<
+      NestExpressApplication
+    >(ApplicationModule)
+    app.useStaticAssets(join(__dirname, 'public'))
+    app.use(volleyball)
+    app.use(cookieParser())
+    app.useGlobalFilters(new GlobalHttpExceptionFilter())
+    await app.listen(<string>process.env.APP_PORT, () =>
+      console.log(`listening on PORT ${process.env.APP_PORT}`)
     )
   } catch (err) {
     console.log('app failed to connect for following reasons')

@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  labels:
+    tier: backend
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: backend
+      app: redis
+  template:
+    metadata:
+      labels:
+        tier: backend
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:5.0-alpine
+          command:
+            [
+              'redis-server',
+              '--requirepass $(REDIS_PASSWORD)',
+              '--appendonly',
+              'yes',
+              '--save',
+              '900',
+              '1',
+              '--save',
+              '300',
+              '10',
+              '--save',
+              '60',
+              '10000',
+            ]
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: world-of-chatting-secrets
+                  key: REDIS_PASSWORD
+      volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: redis-pv-claim

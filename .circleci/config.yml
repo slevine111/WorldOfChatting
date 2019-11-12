@@ -1,39 +1,92 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
 version: 2
 jobs:
-  build:
+  test:
     docker:
       # specify the version you desire here
-      - image: circleci/node:lts-jessie
-        environment:
-          HOST: localhost
-          USERNAME: root
-          DATABASE_TEST: circle_test
-      - image: circleci/postgres:9.6.5-alpine-ram
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
+      - image: circleci/buildpack-deps:jessie
 
-    working_directory: ~/repo
+    steps:
+      - checkout
+      - setup_remote_docker
+
+      - run:
+          name: build test image
+          command: docker-compose build
+
+      - run:
+          name: test
+          command: docker-compose run --name worldofchatting-webserver-test webserver npm run test
+
+      - run:
+          name: copy test result files
+          when: always
+          command: |
+            docker cp worldofchatting-webserver-test:/user/src/app/coverage ./coverage
+            docker cp worldofchatting-webserver-test:/user/src/app/test-results ./test-results
+
+      - store_test_results:
+          path: ./test-results
+
+      - store_artifacts:
+          path: ./coverage
+          destination: test-coverage-results
+
+      - store_artifacts:
+          path: ./test-results
+          destination: test-results
+
+  build_and_deploy:
+    docker:
+      # specify the version you desire here
+      - image: circleci/buildpack-deps:jessie
 
     steps:
       - checkout
 
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+      - run:
+          name: put environment variables in secrets
+          command: |
+            POSTGRES_USER_ENCODED=$(echo $POSTGRES_USER | base64)
+            POSTGRES_PASSWORD_ENCODED=$(echo $POSTGRES_PASSWORD | base64)
+            REDIS_PASSWORD_ENCODED=$(echo $REDIS_PASSWORD | base64)
+            JWT_SECRET_ENCODED=$(echo $JWT_SECRET | base64)
+            jwt_secret_lines=$(echo $JWT_SECRET_ENCODED | tr " " "\n")
+            sed -i "s/ENV-VAR-POSTGRES-USER/${POSTGRES_USER_ENCODED}/" ./k8s-prod/secret.yaml
+            sed -i "s/ENV-VAR-POSTGRES-PASSWORD/${POSTGRES_PASSWORD_ENCODED}/" ./k8s-prod/secret.yaml
+            sed -i "s/ENV-VAR-REDIS-PASSWORD/${REDIS_PASSWORD_ENCODED}/" ./k8s-prod/secret.yaml
+            for line in $jwt_secret_lines
+            do
+                sed -i "s/ENV-VAR-JWT-SECRET/${line}ENV-VAR-JWT-SECRET/" ./k8s-prod/secret.yaml
+            done
+            sed -i "s/ENV-VAR-JWT-SECRET//" ./k8s/secret.yaml
 
-      - run: yarn install
+      - run:
+          name: install devspace
+          command: |
+            curl -s -L "https://github.com/devspace-cloud/devspace/releases/latest" |\
+            sed -nE 's!.*"([^"]*devspace-linux-amd64)".*!https://github.com\1!p' | xargs -n 1 curl -L -o devspace && chmod +x devspace;
+            sudo mv devspace /usr/local/bin;
 
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: devspace login
+          command: devspace login --key ${DEVSPACE_CLOUD_ACCESS_KEY}
 
-      # run tests!
-      - run: yarn test
+      - run:
+          name: set up space to use
+          command: devspace use space worldofchatting
+
+      - run:
+          name: deploy
+          command: devspace deploy -p production
+
+workflows:
+  version: 2
+  test_build_and_deploy:
+    jobs:
+      - test
+      - build_and_deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master

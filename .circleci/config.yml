@@ -10,10 +10,11 @@ jobs:
       - setup_remote_docker
 
       - restore_cache:
+          name: restore cache with docker image
           keys:
             - v1-{{ .Branch }}
           paths:
-            - /caches/worldofchatting-webserver-test.tar
+            - ./caches/worldofchatting-webserver-test.tar
 
       - run:
           name: load docker image from cache
@@ -26,15 +27,16 @@ jobs:
           command: docker-compose build
 
       - run:
-          name: save docker image layer cache
+          name: save docker image to folder
           command: |
-            mkdir -p /caches
-            docker save -o /caches//worldofchatting-webserver-test.tar worldofchatting-webserver-test
+            mkdir caches
+            docker save -o ./caches/worldofchatting-webserver-test.tar worldofchatting-webserver-test
 
       - save_cache:
+          name: save folder with docker image to cache
           key: v1-{{ .Branch }}-{{ epoch }}
           paths:
-            - /caches/worldofchatting-webserver-test.tar
+            - ./caches/worldofchatting-webserver-test.tar
 
       - run:
           name: test

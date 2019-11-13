@@ -36,7 +36,7 @@ jobs:
       - run:
           name: save docker image to folder
           command: |
-            mkdir caches
+            mkdir -p caches
             docker save -o ./caches/worldofchatting-webserver-test.tar worldofchatting-webserver-test
 
       - save_cache:

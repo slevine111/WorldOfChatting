@@ -9,9 +9,33 @@ jobs:
       - checkout
       - setup_remote_docker
 
+      - restore_cache:
+          keys:
+            - v1-{{ .Branch }}
+          paths:
+            - /caches/worldofchatting-webserver-test.tar
+
+      - run:
+          name: load docker image from cache
+          command: |
+            set +o pipefail
+            docker load -i /caches/worldofchatting-webserver-test.tar | true
+
       - run:
           name: build test image
           command: docker-compose build
+
+      - run:
+          name: save docker image layer cache
+          command: |
+            mkdir -p /caches
+            docker save -o /caches//worldofchatting-webserver-test.tar worldofchatting-webserver-test
+
+      - save_cache:
+          keys:
+            - v1-{{ .Branch }}-{{ epoch }}
+          paths:
+            - /caches/worldofchatting-webserver-test.tar
 
       - run:
           name: test

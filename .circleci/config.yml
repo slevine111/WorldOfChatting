@@ -20,7 +20,7 @@ jobs:
           name: load docker image from cache
           command: |
             set +o pipefail
-            docker load -i /caches/worldofchatting-webserver-test.tar | true
+            docker load -i ./caches/worldofchatting-webserver-test.tar | true
 
       - run:
           name: build test image

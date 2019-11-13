@@ -23,6 +23,13 @@ jobs:
             docker load -i ./caches/worldofchatting-webserver-test.tar | true
 
       - run:
+          name: rt
+          command: |
+            docker image ls
+            pwd
+            ls
+
+      - run:
           name: build test image
           command: docker-compose build
 

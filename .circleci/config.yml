@@ -32,8 +32,7 @@ jobs:
             docker save -o /caches//worldofchatting-webserver-test.tar worldofchatting-webserver-test
 
       - save_cache:
-          keys:
-            - v1-{{ .Branch }}-{{ epoch }}
+          key: v1-{{ .Branch }}-{{ epoch }}
           paths:
             - /caches/worldofchatting-webserver-test.tar
 

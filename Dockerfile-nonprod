@@ -4,7 +4,6 @@ WORKDIR /user/src/app
 COPY ./package*.json  ./
 #RUN npm audit
 RUN npm install
-COPY --from=build  /user/src/app/node_modules ./node_modules
 COPY tsconfig.json package.json jest.config.js ormconfig.js jest-global-setup.ts jest-global-teardown.ts ./
 COPY ./@types ./@types
 COPY ./src ./src

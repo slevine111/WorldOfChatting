@@ -92,7 +92,6 @@ describe('AuthService', () => {
       .exchangeTokenForUser(token, true)
       .then(({ accessToken }: ITokenAndRelatedInfo) => {
         expect(jwtService.decode(accessToken)!.sub).toBe(id)
-        expect(1).toBe(1)
       })
   })
 

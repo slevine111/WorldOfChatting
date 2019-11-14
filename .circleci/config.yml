@@ -9,9 +9,34 @@ jobs:
       - checkout
       - setup_remote_docker
 
+      - restore_cache:
+          name: restore cache with docker image
+          keys:
+            - v1-{{ .Branch }}
+          paths:
+            - ./caches/worldofchatting-webserver-test.tar
+
+      - run:
+          name: load docker image from cache
+          command: |
+            set +o pipefail
+            docker load -i ./caches/worldofchatting-webserver-test.tar | true
+
       - run:
           name: build test image
           command: docker-compose build
+
+      - run:
+          name: save docker image to folder
+          command: |
+            mkdir -p caches
+            docker save -o ./caches/worldofchatting-webserver-test.tar worldofchatting-webserver-test
+
+      - save_cache:
+          name: save folder with docker image to cache
+          key: v1-{{ .Branch }}-{{ epoch }}
+          paths:
+            - ./caches/worldofchatting-webserver-test.tar
 
       - run:
           name: test
@@ -46,10 +71,10 @@ jobs:
       - run:
           name: put environment variables in secrets
           command: |
-            POSTGRES_USER_ENCODED=$(echo $POSTGRES_USER | base64)
-            POSTGRES_PASSWORD_ENCODED=$(echo $POSTGRES_PASSWORD | base64)
-            REDIS_PASSWORD_ENCODED=$(echo $REDIS_PASSWORD | base64)
-            JWT_SECRET_ENCODED=$(echo $JWT_SECRET | base64)
+            POSTGRES_USER_ENCODED=$(echo -n $POSTGRES_USER | base64)
+            POSTGRES_PASSWORD_ENCODED=$(echo -n $POSTGRES_PASSWORD | base64)
+            REDIS_PASSWORD_ENCODED=$(echo -n $REDIS_PASSWORD | base64)
+            JWT_SECRET_ENCODED=$(echo -n $JWT_SECRET | base64)
             jwt_secret_lines=$(echo $JWT_SECRET_ENCODED | tr " " "\n")
             sed -i "s/ENV-VAR-POSTGRES-USER/${POSTGRES_USER_ENCODED}/" ./k8s-prod/secret.yaml
             sed -i "s/ENV-VAR-POSTGRES-PASSWORD/${POSTGRES_PASSWORD_ENCODED}/" ./k8s-prod/secret.yaml

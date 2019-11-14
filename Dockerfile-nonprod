@@ -1,22 +1,18 @@
-FROM node:lts-alpine AS build
+FROM node:lts-alpine AS build-and-test
 RUN apk --no-cache add --virtual builds-deps build-base python
 WORKDIR /user/src/app
 COPY ./package*.json  ./
 #RUN npm audit
 RUN npm install
-
-FROM node:lts-alpine AS test
-WORKDIR /user/src/app
 COPY --from=build  /user/src/app/node_modules ./node_modules
 COPY tsconfig.json package.json jest.config.js ormconfig.js jest-global-setup.ts jest-global-teardown.ts ./
 COPY ./@types ./@types
 COPY ./src ./src
 COPY ./tests ./tests
-CMD ["npm","test"]
 
 FROM node:lts-alpine AS dev
 WORKDIR /user/src/app
-COPY --from=build  /user/src/app/node_modules ./node_modules
+COPY --from=build-and-test  /user/src/app/node_modules ./node_modules
 COPY tsconfig.json package.json  ormconfig.js index.html webpack.config.js ./
 COPY ./@types ./@types
 COPY ./src ./src

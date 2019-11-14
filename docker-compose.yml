@@ -6,7 +6,8 @@ services:
       dockerfile: Dockerfile-nonprod
       target: test
       cache_from:
-        - worldofchatting-webserver-test:latest
+        - worldofchatting-webserver-test
+    command: ['npm', 'test']
     image: worldofchatting-webserver-test
     container_name: worldofchatting-webserver-test
     environment:

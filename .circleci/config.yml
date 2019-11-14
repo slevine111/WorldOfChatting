@@ -25,7 +25,7 @@ jobs:
       - run:
           name: rt
           command: |
-            docker image ls
+            docker image ls -a
             pwd
             ls
 

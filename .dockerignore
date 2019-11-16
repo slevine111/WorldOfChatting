@@ -4,7 +4,7 @@ npm-debug.log
 .gitignore
 Dockerfile
 k8s
-
+.circleci
 
 
 # Ignore devspace.yaml file to prevent image rebuilding after config changes

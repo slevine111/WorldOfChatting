@@ -32,7 +32,7 @@ module.exports = [
     entities: [resolve(__dirname, 'src', 'entities', '*.ts')]
   },
   {
-    name: 'connection',
+    name: 'connectiondsfgv',
     ...commonFields,
     database: process.env.DATABASE_TEST,
     entities: [resolve(__dirname, 'src', 'entities', '*.ts')]

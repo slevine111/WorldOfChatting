@@ -136,6 +136,13 @@ jobs:
           paths:
             - ./.devspace/generated.yaml
 
+      - run:
+          name: something again
+          command: |
+            ls -a
+            ls .devspace
+            cat ./.devspace/generated.yaml
+
 workflows:
   version: 2
   test_build_and_deploy:

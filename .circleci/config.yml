@@ -90,7 +90,7 @@ jobs:
           command: curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
 
       - run:
-          name: make kubectl global binary
+          name: make kubectl global executable
           command: |
             chmod +x ./kubectl
             sudo mv ./kubectl /usr/local/bin
@@ -112,9 +112,34 @@ jobs:
 
       - setup_remote_docker
 
+      - restore_cache:
+          name: restore cache with devspace cache file
+          keys:
+            - v1-devspace-{{ .Branch }}
+          paths:
+            - ./.devspace/generated.yaml
+
+      - run:
+          name: checking
+          command: |
+            ls -a
+            [ -d ./.devspace ] && [ -f ./.devspace/generated.yaml ] && cat ./.devspace/generated.yaml
+
       - run:
           name: deploy
           command: devspace deploy -p production
+
+      - save_cache:
+          name: save new devspace cache file to cache
+          key: v1-devspace-{{ .Branch }}-{{ epoch }}
+          paths:
+            - ./.devspace/generated.yaml
+
+      - run:
+          name: checking again
+          command: |
+            ls -a
+            [ -d ./.devspace ] && [ -f ./.devspace/generated.yaml ] && cat ./.devspace/generated.yaml
 
 workflows:
   version: 2

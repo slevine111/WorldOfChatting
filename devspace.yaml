@@ -3,7 +3,6 @@ images:
   webserver:
     image: dscr.io/slevine111/worldofchatting-dev
     dockerfile: ./Dockerfile-nonprod
-    tag: ${DEVSPACE_TIMESTAMP}
     createPullSecret: true
     build:
       docker:
@@ -37,7 +36,6 @@ profiles:
         path: images.webserver
         value:
           image: dscr.io/slevine111/worldofchatting
-          tag: ${DEVSPACE_TIMESTAMP}
           createPullSecret: true
       - op: replace
         path: deployments[0].kubectl.manifests[1]

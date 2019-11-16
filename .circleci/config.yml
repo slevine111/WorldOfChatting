@@ -124,6 +124,7 @@ jobs:
           command: |
             ls -a
             ls .devspace
+            cat ./.devspace/generated.yaml
 
       - run:
           name: fail

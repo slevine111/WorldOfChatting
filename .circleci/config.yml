@@ -120,12 +120,6 @@ jobs:
             - ./.devspace/generated.yaml
 
       - run:
-          name: checking
-          command: |
-            ls -a
-            [ -d ./.devspace ] && [ -f ./.devspace/generated.yaml ] && cat ./.devspace/generated.yaml
-
-      - run:
           name: deploy
           command: devspace deploy -p production
 
@@ -134,12 +128,6 @@ jobs:
           key: v1-devspace-{{ .Branch }}-{{ epoch }}
           paths:
             - ./.devspace/generated.yaml
-
-      - run:
-          name: checking again
-          command: |
-            ls -a
-            [ -d ./.devspace ] && [ -f ./.devspace/generated.yaml ] && cat ./.devspace/generated.yaml
 
 workflows:
   version: 2

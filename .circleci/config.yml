@@ -17,7 +17,7 @@ jobs:
             - ./caches/worldofchatting-webserver-test.tar
 
       - run:
-          name: load docker image from cache
+          name: load docker image from cache tar file
           command: |
             set +o pipefail
             docker load -i ./caches/worldofchatting-webserver-test.tar | true
@@ -27,13 +27,13 @@ jobs:
           command: docker-compose build
 
       - run:
-          name: save docker image to folder
+          name: save tar file of docker image to folder
           command: |
             mkdir -p caches
             docker save -o ./caches/worldofchatting-webserver-test.tar worldofchatting-webserver-test
 
       - save_cache:
-          name: save folder with docker image to cache
+          name: save folder with tar file of docker image to cache
           key: v1-{{ .Branch }}-{{ epoch }}
           paths:
             - ./caches/worldofchatting-webserver-test.tar
@@ -112,45 +112,18 @@ jobs:
 
       - setup_remote_docker
 
-      - restore_cache:
-          name: restore cache with devspace cache file
-          keys:
-            - v1-devspace-{{ .Branch }}
-          paths:
-            - ./.devspace/generated.yaml
-
-      - run:
-          name: something
-          command: |
-            ls -a
-            ls .devspace
-            cat ./.devspace/generated.yaml
-
       - run:
           name: deploy
           command: devspace deploy -p production
-
-      - save_cache:
-          name: save new devspace cache file to cache
-          key: v1-devspace-{{ .Branch }}-{{ epoch }}
-          paths:
-            - ./.devspace/generated.yaml
-
-      - run:
-          name: something again
-          command: |
-            ls -a
-            ls .devspace
-            cat ./.devspace/generated.yaml
 
 workflows:
   version: 2
   test_build_and_deploy:
     jobs:
-      #- test
+      - test
       - build_and_deploy:
-          # requires:
-          #  - test
+           requires:
+            - test
           filters:
             branches:
               only: master

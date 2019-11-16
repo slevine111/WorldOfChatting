@@ -120,6 +120,16 @@ jobs:
             - ./.devspace/generated.yaml
 
       - run:
+          name: something
+          command: |
+            ls -a
+            ls .devspace
+
+       - run:
+          name: fail
+          command: ewfgrnyhbgvfcdx
+
+      - run:
           name: deploy
           command: devspace deploy -p production
 
@@ -133,10 +143,10 @@ workflows:
   version: 2
   test_build_and_deploy:
     jobs:
-      - test
+      #- test
       - build_and_deploy:
-          requires:
-            - test
+          # requires:
+          #  - test
           filters:
             branches:
               only: master

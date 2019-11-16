@@ -127,10 +127,6 @@ jobs:
             cat ./.devspace/generated.yaml
 
       - run:
-          name: fail
-          command: ewfgrnyhbgvfcdx
-
-      - run:
           name: deploy
           command: devspace deploy -p production
 

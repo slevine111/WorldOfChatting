@@ -3,8 +3,8 @@ import { setUsers } from './user/actions'
 import { setChatGroups } from './chatgroup/actions'
 import { setUserLanguages } from './userlanguage/actions'
 import { IUserAndExpireTime } from './auth/types'
-import { setUserAndAccessTokenFields } from './auth/actions'
-import { IUserPostDTO } from '../../server/users/users.dto'
+import { setUserAndAccessTokenFields, setToInitialState } from './auth/actions'
+import { IUserPostDTO, IUserUpdateDTO } from '../../server/users/users.dto'
 import {
   IUserLanguagePostDTO,
   IUserLanguagePostDTOSubset
@@ -30,6 +30,24 @@ export const signupNewUserProcess = (
     }))
     await axios.post('/api/userlanguage', newULsForDB)
   }
+}
+
+export const logoutUserProcess = (
+  userId: string,
+  partialUpdatedUser: IUserUpdateDTO
+) => {
+  const innerFunction = async (dispatch: any) => {
+    await axios.put(`/api/user/${userId}`, partialUpdatedUser)
+    dispatch(setChatGroups([]))
+    dispatch(setUserLanguages([]))
+    dispatch(setUsers([]))
+    return axios.delete('/api/auth').then((): void => {
+      dispatch(setToInitialState())
+    })
+  }
+  innerFunction.bypassRefreshTokenMiddleware = true
+
+  return innerFunction
 }
 
 export const getAndSetSingleUserRelatedData = async (

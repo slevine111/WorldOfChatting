@@ -2,7 +2,7 @@ import { Repository, In } from 'typeorm'
 import { Injectable, HttpException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'
-import { IUserPostDTO } from './users.dto'
+import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
 import { compare, hash } from 'bcrypt'
 
 @Injectable()
@@ -71,5 +71,14 @@ export default class UserService {
       password: hashedPassword
     })
     return { ...otherUserFields, id, loggedIn }
+  }
+
+  updateUser(
+    userId: string,
+    updatedUser: IUserUpdateDTO
+  ): Promise<User | undefined> {
+    return this.userRepository.update(userId, updatedUser).then(() => {
+      return this.findSingleUserById(userId)
+    })
   }
 }

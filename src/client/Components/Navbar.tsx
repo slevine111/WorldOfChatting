@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { ReduxState } from '../store/index'
 import { User } from '../../entities'
-import { logoutUserThunk } from '../store/auth/thunks'
+import { logoutUserProcess } from '../store/shared-actions'
+import { IUserUpdateDTO } from '../../server/users/users.dto'
 import { ThunkDispatch } from 'redux-thunk'
 
 //Material-UI components
@@ -21,7 +22,10 @@ interface IReduxStateProps {
 }
 
 interface IDispatchProps {
-  logoutUser: () => void
+  logoutUser: (
+    userId: string,
+    updatedUserFields: IUserUpdateDTO
+  ) => Promise<void>
 }
 
 interface INavbarProps extends IReduxStateProps, IDispatchProps {}
@@ -47,7 +51,7 @@ const Navbar: React.FC<INavbarProps> = ({ user, logoutUser }): ReactElement => {
           <Link
             to="/"
             className={classes.aboutLink}
-            onClick={() => logoutUser()}
+            onClick={() => logoutUser(user.id, { loggedIn: false })}
           >
             Logout
           </Link>
@@ -65,11 +69,9 @@ const mapDispatchToProps = (
   dispatch: ThunkDispatch<any, any, AnyAction>
 ): IDispatchProps => {
   return {
-    logoutUser: () => dispatch(logoutUserThunk())
+    logoutUser: (userId, updatedUserFields) =>
+      dispatch(logoutUserProcess(userId, updatedUserFields))
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Navbar)
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar)

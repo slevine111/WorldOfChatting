@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import useStyles from './styles'
 import { connect } from 'react-redux'
-import { loginUserProcess } from '../../store/shared-actions'
+import { loginUserProcess } from '../../store/auth/thunks'
 import { SetUserAndAccessTokenFieldsActionType } from '../../store/auth/actions'
 import { IUserAndExpireTime } from '../../store/auth/types'
 import { IUserSignInDTO } from '../../../server/auth/auth.dto'
@@ -22,10 +22,12 @@ interface ILoginProps extends IDispatchProps {
 }
 
 const Login: React.FC<ILoginProps> = ({ loginUser, history }): ReactElement => {
-  const [loginInfo, setLoginInfo] = useState<IUserSignInDTO>({
-    email: '',
-    password: ''
-  })
+  const [loginInfo, setLoginInfo] = useState<IUserSignInDTO>(
+    history.location.state || {
+      email: '',
+      password: ''
+    }
+  )
   const [error, setError] = useState<string>('')
 
   const handleChange = ({ target }: ChangeEvent<HTMLInputElement>): void => {
@@ -106,7 +108,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(Login)
+export default connect(null, mapDispatchToProps)(Login)

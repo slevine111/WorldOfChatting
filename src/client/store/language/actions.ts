@@ -1,24 +1,27 @@
 import axios, { AxiosResponse } from 'axios'
 import { Language } from '../../../entities'
-import { GET_ALL_LANGUAGES, IGetAllLanguagesAction } from './types'
+import { SET_LANGUAGES } from './types'
 import { ThunkAction } from 'redux-thunk'
 
-const getAllLanguages = (languages: Language[]): IGetAllLanguagesAction => ({
-  type: GET_ALL_LANGUAGES,
+const setLanguages = (languages: Language[]) => ({
+  type: SET_LANGUAGES,
   languages
 })
+type SetLanguagesType = ReturnType<typeof setLanguages>
+
+export type LanguageActionTypes = SetLanguagesType
 
 export const getAllLanguagesThunk = (): ThunkAction<
   Promise<void>,
   Language[],
   null,
-  IGetAllLanguagesAction
+  SetLanguagesType
 > => {
   return (dispatch): Promise<void> => {
     return axios
       .get('/api/language')
       .then(({ data }: AxiosResponse<Language[]>): void => {
-        dispatch(getAllLanguages(data))
+        dispatch(setLanguages(data))
       })
   }
 }

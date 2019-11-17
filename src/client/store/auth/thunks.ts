@@ -2,10 +2,11 @@ import {
   setAccessTokenStatus,
   setToInitialState,
   setAccessTokenFields,
-  setUserAndAccessTokenFields,
   SetUserAndAccessTokenFieldsActionType
 } from './actions'
 import { IUserAndExpireTime } from './types'
+import { getAndSetSingleUserRelatedData } from '../shared-actions'
+import { IUserSignInDTO } from '../../../server/auth/auth.dto'
 import axios, { AxiosResponse } from 'axios'
 import { ThunkAction } from 'redux-thunk'
 import { AnyAction } from 'redux'
@@ -26,6 +27,16 @@ export const refreshToken = (): ThunkAction<
   }
 }
 
+export const loginUserProcess = (userEmailAndPassword: IUserSignInDTO) => {
+  return (dispatch: any) => {
+    return axios
+      .post('/api/auth/login', userEmailAndPassword)
+      .then(({ data }: AxiosResponse<IUserAndExpireTime>) => {
+        getAndSetSingleUserRelatedData(data, dispatch)
+      })
+  }
+}
+
 export const checkIfUserLoggedInProcess = (): ThunkAction<
   Promise<void>,
   IUserAndExpireTime,
@@ -36,8 +47,7 @@ export const checkIfUserLoggedInProcess = (): ThunkAction<
     return axios
       .get('/api/auth')
       .then(({ data }: AxiosResponse<IUserAndExpireTime>) => {
-        const { expireTime, user } = data
-        dispatch(setUserAndAccessTokenFields(user, 'RECEIVED', expireTime))
+        getAndSetSingleUserRelatedData(data, dispatch)
       })
   }
 }

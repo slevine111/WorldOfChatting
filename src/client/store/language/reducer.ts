@@ -1,12 +1,13 @@
 import { Language } from '../../../entities'
-import { GET_ALL_LANGUAGES, LanguageActionTypes } from './types'
+import { SET_LANGUAGES } from './types'
+import { LanguageActionTypes } from './actions'
 
 export default (
   state: Language[] = [],
   action: LanguageActionTypes
 ): Language[] => {
   switch (action.type) {
-    case GET_ALL_LANGUAGES:
+    case SET_LANGUAGES:
       return [...action.languages]
     default:
       return state

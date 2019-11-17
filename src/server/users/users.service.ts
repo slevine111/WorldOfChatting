@@ -2,7 +2,7 @@ import { Repository, In } from 'typeorm'
 import { Injectable, HttpException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'
-import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
+import { IUserPostDTO } from './users.dto'
 import { compare, hash } from 'bcrypt'
 
 @Injectable()
@@ -11,10 +11,6 @@ export default class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>
   ) {}
-
-  getAll(): Promise<User[]> {
-    return this.userRepository.find()
-  }
 
   findSingleUser(
     email: string,
@@ -62,10 +58,6 @@ export default class UserService {
     return this.userRepository.findOne({ where: { id } })
   }
 
-  findLoggedInUsers(): Promise<User[]> {
-    return this.userRepository.find({ loggedIn: true })
-  }
-
   getLoggedInSpecifiedUsers(userIds: string): Promise<User[]> {
     const userIdsArray: string[] = userIds.split(',')
     return this.userRepository.find({ loggedIn: true, id: In(userIdsArray) })
@@ -79,14 +71,5 @@ export default class UserService {
       password: hashedPassword
     })
     return { ...otherUserFields, id, loggedIn }
-  }
-
-  updateUser(
-    userId: string,
-    updatedUser: IUserUpdateDTO
-  ): Promise<User | undefined> {
-    return this.userRepository.update(userId, updatedUser).then(() => {
-      return this.findSingleUserById(userId)
-    })
   }
 }

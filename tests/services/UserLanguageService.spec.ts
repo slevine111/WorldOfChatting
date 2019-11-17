@@ -33,8 +33,8 @@ describe('UserLanguageService', () => {
     ] = await userLanguageRepo.findAndCount()
 
     const newULs: IUserLanguagePostDTO[] = [
-      { type: 'learner', user, language: languages[0] },
-      { type: 'teacher', user, language: languages[1] }
+      { type: 'learner', userId: user.id, languageId: languages[0].id },
+      { type: 'teacher', userId: user.id, languageId: languages[1].id }
     ]
     await userLanguageService.addNewUserLanguages(newULs)
     const [, newNumberULs]: [
@@ -46,8 +46,8 @@ describe('UserLanguageService', () => {
 
   test('addNewUserLanguages returns the new userLanguages added to database', () => {
     const newULs: IUserLanguagePostDTO[] = [
-      { type: 'learner', user, language: languages[2] },
-      { type: 'teacher', user, language: languages[3] }
+      { type: 'learner', userId: user.id, languageId: languages[2].id },
+      { type: 'teacher', userId: user.id, languageId: languages[3].id }
     ]
     return userLanguageService
       .addNewUserLanguages(newULs)

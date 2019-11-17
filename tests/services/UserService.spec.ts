@@ -12,19 +12,6 @@ describe('User Service', () => {
     userService = new UserService(userRepo)
   })
 
-  test('getAll returns all users', async () => {
-    const [, numberUsers]: [User[], number] = await userRepo.findAndCount()
-    return userService.getAll().then(users => {
-      expect(users).toHaveLength(numberUsers)
-      expect(users[0].firstName).toBeDefined()
-    })
-  })
-  test('findLoggedInUsers only returns users with loggedIn = true', () => {
-    return userService.findLoggedInUsers().then(users => {
-      expect(users.every(u => u.loggedIn)).toBe(true)
-    })
-  })
-
   test('addNewUser adds one user to database', async () => {
     const [, numberUsers]: [User[], number] = await userRepo.findAndCount()
     const newUser: IUserPostDTO = {

@@ -1,16 +1,17 @@
 import React, { ReactElement } from 'react'
-import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { ReduxState } from '../store/index'
 import { User } from '../../entities'
 import { logoutUserProcess } from '../store/shared-actions'
 import { IUserUpdateDTO } from '../../server/users/users.dto'
 import { ThunkDispatch } from 'redux-thunk'
+import { History } from 'history'
 
 //Material-UI components
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
 
 //MaterIal-UI style imports
 import { makeStyles } from '@material-ui/core/styles'
@@ -28,33 +29,51 @@ interface IDispatchProps {
   ) => Promise<void>
 }
 
-interface INavbarProps extends IReduxStateProps, IDispatchProps {}
+interface INavbarProps extends IReduxStateProps, IDispatchProps {
+  history: History
+}
 
 const useStyles: Style = makeStyles({
-  aboutLink: {
-    textDecoration: 'none',
-    color: 'white',
-    marginLeft: '10%'
-  }
+  siteNameLink: { textDecoration: 'none', color: 'white', width: '100%' },
+  buttonStyle: {
+    textTransform: 'none',
+    color: 'inherit'
+  },
+  aboutButton: { marginLeft: '15px' }
 })
 
-const Navbar: React.FC<INavbarProps> = ({ user, logoutUser }): ReactElement => {
+const Navbar: React.FC<INavbarProps> = ({
+  user,
+  logoutUser,
+  history
+}): ReactElement => {
   const classes = useStyles()
   return (
     <AppBar position="fixed">
       <Toolbar>
-        <Typography variant="h6">World of Chatting</Typography>
-        <Link to="/about" className={classes.aboutLink}>
+        <Button
+          className={classes.buttonStyle}
+          onClick={() => history.push(user.id ? '/home' : '/')}
+        >
+          <Typography variant="h6">World of Chatting</Typography>
+        </Button>
+        <Button
+          className={`${classes.aboutButton} ${classes.buttonStyle}`}
+          onClick={() => history.push('/about')}
+        >
           About
-        </Link>
+        </Button>
         {user.id && (
-          <Link
-            to="/"
-            className={classes.aboutLink}
-            onClick={() => logoutUser(user.id, { loggedIn: false })}
+          <Button
+            className={classes.buttonStyle}
+            onClick={() =>
+              logoutUser(user.id, { loggedIn: false }).then(() =>
+                history.push('/')
+              )
+            }
           >
             Logout
-          </Link>
+          </Button>
         )}
       </Toolbar>
     </AppBar>

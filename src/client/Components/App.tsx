@@ -1,6 +1,6 @@
 //React related imports
 import React, { ReactElement, Fragment, useEffect } from 'react'
-import { HashRouter, Route } from 'react-router-dom'
+import { HashRouter, Route, Switch } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { getAllLanguagesThunk } from '../store/language/actions'
 import { checkIfUserLoggedInProcess } from '../store/auth/thunks'
@@ -15,6 +15,7 @@ import Signup from './Login_Signup/Signup'
 import Login from './Login_Signup/Login'
 import Navbar from './Navbar'
 import Home from './Home'
+import ProtectedLoggedInPageHOC from './ProtectedLoggedInPageHOC'
 import { AnyAction } from 'redux'
 
 const useStyles: Style = makeStyles((theme: any) => ({
@@ -42,11 +43,18 @@ const App: React.FC<IAppProps> = ({
         <Fragment>
           <Route component={Navbar} />
           <div className={classes.toolbar} />
-          <Route path="/" exact component={Login} />
-          <Route path="/home" exact component={Home} />
-          <Route path="/about" exact render={() => <h4>the about page</h4>} />
-          <Route path="/signup" exact component={Signup} />
-          <Route path="/login" exact component={Login} />
+          <Switch>
+            <Route path="/" exact component={Login} />
+            <Route path="/about" exact render={() => <h4>the about page</h4>} />
+            <Route path="/signup" exact component={Signup} />
+            <Route path="/login" exact component={Login} />
+            <Route
+              path="/home"
+              exact
+              component={ProtectedLoggedInPageHOC(Home)}
+            />
+            <Route exact render={() => <h4>url does not exist</h4>} />
+          </Switch>
         </Fragment>
       </HashRouter>
     </div>
@@ -62,7 +70,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(App)
+export default connect(null, mapDispatchToProps)(App)

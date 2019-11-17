@@ -1,5 +1,5 @@
 import React, { ReactElement, useState, ChangeEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import TextField from '@material-ui/core/TextField'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
@@ -13,16 +13,28 @@ import { IUserSignInDTO } from '../../../server/auth/auth.dto'
 import { ThunkDispatch } from 'redux-thunk'
 import { History } from 'history'
 import Grid from '@material-ui/core/Grid'
+import { ReduxState } from '../../store/index'
+import { User } from '../../../entities'
+
+interface IReduxStateProps {
+  user: User
+}
 
 interface IDispatchProps {
   loginUser: (userLoginInfo: IUserSignInDTO) => Promise<void>
 }
 
-interface ILoginProps extends IDispatchProps {
+interface ILoginProps extends IDispatchProps, IReduxStateProps {
   history: History
 }
 
-const Login: React.FC<ILoginProps> = ({ loginUser, history }): ReactElement => {
+const Login: React.FC<ILoginProps> = ({
+  user,
+  loginUser,
+  history
+}): ReactElement => {
+  if (user.id) return <Redirect to="/home" />
+
   const [loginInfo, setLoginInfo] = useState<IUserSignInDTO>(
     history.location.state || {
       email: '',
@@ -51,7 +63,7 @@ const Login: React.FC<ILoginProps> = ({ loginUser, history }): ReactElement => {
     centerText
   } = useStyles()
   return (
-    <Grid container className={formContainer} xs={10}>
+    <Grid container className={formContainer}>
       <Paper className={paperPadding} square={true}>
         <Typography className={centerText} variant="body1">
           <i>Ready to keep chatting with the world?!</i>
@@ -104,6 +116,10 @@ const Login: React.FC<ILoginProps> = ({ loginUser, history }): ReactElement => {
   )
 }
 
+const mapStateToProps = ({ auth: { user } }: ReduxState): IReduxStateProps => ({
+  user
+})
+
 const mapDispatchToProps = (
   dispatch: ThunkDispatch<
     IUserAndExpireTime,
@@ -117,4 +133,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(null, mapDispatchToProps)(Login)
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

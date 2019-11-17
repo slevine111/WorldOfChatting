@@ -1,9 +1,4 @@
-import {
-  setAccessTokenStatus,
-  setToInitialState,
-  setAccessTokenFields,
-  SetUserAndAccessTokenFieldsActionType
-} from './actions'
+import { setAccessTokenStatus, setAccessTokenFields } from './actions'
 import { IUserAndExpireTime } from './types'
 import { getAndSetSingleUserRelatedData } from '../shared-actions'
 import { IUserSignInDTO } from '../../../server/auth/auth.dto'
@@ -37,28 +32,12 @@ export const loginUserProcess = (userEmailAndPassword: IUserSignInDTO) => {
   }
 }
 
-export const checkIfUserLoggedInProcess = (): ThunkAction<
-  Promise<void>,
-  IUserAndExpireTime,
-  null,
-  SetUserAndAccessTokenFieldsActionType
-> => {
-  return dispatch => {
+export const checkIfUserLoggedInProcess = () => {
+  return (dispatch: any) => {
     return axios
       .get('/api/auth')
       .then(({ data }: AxiosResponse<IUserAndExpireTime>) => {
         getAndSetSingleUserRelatedData(data, dispatch)
       })
   }
-}
-
-export const logoutUserThunk = () => {
-  const innerFunction = (dispatch: any) => {
-    return axios.delete('/api/auth').then((): void => {
-      dispatch(setToInitialState())
-    })
-  }
-  innerFunction.bypassRefreshTokenMiddleware = true
-
-  return innerFunction
 }

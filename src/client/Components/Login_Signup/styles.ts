@@ -7,14 +7,10 @@ const useStyles: Style = makeStyles({
     justifyContent: 'space-between'
   },
   formContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    width: '50%',
-    minWidth: '400px',
-    margin: '40px auto 0',
-    padding: '10px 0'
+    justifyContent: 'center',
+    margin: '5vh auto 0'
   },
+  paperPadding: { padding: '20px' },
   firstNameInput: {
     marginRight: '15px'
   },
@@ -26,6 +22,9 @@ const useStyles: Style = makeStyles({
   },
   topMarginButton: {
     marginTop: '10px'
+  },
+  centerText: {
+    textAlign: 'center'
   }
 })
 

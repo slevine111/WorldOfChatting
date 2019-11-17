@@ -12,6 +12,7 @@ import { IUserAndExpireTime } from '../../store/auth/types'
 import { IUserSignInDTO } from '../../../server/auth/auth.dto'
 import { ThunkDispatch } from 'redux-thunk'
 import { History } from 'history'
+import Grid from '@material-ui/core/Grid'
 
 interface IDispatchProps {
   loginUser: (userLoginInfo: IUserSignInDTO) => Promise<void>
@@ -42,56 +43,64 @@ const Login: React.FC<ILoginProps> = ({ loginUser, history }): ReactElement => {
       .catch(({ response }) => setError(response.data.message))
   }
 
-  const { formContainer, topMargin, topMarginButton } = useStyles()
+  const {
+    formContainer,
+    paperPadding,
+    topMargin,
+    topMarginButton,
+    centerText
+  } = useStyles()
   return (
-    <Paper className={formContainer} square={true}>
-      <Typography variant="body1">
-        <i>Ready to keep chatting with the world?!</i>
-      </Typography>
-      <form onSubmit={onSubmit}>
-        <TextField
-          id="email"
-          name="email"
-          label="Email"
-          value={loginInfo.email}
-          onChange={handleChange}
-          margin="normal"
-          fullWidth
-          variant="outlined"
-        />
-        <TextField
-          id="password"
-          name="password"
-          label="Password"
-          value={loginInfo.password}
-          onChange={handleChange}
-          margin="normal"
-          fullWidth
-          variant="outlined"
-        />
-        {error !== '' && (
-          <Typography variant="caption" style={{ color: 'red' }}>
-            {error}
-          </Typography>
-        )}
-        <div className={topMarginButton}>
-          <Button
-            type="submit"
-            size="small"
-            fullWidth
-            variant="contained"
-            color="primary"
-          >
-            Log in
-          </Button>
-        </div>
-      </form>
-      <div className={topMargin}>
-        <Typography>
-          Don't have an account? <Link to="/signup">Sign up here</Link>
+    <Grid container className={formContainer} xs={10}>
+      <Paper className={paperPadding} square={true}>
+        <Typography className={centerText} variant="body1">
+          <i>Ready to keep chatting with the world?!</i>
         </Typography>
-      </div>
-    </Paper>
+        <form onSubmit={onSubmit}>
+          <TextField
+            id="email"
+            name="email"
+            label="Email"
+            value={loginInfo.email}
+            onChange={handleChange}
+            margin="normal"
+            fullWidth
+            variant="outlined"
+          />
+          <TextField
+            id="password"
+            name="password"
+            label="Password"
+            value={loginInfo.password}
+            onChange={handleChange}
+            margin="normal"
+            fullWidth
+            variant="outlined"
+          />
+          {error !== '' && (
+            <Typography variant="caption" style={{ color: 'red' }}>
+              {error}
+            </Typography>
+          )}
+          <div className={topMarginButton}>
+            <Button
+              type="submit"
+              size="small"
+              fullWidth
+              variant="contained"
+              color="primary"
+            >
+              Log in
+            </Button>
+          </div>
+        </form>
+        <div className={topMargin}>
+          <Typography className={centerText}>
+            Don't have an account? <Link to="/signup">Sign up here</Link>
+          </Typography>
+        </div>
+      </Paper>
+    </Grid>
   )
 }
 

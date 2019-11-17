@@ -22,6 +22,7 @@ import { Language } from '../../../entities'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
+import Grid from '@material-ui/core/Grid'
 import useStyles from './styles'
 
 interface IDispatchProps {
@@ -95,44 +96,52 @@ const Signup: React.FC<ISignupProps> = ({
   }
 
   const { languagesToLearn, languagesToTeach } = signupInfo
-  const { formContainer, topMargin, topMarginButton } = useStyles()
+  const {
+    paperPadding,
+    formContainer,
+    topMargin,
+    topMarginButton,
+    centerText
+  } = useStyles()
   return (
-    <Paper className={formContainer} square={true}>
-      <Typography variant="body1">
-        <i>Ready to become a citizen of the world?!</i>
-      </Typography>
-      <form onSubmit={onSubmit} className={topMargin}>
-        {currentStep === 'personal info' ? (
-          <PersonalInfoForm {...{ signupInfo, handleChange }} />
-        ) : (
-          <LanguageSelector
-            handleChange={handleLanguageChange}
-            {...{ languagesToLearn, languagesToTeach }}
-          />
-        )}
-
-        {currentStep === 'personal info' ? (
-          <div className={topMarginButton}>
-            <Button
-              type="button"
-              fullWidth
-              variant="contained"
-              color="primary"
-              onClick={() => setCurrentStep('language selector')}
-            >
-              Next
-            </Button>
-          </div>
-        ) : (
-          <SignupStepButtons {...{ setCurrentStep }} />
-        )}
-      </form>
-      <div className={topMargin}>
-        <Typography>
-          Already have an account? <Link to="/login">Log in</Link>
+    <Grid container className={formContainer} xs={10}>
+      <Paper className={paperPadding} square={true}>
+        <Typography className={centerText} variant="body1">
+          <i>Ready to become a citizen of the world?!</i>
         </Typography>
-      </div>
-    </Paper>
+        <form onSubmit={onSubmit} className={topMargin}>
+          {currentStep === 'personal info' ? (
+            <PersonalInfoForm {...{ signupInfo, handleChange }} />
+          ) : (
+            <LanguageSelector
+              handleChange={handleLanguageChange}
+              {...{ languagesToLearn, languagesToTeach }}
+            />
+          )}
+
+          {currentStep === 'personal info' ? (
+            <div className={topMarginButton}>
+              <Button
+                type="button"
+                fullWidth
+                variant="contained"
+                color="primary"
+                onClick={() => setCurrentStep('language selector')}
+              >
+                Next
+              </Button>
+            </div>
+          ) : (
+            <SignupStepButtons {...{ setCurrentStep }} />
+          )}
+        </form>
+        <div className={topMargin}>
+          <Typography className={centerText}>
+            Already have an account? <Link to="/login">Log in</Link>
+          </Typography>
+        </div>
+      </Paper>
+    </Grid>
   )
 }
 

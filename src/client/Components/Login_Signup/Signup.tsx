@@ -77,11 +77,21 @@ const Signup: React.FC<ISignupProps> = ({
     event.preventDefault()
     const { languagesToLearn, languagesToTeach, ...otherUserInfo } = signupInfo
     const userLanguagePayload: IUserLanguagePostDTOSubset[] = [
-      ...languagesToLearn.map(language => ({ type: 'learner', language })),
-      ...languagesToTeach.map(language => ({ type: 'teacher', language }))
+      ...languagesToLearn.map(language => ({
+        type: 'learner',
+        languageId: language.id
+      })),
+      ...languagesToTeach.map(language => ({
+        type: 'teacher',
+        languageId: language.id
+      }))
     ]
-    signupNewUserProcess(otherUserInfo, userLanguagePayload)
-    history.push('/login')
+    signupNewUserProcess(otherUserInfo, userLanguagePayload).then(() => {
+      history.push({
+        pathname: '/login',
+        state: { email: otherUserInfo.email, password: otherUserInfo.password }
+      })
+    })
   }
 
   const { languagesToLearn, languagesToTeach } = signupInfo
@@ -137,7 +147,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(Signup)
+export default connect(null, mapDispatchToProps)(Signup)

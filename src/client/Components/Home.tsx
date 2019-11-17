@@ -1,25 +1,25 @@
 import React from 'react'
-import { connect } from 'react-redux'
-import { getAllLanguagesThunk } from '../store/language/actions'
+//import { connect } from 'react-redux'
+//import { getAllLanguagesThunk } from '../store/language/actions'
 
-const Home = ({ langs }: any) => {
+const Home = () => {
   return (
     <div>
       23!
-      <button type="button" onClick={() => langs()}>
-        click
-      </button>
+      <button type="button">click</button>
     </div>
   )
 }
 
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    langs: () => dispatch(getAllLanguagesThunk())
+export default Home
+
+//const mapDispatchToProps = () => {
+// return {
+/*   langs: () => dispatch(getAllLanguagesThunk())
   }
 }
 
 export default connect(
   null,
   mapDispatchToProps
-)(Home)
+)(Home)*/

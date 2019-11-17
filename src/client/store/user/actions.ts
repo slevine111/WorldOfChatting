@@ -1,5 +1,5 @@
 import { User } from '../../../entities'
-import { SET_USERS, CREATE_NEW_USER } from './types'
+import { SET_USERS } from './types'
 
 export const setUsers = (users: User[]) => ({
   type: SET_USERS,
@@ -7,10 +7,4 @@ export const setUsers = (users: User[]) => ({
 })
 type SetUsersType = ReturnType<typeof setUsers>
 
-export const createNewUser = (newUser: User) => ({
-  type: CREATE_NEW_USER,
-  newUser
-})
-type CreateNewUserType = ReturnType<typeof createNewUser>
-
-export type UserActionTypes = SetUsersType | CreateNewUserType
+export type UserActionTypes = SetUsersType

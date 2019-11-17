@@ -1,6 +1,6 @@
 //Packages
 import React, { useState, ReactElement, ChangeEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import { History } from 'history'
 import { connect } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
@@ -14,9 +14,10 @@ import SignupStepButtons from './SignupStepButtons'
 //My modules
 import { ISignupInfo } from './index'
 import { signupNewUserProcess } from '../../store/shared-actions'
+import { ReduxState } from '../../store/index'
 import { IUserPostDTO } from '../../../server/users/users.dto'
 import { IUserLanguagePostDTOSubset } from '../../../server/userlanguages/userlanguages.dto'
-import { Language } from '../../../entities'
+import { Language, User } from '../../../entities'
 
 //Material-UI
 import Typography from '@material-ui/core/Typography'
@@ -25,6 +26,10 @@ import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 import useStyles from './styles'
 
+interface IReduxStateProps {
+  user: User
+}
+
 interface IDispatchProps {
   signupNewUserProcess: (
     newUser: IUserPostDTO,
@@ -32,14 +37,17 @@ interface IDispatchProps {
   ) => Promise<void>
 }
 
-interface ISignupProps extends IDispatchProps {
+interface ISignupProps extends IDispatchProps, IReduxStateProps {
   history: History
 }
 
 const Signup: React.FC<ISignupProps> = ({
+  user,
   signupNewUserProcess,
   history
 }): ReactElement => {
+  if (user.id) return <Redirect to="/home" />
+
   let [signupInfo, setSignupFields] = useState<ISignupInfo>({
     firstName: '',
     lastName: '',
@@ -104,7 +112,7 @@ const Signup: React.FC<ISignupProps> = ({
     centerText
   } = useStyles()
   return (
-    <Grid container className={formContainer} xs={10}>
+    <Grid container className={formContainer}>
       <Paper className={paperPadding} square={true}>
         <Typography className={centerText} variant="body1">
           <i>Ready to become a citizen of the world?!</i>
@@ -145,6 +153,10 @@ const Signup: React.FC<ISignupProps> = ({
   )
 }
 
+const mapStateToProps = ({ auth: { user } }: ReduxState): IReduxStateProps => ({
+  user
+})
+
 const mapDispatchToProps = (
   dispatch: ThunkDispatch<any, any, AnyAction>
 ): IDispatchProps => {
@@ -156,4 +168,4 @@ const mapDispatchToProps = (
   }
 }
 
-export default connect(null, mapDispatchToProps)(Signup)
+export default connect(mapStateToProps, mapDispatchToProps)(Signup)

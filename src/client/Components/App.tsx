@@ -14,7 +14,7 @@ import { Style } from 'jss'
 import Signup from './Login_Signup/Signup'
 import Login from './Login_Signup/Login'
 import Navbar from './Navbar'
-import Home from './Home'
+import Home from './Home/Home'
 import ProtectedLoggedInPageHOC from './ProtectedLoggedInPageHOC'
 import { AnyAction } from 'redux'
 

@@ -18,6 +18,7 @@ import { ReduxState } from '../../store/index'
 import { IUserPostDTO } from '../../../server/users/users.dto'
 import { IUserLanguagePostDTOSubset } from '../../../server/userlanguages/userlanguages.dto'
 import { Language, User } from '../../../entities'
+import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
 
 //Material-UI
 import Typography from '@material-ui/core/Typography'
@@ -83,16 +84,18 @@ const Signup: React.FC<ISignupProps> = ({
   }
 
   const onSubmit = (event: ChangeEvent<HTMLFormElement>): void => {
+    const learnerType: UserLanguageTypeFieldOptions = 'learner'
+    const teacherType: UserLanguageTypeFieldOptions = 'teacher'
     event.preventDefault()
     const { languagesToLearn, languagesToTeach, ...otherUserInfo } = signupInfo
     const userLanguagePayload: IUserLanguagePostDTOSubset[] = [
       ...languagesToLearn.map(language => ({
-        type: 'learner',
-        languageId: language.id
+        languageId: language.id,
+        type: learnerType
       })),
       ...languagesToTeach.map(language => ({
-        type: 'teacher',
-        languageId: language.id
+        languageId: language.id,
+        type: teacherType
       }))
     ]
     signupNewUserProcess(otherUserInfo, userLanguagePayload).then(() => {

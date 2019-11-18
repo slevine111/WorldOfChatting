@@ -1,7 +1,8 @@
 import { User, Language } from '../../entities'
+import { UserLanguageTypeFieldOptions } from '../../entities/UserLanguage'
 
 export interface IUserLanguagePostDTOSubset {
-  type: string
+  type: UserLanguageTypeFieldOptions
   numberOfYears?: number
   active?: boolean
   languageId: string

@@ -24,11 +24,11 @@ export default class UserLanguage {
   @Column({ enum: [true, false], default: true })
   active: Boolean
 
-  @ManyToOne(() => User /*, user => user.userLanguages*/)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'userId' })
   userId: string
 
-  @ManyToOne(() => Language /*, language => language.userLanguages*/)
+  @ManyToOne(() => Language)
   @JoinColumn({ name: 'languageId' })
   languageId: string
 }

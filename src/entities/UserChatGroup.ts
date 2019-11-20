@@ -2,7 +2,6 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  CreateDateColumn,
   ManyToOne,
   JoinColumn
 } from 'typeorm'
@@ -10,15 +9,12 @@ import User from './User'
 import ChatGroup from './ChatGroup'
 
 @Entity()
-export default class Message {
+export default class UserChatGroup {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column('varchar')
-  body: string
-
-  @CreateDateColumn()
-  createdAt: Date
+  @Column({ type: 'boolean', default: false })
+  favorite: boolean
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'userId' })

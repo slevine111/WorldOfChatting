@@ -1,14 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  //OneToMany,
-  ManyToMany
-} from 'typeorm'
-//import UserLanguage from './UserLanguage'
-import ChatGroup from './ChatGroup'
-//import Message from './Message'
-//import Language from './Language'
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
 export default class User {
@@ -29,16 +19,4 @@ export default class User {
 
   @Column({ type: 'boolean', default: false })
   loggedIn: boolean
-
-  /*@OneToMany(() => UserLanguage, userLanguage => userLanguage.user)
-  userLanguages?: UserLanguage[]
-
-  @OneToMany(() => Message, message => message.user)
-  messages?: Message[]
-
-  @OneToMany(() => Language, language => language.userSubmitted)
-  languages?: Language[]*/
-
-  @ManyToMany(() => ChatGroup, chatGroup => chatGroup.userIds)
-  chatGroups?: ChatGroup[]
 }

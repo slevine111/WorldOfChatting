@@ -59,8 +59,10 @@ export default class UserService {
   }
 
   getLoggedInSpecifiedUsers(userIds: string): Promise<User[]> {
-    const userIdsArray: string[] = userIds.split(',')
-    return this.userRepository.find({ loggedIn: true, id: In(userIdsArray) })
+    return this.userRepository.find({
+      loggedIn: true,
+      id: In(userIds.split(','))
+    })
   }
 
   async addNewUser(user: IUserPostDTO): Promise<User> {

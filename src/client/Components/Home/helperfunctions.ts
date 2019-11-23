@@ -1,4 +1,4 @@
-import { User, UserLanguage, Language } from '../../../entities'
+import { User, UserLanguage, Language, ChatGroup, UserChatGroup } from '../../../entities'
 import * as myInterfaces from './index'
 
 interface IObjectOfLanguages {
@@ -9,20 +9,28 @@ interface IObjectOfUsers {
   [key: string]: User
 }
 
-export const groupUsersByLanguage = (
-  loggedInUser: User,
-  users: User[],
-  userLanguagues: UserLanguage[],
-  languages: Language[]
-): myInterfaces.IReturnObject => {
+export const mapLanguagesById = (languages: Language[]): IObjectOfLanguages => {
   let languagesMap: IObjectOfLanguages = {}
   for (let i = 0; i < languages.length; ++i) {
     languagesMap[languages[i].id] = languages[i]
   }
+  return languagesMap
+}
+
+export const mapUsersById = (users: User[]): IObjectOfUsers => {
   let usersMap: IObjectOfUsers = {}
   for (let i = 0; i < users.length; ++i) {
     usersMap[users[i].id] = users[i]
   }
+  return usersMap
+}
+
+export const groupUsersByLanguage = (
+  loggedInUser: User,
+  usersMap: IObjectOfUsers,
+  userLanguagues: UserLanguage[],
+  languagesMap: IObjectOfLanguages
+): myInterfaces.IReturnObject => {
   let usersByLanguageMap: myInterfaces.IObjectOfUsersByLanguage = {}
   let languagesOfLoggedInUser: myInterfaces.ILanguageOfLoggedInUser[] = []
   for (let i = 0; i < userLanguagues.length; ++i) {
@@ -48,3 +56,8 @@ export const groupUsersByLanguage = (
   }
   return { languagesOfLoggedInUser, usersByLanguageMap }
 }
+
+export const getFavoriteChatGroups = (  usersMap: IObjectOfUsers,
+  languagesMap: IObjectOfLanguages,
+  chatGroups
+  )

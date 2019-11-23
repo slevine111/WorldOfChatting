@@ -12,10 +12,10 @@ export default class ChatGroup {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true, unique: true })
   name: string
 
   @ManyToOne(() => Language)
-  @JoinColumn({ name: 'languageId' })
-  languageId: string
+  @JoinColumn({ name: 'language' })
+  language: string
 }

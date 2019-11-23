@@ -29,6 +29,6 @@ export default class UserLanguage {
   userId: string
 
   @ManyToOne(() => Language)
-  @JoinColumn({ name: 'languageId' })
-  languageId: string
+  @JoinColumn({ name: 'language' })
+  language: string
 }

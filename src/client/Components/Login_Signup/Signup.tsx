@@ -17,7 +17,7 @@ import { signupNewUserProcess } from '../../store/shared-actions'
 import { ReduxState } from '../../store/index'
 import { IUserPostDTO } from '../../../server/users/users.dto'
 import { IUserLanguagePostDTOSubset } from '../../../server/userlanguages/userlanguages.dto'
-import { Language, User } from '../../../entities'
+import { User } from '../../../entities'
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
 
 //Material-UI
@@ -67,7 +67,7 @@ const Signup: React.FC<ISignupProps> = ({
 
   const handleLanguageChange = (
     { target }: ChangeEvent<HTMLInputElement>,
-    language: Language,
+    language: string,
     signupInfoKey: 'languagesToLearn' | 'languagesToTeach'
   ): void => {
     if (target.checked) {
@@ -90,11 +90,11 @@ const Signup: React.FC<ISignupProps> = ({
     const { languagesToLearn, languagesToTeach, ...otherUserInfo } = signupInfo
     const userLanguagePayload: IUserLanguagePostDTOSubset[] = [
       ...languagesToLearn.map(language => ({
-        languageId: language.id,
+        language,
         type: learnerType
       })),
       ...languagesToTeach.map(language => ({
-        languageId: language.id,
+        language,
         type: teacherType
       }))
     ]

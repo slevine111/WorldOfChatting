@@ -1,4 +1,10 @@
-import { User, UserLanguage, Language, ChatGroup, UserChatGroup } from '../../../entities'
+import {
+  User,
+  UserLanguage,
+  Language,
+  ChatGroup,
+  UserChatGroup
+} from '../../../entities'
 import * as myInterfaces from './index'
 
 interface IObjectOfLanguages {
@@ -56,8 +62,3 @@ export const groupUsersByLanguage = (
   }
   return { languagesOfLoggedInUser, usersByLanguageMap }
 }
-
-export const getFavoriteChatGroups = (  usersMap: IObjectOfUsers,
-  languagesMap: IObjectOfLanguages,
-  chatGroups
-  )

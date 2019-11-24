@@ -12,7 +12,7 @@ export default class LanguageService {
 
   getAll(): Promise<Language[]> {
     return this.languageRepository
-      .query(`SELECT id, language, countries, "usersApproved", "userSubmittedId"
+      .query(`SELECT language, countries, "usersApproved", "userSubmittedId"
               FROM language`)
   }
 }

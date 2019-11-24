@@ -13,9 +13,9 @@ export default class ChatGroupService {
   getChatGroupsOfSingleUser(userId: string): Promise<ChatGroup[]> {
     return this.chatGroupRepository.query(
       `SELECT A.*
-         FROM chat_group A
-         JOIN user_chat_group B ON A.id = B."chatGroupId"
-         WHERE "userId" = $1`,
+       FROM chat_group A
+       JOIN user_chat_group B ON A.id = B."chatGroupId"
+       WHERE "userId" = $1`,
       [userId]
     )
   }

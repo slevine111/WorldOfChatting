@@ -15,7 +15,7 @@ export default class UserLanguageService {
     return this.userLanguageRepository.query(
       `SELECT A.*
        FROM user_language A
-       JOIN (SELECT "languageId" FROM user_language WHERE "userId" = $1) B ON A."languageId" = B."languageId"
+       JOIN (SELECT language FROM user_language WHERE "userId" = $1) B ON A.language = B.language
     `,
       [userId]
     )

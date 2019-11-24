@@ -39,6 +39,7 @@ export default class UserController {
   }
 
   @Put('/:userId')
+  @UseGuards(AuthGuard)
   updateUser(
     @Param('userId') userId: string,
     @Body() updatedUser: IUserUpdateDTO

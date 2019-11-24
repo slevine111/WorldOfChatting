@@ -5,7 +5,7 @@ export interface IUserLanguagePostDTOSubset {
   type: UserLanguageTypeFieldOptions
   numberOfYears?: number
   active?: boolean
-  languageId: string
+  language: string
 }
 
 export interface IUserLanguagePostDTO extends IUserLanguagePostDTOSubset {

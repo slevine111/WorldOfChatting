@@ -1,5 +1,5 @@
 import { Repository, In } from 'typeorm'
-import { Injectable, HttpException } from '@nestjs/common'
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
@@ -30,12 +30,14 @@ export default class UserService {
         where: { email }
       })
       .then(async (user: User | undefined) => {
-        if (user === undefined) throw new HttpException('username invalid', 400)
+        if (user === undefined)
+          throw new HttpException('username invalid', HttpStatus.BAD_REQUEST)
         const passwordCorrect: boolean = await compare(
           inputPassword,
           user.password!
         )
-        if (!passwordCorrect) throw new HttpException('password invalid', 400)
+        if (!passwordCorrect)
+          throw new HttpException('password invalid', HttpStatus.BAD_REQUEST)
         if (returnPassword) return user
         const { password, ...otherUserFields } = user
         return otherUserFields
@@ -75,12 +77,11 @@ export default class UserService {
     return { ...otherUserFields, id, loggedIn }
   }
 
-  updateUser(
-    userId: string,
-    updatedUser: IUserUpdateDTO
-  ): Promise<User | undefined> {
-    return this.userRepository.update(userId, updatedUser).then(() => {
-      return this.findSingleUserById(userId)
+  updateUser(userId: string, updatedUser: IUserUpdateDTO): Promise<User> {
+    return this.findSingleUserById(userId).then((user: User | undefined) => {
+      if (user === undefined)
+        throw new HttpException('username invalid', HttpStatus.BAD_REQUEST)
+      return this.userRepository.save({ ...user, ...updatedUser })
     })
   }
 }

@@ -40,7 +40,7 @@ interface IUserChatGroupSubset {
 }
 
 interface IUserLanguageSubset {
-  type: string
+  type: UserLanguageTypeFieldOptions
   numberOfYears?: number
   userId: string
   language: string
@@ -226,10 +226,8 @@ export function createUserLanguages(
   for (let i = 0; i < users.length; ++i) {
     const currentUser: User = users[i]
     for (let j = 0; j < 4; j++) {
-      const learner: UserLanguageTypeFieldOptions = 'learner'
-      const teacher: UserLanguageTypeFieldOptions = 'teacher'
       let createdUserLanguage: IUserLanguageSubset = {
-        type: j <= 2 ? learner : teacher,
+        type: j <= 2 ? 'learner' : 'teacher',
         language: languagesArray[i][j],
         userId: currentUser.id
       }

@@ -1,13 +1,16 @@
 import { User, UserLanguage } from '../../../entities'
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
 
+export interface IObjectOfUsers {
+  [key: string]: User
+}
+
 export interface IUserWithLanguageType extends User {
   type: UserLanguageTypeFieldOptions
 }
 
 interface IUsersByLanguage {
   language: string
-  languageId: string
   users: IUserWithLanguageType[]
 }
 
@@ -19,7 +22,13 @@ export interface ILanguageOfLoggedInUser extends UserLanguage {
   language: string
 }
 
-export interface IReturnObject {
+export interface ILanguageObjects {
   languagesOfLoggedInUser: ILanguageOfLoggedInUser[]
-  usersByLanguageMap: IObjectOfUsersByLanguage
+  usersByLanguage: IUsersByLanguage[]
+}
+
+export interface IUsersByChatGroup {
+  name: string
+  language: string
+  users: User[]
 }

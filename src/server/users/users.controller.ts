@@ -4,11 +4,8 @@ import {
   Post,
   Body,
   UseGuards,
-  Query,
   Put,
-  Param,
-  HttpException,
-  HttpStatus
+  Param
 } from '@nestjs/common'
 import UserService from './users.service'
 import AuthGuard from '../auth/auth.guard'
@@ -19,18 +16,10 @@ import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
 export default class UserController {
   constructor(private userService: UserService) {}
 
-  @Get('/loggedin')
+  @Get('/specified/:userIds')
   @UseGuards(AuthGuard)
-  getLoggedInSpecifiedUsers(
-    @Query('userIds') userIds: string
-  ): Promise<User[]> {
-    if (userIds === '') {
-      throw new HttpException(
-        'userIds value in query string can NOT be empty',
-        HttpStatus.BAD_REQUEST
-      )
-    }
-    return this.userService.getLoggedInSpecifiedUsers(userIds)
+  getSpecifiedUsers(@Param('userIds') userIds: string): Promise<User[]> {
+    return this.userService.getSpecifiedUsers(userIds)
   }
 
   @Post()

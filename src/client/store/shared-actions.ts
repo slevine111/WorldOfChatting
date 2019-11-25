@@ -69,8 +69,7 @@ export const getAndSetSingleUserRelatedData = async (
   const userLanguages: UserLanguage[] = userLanguageResponse.data
   const uniqueUserIds: string[] = getUniqueUserIds(userLanguages)
   const usersResponse: AxiosResponse<User[]> = await axios.get(
-    '/api/user/loggedin',
-    { params: { userIds: uniqueUserIds.join(',') } }
+    `/api/user/specified/${uniqueUserIds.join(',')}`
   )
   dispatch(setUserAndAccessTokenFields(user, 'RECEIVED', expireTime))
   dispatch(setChatGroups(chatGroupResponse.data))

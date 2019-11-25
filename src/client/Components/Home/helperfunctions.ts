@@ -1,49 +1,61 @@
-import {
-  User,
-  UserLanguage,
-  Language,
-  ChatGroup,
-  UserChatGroup
-} from '../../../entities'
+import { User, UserLanguage, UserChatGroup, ChatGroup } from '../../../entities'
 import * as myInterfaces from './index'
 
-interface IObjectOfLanguages {
-  [key: string]: Language
+interface IObjectOfUserArrays {
+  [key: string]: User[] | null
 }
 
-interface IObjectOfUsers {
-  [key: string]: User
-}
-
-export const mapLanguagesById = (languages: Language[]): IObjectOfLanguages => {
-  let languagesMap: IObjectOfLanguages = {}
-  for (let i = 0; i < languages.length; ++i) {
-    languagesMap[languages[i].id] = languages[i]
-  }
-  return languagesMap
-}
-
-export const mapUsersById = (users: User[]): IObjectOfUsers => {
-  let usersMap: IObjectOfUsers = {}
+export const mapUserById = (users: User[]): myInterfaces.IObjectOfUsers => {
+  let usersMap: myInterfaces.IObjectOfUsers = {}
   for (let i = 0; i < users.length; ++i) {
     usersMap[users[i].id] = users[i]
   }
   return usersMap
 }
 
+export const getFavoriteChatGroupsOfUser = (
+  loggedInUser: User,
+  usersMap: myInterfaces.IObjectOfUsers,
+  chatGroups: ChatGroup[],
+  userChatGroups: UserChatGroup[]
+): myInterfaces.IUsersByChatGroup[] => {
+  let objectByChatGroup: IObjectOfUserArrays = {}
+  for (let i = 0; i < userChatGroups.length; ++i) {
+    const { userId, chatGroupId, favorite } = userChatGroups[i]
+    if (userId === loggedInUser.id && !favorite) {
+      objectByChatGroup[chatGroupId] = null
+    } else if (
+      userId !== loggedInUser.id &&
+      objectByChatGroup[chatGroupId] !== null
+    ) {
+      if (objectByChatGroup[chatGroupId]) {
+        objectByChatGroup[chatGroupId]!.push(usersMap[userId])
+      } else {
+        objectByChatGroup[chatGroupId] = [usersMap[userId]]
+      }
+    }
+  }
+  let usersByChatGroup: myInterfaces.IUsersByChatGroup[] = []
+  for (let i = 0; i < chatGroups.length; ++i) {
+    const { id, name, language } = chatGroups[i]
+    if (objectByChatGroup[id]) {
+      usersByChatGroup.push({ name, language, users: objectByChatGroup[id]! })
+    }
+  }
+  return usersByChatGroup
+}
+
 export const groupUsersByLanguage = (
   loggedInUser: User,
-  usersMap: IObjectOfUsers,
-  userLanguagues: UserLanguage[],
-  languagesMap: IObjectOfLanguages
-): myInterfaces.IReturnObject => {
+  usersMap: myInterfaces.IObjectOfUsers,
+  userLanguagues: UserLanguage[]
+): myInterfaces.ILanguageObjects => {
   let usersByLanguageMap: myInterfaces.IObjectOfUsersByLanguage = {}
-  let languagesOfLoggedInUser: myInterfaces.ILanguageOfLoggedInUser[] = []
+  let languagesOfLoggedInUser: UserLanguage[] = []
   for (let i = 0; i < userLanguagues.length; ++i) {
-    const { userId, languageId, type, active } = userLanguagues[i]
-    const { language } = languagesMap[languageId]
+    const { userId, language, type, active } = userLanguagues[i]
     if (userId === loggedInUser.id) {
-      languagesOfLoggedInUser.push({ ...userLanguagues[i], language })
+      languagesOfLoggedInUser.push(userLanguagues[i])
     } else if (active) {
       const user: myInterfaces.IUserWithLanguageType = {
         ...usersMap[userId],
@@ -53,12 +65,14 @@ export const groupUsersByLanguage = (
         usersByLanguageMap[language].users.push(user)
       } else {
         usersByLanguageMap[language] = {
-          languageId,
           language,
           users: [user]
         }
       }
     }
   }
-  return { languagesOfLoggedInUser, usersByLanguageMap }
+  return {
+    languagesOfLoggedInUser,
+    usersByLanguage: Object.values(usersByLanguageMap)
+  }
 }

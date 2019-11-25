@@ -60,9 +60,8 @@ export default class UserService {
     return this.userRepository.findOne({ where: { id } })
   }
 
-  getLoggedInSpecifiedUsers(userIds: string): Promise<User[]> {
+  getSpecifiedUsers(userIds: string): Promise<User[]> {
     return this.userRepository.find({
-      loggedIn: true,
       id: In(userIds.split(','))
     })
   }

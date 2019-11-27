@@ -20,12 +20,6 @@ module.exports = [
     entities: [resolve(__dirname, 'js', 'entities', '*.js')]
   },
   {
-    name: 'seed',
-    ...commonFields,
-    database: process.env.DATABASE,
-    entities: [resolve(__dirname, 'src', 'entities', '*.ts')]
-  },
-  {
     name: 'test',
     ...commonFields,
     database: process.env.DATABASE_TEST,

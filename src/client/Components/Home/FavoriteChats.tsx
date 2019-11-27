@@ -22,7 +22,6 @@ const FavoriteChats: React.FC<IFavoriteChatsProps> = ({
   return (
     <div>
       <Typography variant="h6">My Favorite Chats</Typography>
-
       {favoriteChatGroups.length &&
         favoriteChatGroups.map((ch: IUsersByChatGroup) => {
           if (ch.users.length > 1) {

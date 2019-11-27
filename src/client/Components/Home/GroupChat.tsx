@@ -11,7 +11,7 @@ interface IOwnProps {
 interface IGroupChatProps extends IOwnProps {}
 
 const GroupChat: React.FC<IGroupChatProps> = ({ usersByChatGroup }) => {
-  const { users } = usersByChatGroup
+  const { users, language } = usersByChatGroup
   return (
     <div>
       <Badge
@@ -21,9 +21,17 @@ const GroupChat: React.FC<IGroupChatProps> = ({ usersByChatGroup }) => {
       >
         <Avatar>{users.length}</Avatar>{' '}
       </Badge>
-      <Typography variant="body1">{`${users[0].firstName} ${
-        users[0].lastName
-      } & ${users.length - 1} more`}</Typography>
+      <Typography variant="body1">
+        {' '}
+        <div>
+          <b>
+            {' '}
+            {`${users[0].firstName} ${users[0].lastName} & ${users.length -
+              1} more`}
+          </b>
+        </div>{' '}
+        <em>{language}</em>
+      </Typography>
     </div>
   )
 }

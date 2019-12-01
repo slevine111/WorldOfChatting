@@ -73,6 +73,6 @@ export const groupUsersByLanguage = (
   }
   return {
     languagesOfLoggedInUser,
-    usersByLanguage: Object.values(usersByLanguageMap)
+    usersByLanguageMap
   }
 }

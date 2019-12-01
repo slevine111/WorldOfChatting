@@ -24,7 +24,7 @@ export interface ILanguageOfLoggedInUser extends UserLanguage {
 
 export interface ILanguageObjects {
   languagesOfLoggedInUser: ILanguageOfLoggedInUser[]
-  usersByLanguage: IUsersByLanguage[]
+  usersByLanguageMap: IObjectOfUsersByLanguage
 }
 
 export interface IUsersByChatGroup {

@@ -3,8 +3,7 @@ import { connect } from 'react-redux'
 import { ReduxState } from '../../store'
 import { IObjectOfUsers, IUsersByChatGroup } from './index'
 import { getFavoriteChatGroupsOfUser } from './helperfunctions'
-import DirectChat from './DirectChat'
-import GroupChat from './GroupChat'
+import ChatBio from './ChatBio'
 import Typography from '@material-ui/core/Typography'
 
 interface IReduxStateProps {
@@ -23,12 +22,8 @@ const FavoriteChats: React.FC<IFavoriteChatsProps> = ({
     <div>
       <Typography variant="h6">My Favorite Chats</Typography>
       {favoriteChatGroups.length &&
-        favoriteChatGroups.map((ch: IUsersByChatGroup) => {
-          if (ch.users.length > 1) {
-            return <GroupChat usersByChatGroup={ch} />
-          } else {
-            return <DirectChat usersByChatGroup={ch} />
-          }
+        favoriteChatGroups.map((ch: IUsersByChatGroup, idx: number) => {
+          return <ChatBio key={idx} usersByChatGroup={ch} />
         })}
     </div>
   )

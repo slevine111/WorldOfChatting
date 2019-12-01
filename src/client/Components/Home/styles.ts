@@ -11,6 +11,8 @@ export default makeStyles(() => {
       backgroundColor: 'red',
       boxShadow
     },
-    dot: { height: '10px', minWidth: '10px' }
+    dot: { height: '10px', minWidth: '10px' },
+    blockDisplay: { display: 'block' },
+    avatarColor: { backgroundColor: 'dodgerblue' }
   }
 })

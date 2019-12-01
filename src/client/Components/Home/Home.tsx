@@ -1,30 +1,26 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { ReduxState } from '../../store'
-import { ILanguageObjects, IObjectOfUsers } from './index'
-import { groupUsersByLanguage, mapUserById } from './helperfunctions'
+import { IObjectOfUsers } from './index'
+import { mapUserById } from './helperfunctions'
 import {
   checkIfDataExists,
   IGroupedArraysAndObjects
 } from '../utilityfunctions'
 import FavoriteChats from './FavoriteChats'
+import MyLanguages from './MyLanguages'
 
-interface IReduxStateProps extends ILanguageObjects {
+interface IReduxStateProps {
   usersMap: IObjectOfUsers
 }
 
 interface IHomeProps extends IReduxStateProps {}
 
-const Home: React.FC<IHomeProps> = ({
-  languagesOfLoggedInUser,
-  usersByLanguage,
-  usersMap
-}) => {
-  console.log(languagesOfLoggedInUser)
-  console.log(usersByLanguage)
+const Home: React.FC<IHomeProps> = ({ usersMap }) => {
   return (
     <div>
       <FavoriteChats {...{ usersMap }} />
+      <MyLanguages {...{ usersMap }} />
     </div>
   )
 }
@@ -41,17 +37,7 @@ const mapStateToProps = ({
     arrays: [users, userLanguages, chatGroups, userChatGroups]
   }
   const dataExists: boolean = checkIfDataExists(dataExistsInput)
-  if (!dataExists)
-    return {
-      languagesOfLoggedInUser: [],
-      usersByLanguage: [],
-      usersMap: {}
-    }
-  const usersMap: IObjectOfUsers = mapUserById(users)
-  return {
-    ...groupUsersByLanguage(auth.user, usersMap, userLanguages),
-    usersMap
-  }
+  return { usersMap: dataExists ? mapUserById(users) : {} }
 }
 
 export default connect(mapStateToProps)(Home)

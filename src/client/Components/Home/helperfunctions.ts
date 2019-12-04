@@ -1,12 +1,21 @@
-import { User, UserLanguage, UserChatGroup, ChatGroup } from '../../../entities'
-import * as myInterfaces from './index'
+import {
+  User,
+  /*UserLanguage,*/ UserChatGroup,
+  ChatGroup
+} from '../../../entities'
+import { IAuthReducerUserField } from '../../store/auth/types'
+import { IUsersByChatGroup, IWordCloudArrayObject } from './index'
 
 interface IObjectOfUserArrays {
   [key: string]: User[] | null
 }
 
-export const mapUserById = (users: User[]): myInterfaces.IObjectOfUsers => {
-  let usersMap: myInterfaces.IObjectOfUsers = {}
+interface IObjectOfUsers {
+  [key: string]: User
+}
+
+const mapUserById = (users: User[]): IObjectOfUsers => {
+  let usersMap: IObjectOfUsers = {}
   for (let i = 0; i < users.length; ++i) {
     usersMap[users[i].id] = users[i]
   }
@@ -14,11 +23,12 @@ export const mapUserById = (users: User[]): myInterfaces.IObjectOfUsers => {
 }
 
 export const getFavoriteChatGroupsOfUser = (
-  loggedInUser: User,
-  usersMap: myInterfaces.IObjectOfUsers,
+  loggedInUser: IAuthReducerUserField,
+  users: User[],
   chatGroups: ChatGroup[],
   userChatGroups: UserChatGroup[]
-): myInterfaces.IUsersByChatGroup[] => {
+): IUsersByChatGroup[] => {
+  const usersMap: IObjectOfUsers = mapUserById(users)
   let objectByChatGroup: IObjectOfUserArrays = {}
   for (let i = 0; i < userChatGroups.length; ++i) {
     const { userId, chatGroupId, favorite } = userChatGroups[i]
@@ -35,7 +45,7 @@ export const getFavoriteChatGroupsOfUser = (
       }
     }
   }
-  let usersByChatGroup: myInterfaces.IUsersByChatGroup[] = []
+  let usersByChatGroup: IUsersByChatGroup[] = []
   for (let i = 0; i < chatGroups.length; ++i) {
     const { id, name, language } = chatGroups[i]
     if (objectByChatGroup[id]) {
@@ -45,7 +55,19 @@ export const getFavoriteChatGroupsOfUser = (
   return usersByChatGroup
 }
 
-export const groupUsersByLanguage = (
+export const generateWordCloudArray = (
+  loggedInUser: IAuthReducerUserField
+): IWordCloudArrayObject[] => {
+  const { languages } = loggedInUser
+  let wordCloudArray: IWordCloudArrayObject[] = []
+  for (let i = 0; i < languages.length; ++i) {
+    const { language, usersOnlineCount, userType } = languages[i]
+    wordCloudArray.push({ text: language, value: usersOnlineCount, userType })
+  }
+  return wordCloudArray
+}
+
+/*export const groupUsersByLanguage = (
   loggedInUser: User,
   usersMap: myInterfaces.IObjectOfUsers,
   userLanguagues: UserLanguage[]
@@ -53,7 +75,7 @@ export const groupUsersByLanguage = (
   let usersByLanguageMap: myInterfaces.IObjectOfUsersByLanguage = {}
   let userCountByLanguageMap: myInterfaces.IObjectOfUserCountByLanguage = {}
   let languagesOfLoggedInUser: UserLanguage[] = []
-  for (let i = 0; i < userLanguagues.length; ++i) {
+  for (let i = 1; i < userLanguagues.length; ++i) {
     const { userId, language, type, active } = userLanguagues[i]
     if (userId === loggedInUser.id) {
       languagesOfLoggedInUser.push(userLanguagues[i])
@@ -94,4 +116,19 @@ export const groupUsersByLanguage = (
     userCountByLanguageMap,
     userCountByLanguage: Object.values(userCountByLanguageMap)
   }
+}*/
+
+/*export interface IObjectOfUserCountByLanguage {
+  [key: string]: IUserCountByLanguage
 }
+
+export interface ILanguageOfLoggedInUser extends UserLanguage {
+  language: string
+}
+
+export interface ILanguageObjects {
+  languagesOfLoggedInUser: ILanguageOfLoggedInUser[]
+  usersByLanguageMap: IObjectOfUsersByLanguage
+  userCountByLanguageMap: IObjectOfUserCountByLanguage
+  userCountByLanguage: IUserCountByLanguage[]
+}*/

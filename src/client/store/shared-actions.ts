@@ -1,7 +1,7 @@
 import { User, ChatGroup, UserChatGroup } from '../../entities'
 import {
   IUserCountByLanguage,
-  ILanguageWithActiveField
+  ILanguageWithActiveAndTypeFields
 } from '../../shared-types'
 import { setUsers } from './user/actions'
 import { setChatGroups } from './chatgroup/actions'
@@ -66,14 +66,14 @@ export const getAndSetSingleUserRelatedData = async (
 ): Promise<void> => {
   const { expireTime, user } = userAndExpireTime
   const [languages, chatGroups, userCountByLanguage, userChatGroups]: [
-    AxiosResponse<ILanguageWithActiveField[]>,
+    AxiosResponse<ILanguageWithActiveAndTypeFields[]>,
     AxiosResponse<ChatGroup[]>,
     AxiosResponse<IUserCountByLanguage[]>,
     AxiosResponse<UserChatGroup[]>
   ] = await Promise.all([
     axios.get(`/api/language/${user.id}`),
     axios.get(`/api/chatgroup/${user.id}`),
-    axios.get(`/api/userlanguage/linked/${user.id}/countbyuserlanguage`),
+    axios.get(`/api/userlanguage/linked/${user.id}/countbylanguage`),
     axios.get(`/api/userchatgroup/linked/${user.id}`)
   ])
   const uniqueUserIds: string[] = getUniqueUserIds(userChatGroups.data)
@@ -95,7 +95,7 @@ export const getAndSetSingleUserRelatedData = async (
 
 const generateAuthReducerUserField = (
   user: User,
-  languages: ILanguageWithActiveField[],
+  languages: ILanguageWithActiveAndTypeFields[],
   userCountByLanguage: IUserCountByLanguage[]
 ): IAuthReducerUserField => {
   let userWithLanguagesArray: IAuthReducerUserField = { ...user, languages: [] }

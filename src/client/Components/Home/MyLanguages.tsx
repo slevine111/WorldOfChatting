@@ -1,19 +1,16 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import { Route, RouteComponentProps, withRouter } from 'react-router-dom'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { ReduxState } from '../../store'
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
-import { IObjectOfUsers, ILanguageObjects } from './index'
-import { groupUsersByLanguage } from './helperfunctions'
+import { IWordCloudArrayObject } from './index'
+import { generateWordCloudArray } from './helperfunctions'
 import Typography from '@material-ui/core/Typography'
 import ReactWordCloud from 'react-wordcloud'
 import MenuItem from '@material-ui/core/MenuItem'
 import Popover from '@material-ui/core/Popover'
-import PeopleIconsList from './PeopleIconsList'
 import { CallbacksProp } from 'react-wordcloud/dist/types'
 import { Word } from 'd3-cloud'
-
-type LanguageDisplayOptions = '' | 'icon' | 'list'
 
 declare module 'd3-cloud' {
   interface Word {
@@ -21,21 +18,14 @@ declare module 'd3-cloud' {
   }
 }
 
-interface IReduxStateProps extends ILanguageObjects {}
-
-interface IOwnProps {
-  usersMap: IObjectOfUsers
+interface IReduxStateProps {
+  usersCountByLanguage: IWordCloudArrayObject[]
 }
 
-interface IMyLanguagesProps
-  extends IReduxStateProps,
-    IOwnProps,
-    RouteComponentProps {}
+interface IMyLanguagesProps extends IReduxStateProps, RouteComponentProps {}
 
 const MyLanguages: React.FC<IMyLanguagesProps> = ({
-  usersByLanguageMap,
-  userCountByLanguageMap,
-  userCountByLanguage,
+  usersCountByLanguage,
   match,
   history
 }) => {
@@ -43,9 +33,6 @@ const MyLanguages: React.FC<IMyLanguagesProps> = ({
     selectedLanguageDOMElement,
     setSelectedLanguageDOMElement
   ] = useState<HTMLButtonElement | null>(null)
-  const [languageDisplay, setLanguageDisplay] = useState<
-    LanguageDisplayOptions
-  >('icon')
   const wordCloudCallbacks: CallbacksProp = {
     getWordColor: (word: Word): string => {
       return word.userType === 'teacher' ? 'blue' : 'red'
@@ -61,15 +48,13 @@ const MyLanguages: React.FC<IMyLanguagesProps> = ({
     selectedLanguageDOMElement !== null
       ? selectedLanguageDOMElement.textContent!
       : ''
-  const userCount: number =
-    selectedLanguage !== '' ? userCountByLanguageMap[selectedLanguage].value : 0
-  console.log(usersByLanguageMap)
+  console.log(usersCountByLanguage)
   console.log(selectedLanguage)
   return (
     <div>
       <Typography variant="h6">My Languages</Typography>
       <ReactWordCloud
-        words={userCountByLanguage}
+        words={usersCountByLanguage}
         options={{
           enableTooltip: false,
           fontSizes: [30, 60],
@@ -87,39 +72,13 @@ const MyLanguages: React.FC<IMyLanguagesProps> = ({
         <MenuItem>
           {selectedLanguage !== '' ? `Go to ${selectedLanguage} page` : ''}
         </MenuItem>
-        <MenuItem
-          disabled={selectedLanguage !== '' && userCount === 0}
-          onClick={() => {
-            setLanguageDisplay('icon')
-            history.push(`${match.path}/${selectedLanguage}`)
-            setSelectedLanguageDOMElement(null)
-          }}
-        >
-          {selectedLanguage === ''
-            ? ''
-            : userCount > 0
-            ? `Show ${userCount} users below`
-            : 'No users online'}
-        </MenuItem>
       </Popover>
-      {languageDisplay === 'icon' && (
-        <Route
-          exact
-          path={`${match.path}/:language`}
-          render={({ match }) => (
-            <PeopleIconsList {...{ match, usersByLanguageMap }} />
-          )}
-        />
-      )}
     </div>
   )
 }
 
-const mapStateToProps = (
-  { auth, userLanguages }: ReduxState,
-  { usersMap }: IOwnProps
-): IReduxStateProps => {
-  return groupUsersByLanguage(auth.user, usersMap, userLanguages)
+const mapStateToProps = ({ auth }: ReduxState): IReduxStateProps => {
+  return { usersCountByLanguage: generateWordCloudArray(auth.user) }
 }
 
 export default withRouter(connect(mapStateToProps)(MyLanguages))

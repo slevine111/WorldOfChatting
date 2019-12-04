@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { ReduxState } from '../../store'
-import { IObjectOfUsers, IUsersByChatGroup } from './index'
+import { IUsersByChatGroup } from './index'
 import { getFavoriteChatGroupsOfUser } from './helperfunctions'
 import ChatBio from './ChatBio'
 import Typography from '@material-ui/core/Typography'
@@ -9,11 +9,8 @@ import Typography from '@material-ui/core/Typography'
 interface IReduxStateProps {
   favoriteChatGroups: IUsersByChatGroup[]
 }
-interface IOwnProps {
-  usersMap: IObjectOfUsers
-}
 
-interface IFavoriteChatsProps extends IReduxStateProps, IOwnProps {}
+interface IFavoriteChatsProps extends IReduxStateProps {}
 
 const FavoriteChats: React.FC<IFavoriteChatsProps> = ({
   favoriteChatGroups
@@ -29,13 +26,15 @@ const FavoriteChats: React.FC<IFavoriteChatsProps> = ({
   )
 }
 
-const mapStateToProps = (
-  { auth, chatGroups, userChatGroups }: ReduxState,
-  { usersMap }: IOwnProps
-): IReduxStateProps => {
+const mapStateToProps = ({
+  auth,
+  users,
+  chatGroups,
+  userChatGroups
+}: ReduxState): IReduxStateProps => {
   const favoriteChatGroups: IUsersByChatGroup[] = getFavoriteChatGroupsOfUser(
     auth.user,
-    usersMap,
+    users,
     chatGroups,
     userChatGroups
   )

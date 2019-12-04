@@ -1,5 +1,5 @@
 import { User } from '../../../entities'
-import { ILanguageWithActiveField } from '../../../shared-types'
+import { ILanguageWithActiveAndTypeFields } from '../../../shared-types'
 import { AnyAction } from 'redux'
 
 export const SET_TO_INITIAL_STATE = <const>'SET_TO_INITIAL_STATE'
@@ -12,7 +12,7 @@ export const ADD_POSTPONNED_ACTION = <const>'ADD_POSTPONNED_ACTION'
 
 export type PossibleStatuses = 'NONE' | 'FETCHING' | 'RECEIVED'
 
-interface ILanguageExpanded extends ILanguageWithActiveField {
+interface ILanguageExpanded extends ILanguageWithActiveAndTypeFields {
   usersOnlineCount: number
 }
 

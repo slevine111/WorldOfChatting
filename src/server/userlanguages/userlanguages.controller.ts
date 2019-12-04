@@ -3,6 +3,7 @@ import UserLanguageService from './userlanguages.service'
 import AuthGuard from '../auth/auth.guard'
 import { UserLanguage } from '../../entities'
 import { IUserLanguagePostDTO } from './userlanguages.dto'
+import { IUserCountByLanguage } from '../../shared-types'
 
 @Controller('/api/userlanguage')
 export default class UserLanguageController {
@@ -14,6 +15,14 @@ export default class UserLanguageController {
     @Param('userId') userId: string
   ): Promise<UserLanguage[]> {
     return this.userLanguageService.getUserLanguagesLinkedToUser(userId)
+  }
+
+  @Get('/linked/:userId/countbylanguage')
+  @UseGuards(AuthGuard)
+  getUserCountByLanguage(
+    @Param('userId') userId: string
+  ): Promise<IUserCountByLanguage[]> {
+    return this.userLanguageService.getUserCountByLanguage(userId)
   }
 
   @Post()

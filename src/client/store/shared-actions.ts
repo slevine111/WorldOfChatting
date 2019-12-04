@@ -1,9 +1,13 @@
-import { User, UserLanguage, ChatGroup, UserChatGroup } from '../../entities'
+import { User, ChatGroup, UserChatGroup } from '../../entities'
+import {
+  IUserCountByLanguage,
+  ILanguageWithActiveField
+} from '../../shared-types'
 import { setUsers } from './user/actions'
 import { setChatGroups } from './chatgroup/actions'
 import { setUserLanguages } from './userlanguage/actions'
 import { setUserChatGroups } from './userchatgroup/actions'
-import { IUserAndExpireTime } from './auth/types'
+import { IUserAndExpireTime, IAuthReducerUserField } from './auth/types'
 import { setUserAndAccessTokenFields, setToInitialState } from './auth/actions'
 import { IUserPostDTO, IUserUpdateDTO } from '../../server/users/users.dto'
 import {
@@ -14,6 +18,10 @@ import axios, { AxiosResponse } from 'axios'
 
 interface IPlainObject {
   [key: string]: true
+}
+
+interface IUserCountByLanguageMap {
+  [key: string]: number | undefined
 }
 
 export const signupNewUserProcess = (
@@ -57,31 +65,57 @@ export const getAndSetSingleUserRelatedData = async (
   dispatch: any
 ): Promise<void> => {
   const { expireTime, user } = userAndExpireTime
-  const [chatGroupResponse, userLanguageResponse, userChatGroupResponse]: [
+  const [languages, chatGroups, userCountByLanguage, userChatGroups]: [
+    AxiosResponse<ILanguageWithActiveField[]>,
     AxiosResponse<ChatGroup[]>,
-    AxiosResponse<UserLanguage[]>,
+    AxiosResponse<IUserCountByLanguage[]>,
     AxiosResponse<UserChatGroup[]>
   ] = await Promise.all([
+    axios.get(`/api/language/${user.id}`),
     axios.get(`/api/chatgroup/${user.id}`),
-    axios.get(`/api/userlanguage/linked/${user.id}`),
+    axios.get(`/api/userlanguage/linked/${user.id}/countbyuserlanguage`),
     axios.get(`/api/userchatgroup/linked/${user.id}`)
   ])
-  const userLanguages: UserLanguage[] = userLanguageResponse.data
-  const uniqueUserIds: string[] = getUniqueUserIds(userLanguages)
+  const uniqueUserIds: string[] = getUniqueUserIds(userChatGroups.data)
   const usersResponse: AxiosResponse<User[]> = await axios.get(
     `/api/user/specified/${uniqueUserIds.join(',')}`
   )
-  dispatch(setUserAndAccessTokenFields(user, 'RECEIVED', expireTime))
-  dispatch(setChatGroups(chatGroupResponse.data))
-  dispatch(setUserLanguages(userLanguages))
+  let userWithLanguagesArray: IAuthReducerUserField = generateAuthReducerUserField(
+    user,
+    languages.data,
+    userCountByLanguage.data
+  )
+  dispatch(
+    setUserAndAccessTokenFields(userWithLanguagesArray, 'RECEIVED', expireTime)
+  )
+  dispatch(setChatGroups(chatGroups.data))
   dispatch(setUsers(usersResponse.data))
-  dispatch(setUserChatGroups(userChatGroupResponse.data))
+  dispatch(setUserChatGroups(userChatGroups.data))
 }
 
-const getUniqueUserIds = (userLanguages: UserLanguage[]): string[] => {
+const generateAuthReducerUserField = (
+  user: User,
+  languages: ILanguageWithActiveField[],
+  userCountByLanguage: IUserCountByLanguage[]
+): IAuthReducerUserField => {
+  let userWithLanguagesArray: IAuthReducerUserField = { ...user, languages: [] }
+  let userCountByLanguageMap: IUserCountByLanguageMap = {}
+  for (let i = 0; i < userCountByLanguage.length; ++i) {
+    let { language, usersOnlineCount } = userCountByLanguage[i]
+    userCountByLanguageMap[language] = usersOnlineCount
+  }
+  for (let i = 0; i < languages.length; ++i) {
+    const { language } = languages[i]
+    const usersOnlineCount: number = userCountByLanguageMap[language] || 0
+    userWithLanguagesArray.languages.push({ ...languages[i], usersOnlineCount })
+  }
+  return userWithLanguagesArray
+}
+
+const getUniqueUserIds = (users: UserChatGroup[]): string[] => {
   const uniqueUserIds: IPlainObject = {}
-  for (let i = 0; i < userLanguages.length; ++i) {
-    const { userId } = userLanguages[i]
+  for (let i = 0; i < users.length; ++i) {
+    const { userId } = users[i]
     if (!uniqueUserIds[userId]) uniqueUserIds[userId] = true
   }
   return Object.keys(uniqueUserIds)

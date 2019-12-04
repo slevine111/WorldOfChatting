@@ -51,6 +51,7 @@ export const groupUsersByLanguage = (
   userLanguagues: UserLanguage[]
 ): myInterfaces.ILanguageObjects => {
   let usersByLanguageMap: myInterfaces.IObjectOfUsersByLanguage = {}
+  let userCountByLanguageMap: myInterfaces.IObjectOfUserCountByLanguage = {}
   let languagesOfLoggedInUser: UserLanguage[] = []
   for (let i = 0; i < userLanguagues.length; ++i) {
     const { userId, language, type, active } = userLanguagues[i]
@@ -70,9 +71,27 @@ export const groupUsersByLanguage = (
         }
       }
     }
+    if (userCountByLanguageMap[language] && userId === loggedInUser.id) {
+      userCountByLanguageMap[language].userType = type
+    } else if (
+      userCountByLanguageMap[language] &&
+      userId !== loggedInUser.id &&
+      active
+    ) {
+      ++userCountByLanguageMap[language].value
+    } else if (!userCountByLanguageMap[language]) {
+      userCountByLanguageMap[language] = {
+        text: language,
+        value: Number(userId !== loggedInUser.id && active),
+        userType: userId === loggedInUser.id ? type : null
+      }
+    }
   }
+
   return {
     languagesOfLoggedInUser,
-    usersByLanguageMap
+    usersByLanguageMap,
+    userCountByLanguageMap,
+    userCountByLanguage: Object.values(userCountByLanguageMap)
   }
 }

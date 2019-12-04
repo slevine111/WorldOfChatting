@@ -1,4 +1,3 @@
-import { User } from '../../../entities'
 import * as types from './types'
 import { AnyAction } from 'redux'
 
@@ -29,7 +28,7 @@ export const setAccessTokenFields = (
 type SetAccessTokenFieldsActionType = ReturnType<typeof setAccessTokenFields>
 
 export const setUserAndAccessTokenFields = (
-  user: User,
+  user: types.IAuthReducerUserField,
   status: types.PossibleStatuses,
   expireTime: number
 ) => ({

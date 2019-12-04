@@ -18,6 +18,16 @@ export interface IObjectOfUsersByLanguage {
   [key: string]: IUsersByLanguage
 }
 
+interface IUserCountByLanguage {
+  text: string
+  value: number
+  userType: UserLanguageTypeFieldOptions | null
+}
+
+export interface IObjectOfUserCountByLanguage {
+  [key: string]: IUserCountByLanguage
+}
+
 export interface ILanguageOfLoggedInUser extends UserLanguage {
   language: string
 }
@@ -25,6 +35,8 @@ export interface ILanguageOfLoggedInUser extends UserLanguage {
 export interface ILanguageObjects {
   languagesOfLoggedInUser: ILanguageOfLoggedInUser[]
   usersByLanguageMap: IObjectOfUsersByLanguage
+  userCountByLanguageMap: IObjectOfUserCountByLanguage
+  userCountByLanguage: IUserCountByLanguage[]
 }
 
 export interface IUsersByChatGroup {

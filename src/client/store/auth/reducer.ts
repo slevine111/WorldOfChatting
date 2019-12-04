@@ -1,9 +1,8 @@
-import { User } from '../../../entities'
 import * as types from './types'
 import { AuthActionTypes } from './actions'
 
 const initialState: types.IAuthReducerState = {
-  user: {} as User,
+  user: {} as types.IAuthReducerUserField,
   accessTokenFields: { status: 'NONE', expireTime: Number.POSITIVE_INFINITY },
   postponnedActions: []
 }

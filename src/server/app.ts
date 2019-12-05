@@ -6,7 +6,6 @@ import UserModule from './users/users.module'
 import LanguageModule from './languages/languages.module'
 import UserLanguageModule from './userlanguages/userlanguages.module'
 import ChatGroupModule from './chatgroups/chatgroups.module'
-import UserChatGroupModule from './userchatgroups/userchatgroups.module'
 import AuthModule from './auth/auth.module'
 import MyJWTModule from './MyJWTModule'
 import MyCacheModule from './MyCacheModule'
@@ -18,7 +17,6 @@ import WebpageController from './webpage.controller'
     LanguageModule,
     UserLanguageModule,
     ChatGroupModule,
-    UserChatGroupModule,
     AuthModule,
     MyJWTModule,
     TypeOrmModule.forRoot(),

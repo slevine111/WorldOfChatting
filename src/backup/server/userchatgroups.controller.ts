@@ -1,5 +1,5 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common'
-import AuthGuard from '../auth/auth.guard'
+import AuthGuard from '../../server/auth/auth.guard'
 import UserChatGroupService from './userchatgroups.service'
 import { UserChatGroup } from '../../entities'
 

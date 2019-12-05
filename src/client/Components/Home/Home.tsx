@@ -27,12 +27,11 @@ const Home: React.FC<IHomeProps> = ({ dataLoaded }) => {
 const mapStateToProps = ({
   users,
   auth,
-  chatGroups,
-  userChatGroups
+  chatGroups
 }: ReduxState): IReduxStateProps => {
   const dataExistsInput: IGroupedArraysAndObjects = {
     objects: [auth.user],
-    arrays: [users, chatGroups, userChatGroups]
+    arrays: [users.myUsers, chatGroups]
   }
   const dataLoaded: boolean = checkIfDataExists(dataExistsInput)
   return { dataLoaded }

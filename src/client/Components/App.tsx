@@ -14,7 +14,8 @@ import { Style } from 'jss'
 import Signup from './Login_Signup/Signup'
 import Login from './Login_Signup/Login'
 import Navbar from './Navbar'
-import Home from './Home/Home'
+import Home from './Home/'
+import LanguagePage from './LanguagePage'
 import ProtectedLoggedInPageHOC from './ProtectedLoggedInPageHOC'
 import { AnyAction } from 'redux'
 
@@ -48,7 +49,16 @@ const App: React.FC<IAppProps> = ({
             <Route path="/about" exact render={() => <h4>the about page</h4>} />
             <Route path="/signup" exact component={Signup} />
             <Route path="/login" exact component={Login} />
-            <Route path="/home" component={ProtectedLoggedInPageHOC(Home)} />
+            <Route
+              path="/home"
+              exact
+              component={ProtectedLoggedInPageHOC(Home)}
+            />
+            <Route
+              path="/language/:language"
+              exact
+              component={ProtectedLoggedInPageHOC(LanguagePage)}
+            />
             <Route exact render={() => <h4>url does not exist</h4>} />
           </Switch>
         </Fragment>

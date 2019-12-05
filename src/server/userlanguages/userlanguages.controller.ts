@@ -9,12 +9,12 @@ import { IUserCountByLanguage } from '../../shared-types'
 export default class UserLanguageController {
   constructor(private userLanguageService: UserLanguageService) {}
 
-  @Get('/linked/:userId')
+  @Get('/language/:language')
   @UseGuards(AuthGuard)
-  getUserLanguagesLinkedToUser(
-    @Param('userId') userId: string
+  getUserLanguagesOfLanguage(
+    @Param('language') language: string
   ): Promise<UserLanguage[]> {
-    return this.userLanguageService.getUserLanguagesLinkedToUser(userId)
+    return this.userLanguageService.getUserLanguagesOfLanguage(language)
   }
 
   @Get('/linked/:userId/countbylanguage')

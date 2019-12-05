@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ChatGroup } from '../../entities'
+import { IChatGroupReducer } from '../../shared-types'
 
 @Injectable()
 export default class ChatGroupService {
@@ -10,12 +11,14 @@ export default class ChatGroupService {
     private readonly chatGroupRepository: Repository<ChatGroup>
   ) {}
 
-  getChatGroupsOfSingleUser(userId: string): Promise<ChatGroup[]> {
+  getFavoriteChatGroupsOfSingleUser(
+    userId: string
+  ): Promise<IChatGroupReducer[]> {
     return this.chatGroupRepository.query(
-      `SELECT A.*
+      `SELECT A.*, favorite
        FROM chat_group A
        JOIN user_chat_group B ON A.id = B."chatGroupId"
-       WHERE "userId" = $1`,
+       WHERE "userId" = $1 AND favorite = true`,
       [userId]
     )
   }

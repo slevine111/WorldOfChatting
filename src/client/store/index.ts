@@ -1,16 +1,13 @@
 import { createStore, combineReducers, applyMiddleware, Reducer } from 'redux'
-import {
-  Language,
-  User,
-  UserLanguage,
-  ChatGroup,
-  UserChatGroup
-} from '../../entities'
+import { Language, UserLanguage } from '../../entities'
+import { IChatGroupReducer } from '../../shared-types'
 import languageReducer from './language/reducer'
-import userReducer from './user/reducer'
+import userReducer, { IUserReducerState } from './user/reducer'
 import userLanguageReducer from './userlanguage/reducer'
 import chatGroupReducer from './chatgroup/reducer'
-import userChatGroupReducer from './userchatgroup/reducer'
+import userChatGroupReducer, {
+  IUserChatGroupReducerState
+} from './userchatgroup/reducer'
 import authReducer from './auth/reducer'
 import { IAuthReducerState } from './auth/types'
 
@@ -20,10 +17,10 @@ import refreshTokenMiddleware from './auth/middleware'
 
 interface ICombinedReducer {
   languages: Language[]
-  users: User[]
+  users: IUserReducerState
   userLanguages: UserLanguage[]
-  chatGroups: ChatGroup[]
-  userChatGroups: UserChatGroup[]
+  chatGroups: IChatGroupReducer[]
+  userChatGroups: IUserChatGroupReducerState
   auth: IAuthReducerState
 }
 

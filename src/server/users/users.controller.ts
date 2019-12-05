@@ -11,15 +11,26 @@ import UserService from './users.service'
 import AuthGuard from '../auth/auth.guard'
 import { User } from '../../entities'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
+import { IUserAndChatGroupGetReturn } from '../../shared-types'
 
 @Controller('/api/user')
 export default class UserController {
   constructor(private userService: UserService) {}
 
-  @Get('/specified/:userIds')
+  @Get('/linked/:userId/withchatgroup')
   @UseGuards(AuthGuard)
-  getSpecifiedUsers(@Param('userIds') userIds: string): Promise<User[]> {
-    return this.userService.getSpecifiedUsers(userIds)
+  getUsersAndTheirChatGroups(
+    @Param('userId') userId: string
+  ): Promise<IUserAndChatGroupGetReturn[]> {
+    return this.userService.getUsersAndTheirChatGroups(userId, 'user')
+  }
+
+  @Get('/linked/language/:language/withchatgroup')
+  @UseGuards(AuthGuard)
+  getUsersLinkedToLanguage(
+    @Param('language') language: string
+  ): Promise<IUserAndChatGroupGetReturn[]> {
+    return this.userService.getUsersAndTheirChatGroups(language, 'language')
   }
 
   @Post()

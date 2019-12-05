@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { ReduxState } from '../../store'
-import { IUsersByChatGroup } from './index'
+import { IUsersByChatGroup } from './shared-types'
 import { getFavoriteChatGroupsOfUser } from './helperfunctions'
 import ChatBio from './ChatBio'
 import Typography from '@material-ui/core/Typography'
@@ -27,16 +27,14 @@ const FavoriteChats: React.FC<IFavoriteChatsProps> = ({
 }
 
 const mapStateToProps = ({
-  auth,
   users,
   chatGroups,
   userChatGroups
 }: ReduxState): IReduxStateProps => {
   const favoriteChatGroups: IUsersByChatGroup[] = getFavoriteChatGroupsOfUser(
-    auth.user,
-    users,
+    users.myUsers,
     chatGroups,
-    userChatGroups
+    userChatGroups.myUserCGs
   )
   return {
     favoriteChatGroups

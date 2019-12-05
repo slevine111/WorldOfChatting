@@ -12,14 +12,8 @@ export default class UserLanguageService {
     private readonly userLanguageRepository: Repository<UserLanguage>
   ) {}
 
-  getUserLanguagesLinkedToUser(userId: string): Promise<UserLanguage[]> {
-    return this.userLanguageRepository.query(
-      `SELECT A.*
-       FROM user_language A
-       JOIN (SELECT language FROM user_language WHERE "userId" = $1) B ON A.language = B.language
-    `,
-      [userId]
-    )
+  getUserLanguagesOfLanguage(language: string): Promise<UserLanguage[]> {
+    return this.userLanguageRepository.find({ where: { language } })
   }
 
   getUserCountByLanguage(userId: string): Promise<IUserCountByLanguage[]> {

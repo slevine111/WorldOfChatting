@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { ReduxState } from '../../store'
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
-import { IWordCloudArrayObject } from './index'
+import { IWordCloudArrayObject } from './shared-types'
 import { generateWordCloudArray } from './helperfunctions'
 import Typography from '@material-ui/core/Typography'
 import ReactWordCloud from 'react-wordcloud'
@@ -26,7 +26,6 @@ interface IMyLanguagesProps extends IReduxStateProps, RouteComponentProps {}
 
 const MyLanguages: React.FC<IMyLanguagesProps> = ({
   usersCountByLanguage,
-  match,
   history
 }) => {
   const [
@@ -48,8 +47,6 @@ const MyLanguages: React.FC<IMyLanguagesProps> = ({
     selectedLanguageDOMElement !== null
       ? selectedLanguageDOMElement.textContent!
       : ''
-  console.log(usersCountByLanguage)
-  console.log(selectedLanguage)
   return (
     <div>
       <Typography variant="h6">My Languages</Typography>
@@ -69,7 +66,7 @@ const MyLanguages: React.FC<IMyLanguagesProps> = ({
         onClose={() => setSelectedLanguageDOMElement(null)}
         anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
       >
-        <MenuItem>
+        <MenuItem onClick={() => history.push(`/language/${selectedLanguage}`)}>
           {selectedLanguage !== '' ? `Go to ${selectedLanguage} page` : ''}
         </MenuItem>
       </Popover>

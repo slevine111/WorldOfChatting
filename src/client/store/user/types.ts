@@ -1,1 +1,5 @@
-export const SET_USERS = <const>'SET_USERS'
+export const SET_MY_USERS = <const>'SET_MY_USERS'
+export const SET_CURRENT_LANGUAGE_USERS = <const>'SET_CURRENT_LANGUAGE_USERS'
+export const SET_MY_AND_CURRENT_LANGUAGE_USERS = <const>(
+  'SET_MY_AND_CURRENT_LANGUAGE_USERS'
+)

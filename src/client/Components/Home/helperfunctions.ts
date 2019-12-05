@@ -4,10 +4,10 @@ import {
   ChatGroup
 } from '../../../entities'
 import { IAuthReducerUserField } from '../../store/auth/types'
-import { IUsersByChatGroup, IWordCloudArrayObject } from './index'
+import { IUsersByChatGroup, IWordCloudArrayObject } from './shared-types'
 
 interface IObjectOfUserArrays {
-  [key: string]: User[] | null
+  [key: string]: User[]
 }
 
 interface IObjectOfUsers {
@@ -23,7 +23,6 @@ const mapUserById = (users: User[]): IObjectOfUsers => {
 }
 
 export const getFavoriteChatGroupsOfUser = (
-  loggedInUser: IAuthReducerUserField,
   users: User[],
   chatGroups: ChatGroup[],
   userChatGroups: UserChatGroup[]
@@ -31,18 +30,11 @@ export const getFavoriteChatGroupsOfUser = (
   const usersMap: IObjectOfUsers = mapUserById(users)
   let objectByChatGroup: IObjectOfUserArrays = {}
   for (let i = 0; i < userChatGroups.length; ++i) {
-    const { userId, chatGroupId, favorite } = userChatGroups[i]
-    if (userId === loggedInUser.id && !favorite) {
-      objectByChatGroup[chatGroupId] = null
-    } else if (
-      userId !== loggedInUser.id &&
-      objectByChatGroup[chatGroupId] !== null
-    ) {
-      if (objectByChatGroup[chatGroupId]) {
-        objectByChatGroup[chatGroupId]!.push(usersMap[userId])
-      } else {
-        objectByChatGroup[chatGroupId] = [usersMap[userId]]
-      }
+    const { userId, chatGroupId } = userChatGroups[i]
+    if (objectByChatGroup[chatGroupId]) {
+      objectByChatGroup[chatGroupId].push(usersMap[userId])
+    } else {
+      objectByChatGroup[chatGroupId] = [usersMap[userId]]
     }
   }
   let usersByChatGroup: IUsersByChatGroup[] = []

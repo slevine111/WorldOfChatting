@@ -1,7 +1,8 @@
-import { Repository, In } from 'typeorm'
+import { Repository } from 'typeorm'
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'
+import { IUserAndChatGroupGetReturn } from '../../shared-types'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
 import { compare, hash } from 'bcrypt'
 
@@ -60,10 +61,41 @@ export default class UserService {
     return this.userRepository.findOne({ where: { id } })
   }
 
-  getSpecifiedUsers(userIds: string): Promise<User[]> {
-    return this.userRepository.find({
-      id: In(userIds.split(','))
-    })
+  getUsersAndTheirChatGroups(
+    filteringValue: string,
+    entityLinkedTo: 'user' | 'language'
+  ): Promise<IUserAndChatGroupGetReturn[]> {
+    let queryNonSelectPart: string = ''
+    if (entityLinkedTo === 'user') {
+      queryNonSelectPart = `
+        FROM user_chat_group ucg
+        JOIN (SELECT "chatGroupId" FROM user_chat_group WHERE "userId" = $1 AND favorite = true) filter
+        ON ucg."chatGroupId" = filter."chatGroupId"
+        JOIN "user" u ON ucg."userId" = u.id
+        WHERE ucg."userId" != $2`
+    } else {
+      queryNonSelectPart = `
+        FROM "user" u
+        JOIN (SELECT language, "userId" FROM user_language WHERE language = $1) filter ON u.id = filter."userId"
+        JOIN user_chat_group ucg ON u.id = ucg."userId"
+        JOIN chat_group cg ON ucg."chatGroupId" = cg.id
+        WHERE cg.language = $2`
+    }
+
+    return this.userRepository.query(
+      `SELECT u.id as "userTableId",
+              u."firstName",
+              u."lastName",
+              u."loggedIn",
+              u.email,
+              ucg.id as "userChatGroupId",
+              ucg."userId",
+              ucg."chatGroupId",
+              ucg.favorite\n
+       ${queryNonSelectPart}
+    `,
+      [filteringValue, filteringValue]
+    )
   }
 
   async addNewUser(user: IUserPostDTO): Promise<User> {

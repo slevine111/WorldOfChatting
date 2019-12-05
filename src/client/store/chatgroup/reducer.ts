@@ -1,11 +1,11 @@
 import { SET_CHAT_GROUPS } from './types'
 import { ChatGroupActionTypes } from './actions'
-import { ChatGroup } from '../../../entities'
+import { IChatGroupReducer } from '../../../shared-types'
 
 export default (
-  state: ChatGroup[] = [],
+  state: IChatGroupReducer[] = [],
   action: ChatGroupActionTypes
-): ChatGroup[] => {
+): IChatGroupReducer[] => {
   switch (action.type) {
     case SET_CHAT_GROUPS:
       return action.chatGroups

@@ -7,7 +7,7 @@ import Badge from '@material-ui/core/Badge'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
-import styles from './styles'
+import styles from '../Home/styles'
 
 interface IUserWithLanguageType extends User {
   type: UserLanguageTypeFieldOptions

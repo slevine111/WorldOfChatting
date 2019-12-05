@@ -1,12 +1,22 @@
-import { User, ChatGroup, UserChatGroup } from '../../entities'
+import { User, UserChatGroup, UserLanguage } from '../../entities'
 import {
   IUserCountByLanguage,
-  ILanguageWithActiveAndTypeFields
+  ILanguageWithActiveAndTypeFields,
+  IChatGroupReducer,
+  IUserAndChatGroupGetReturn
 } from '../../shared-types'
-import { setUsers } from './user/actions'
+import {
+  setMyUsers,
+  setCurrentLanguageUsers,
+  setMyAndCurrentLanguageUsers
+} from './user/actions'
 import { setChatGroups } from './chatgroup/actions'
+import {
+  setMyUserChatGroups,
+  setCurrentLanguageUserChatGroups,
+  setMyAndCurrentLanguageUserChatGroups
+} from './userchatgroup/actions'
 import { setUserLanguages } from './userlanguage/actions'
-import { setUserChatGroups } from './userchatgroup/actions'
 import { IUserAndExpireTime, IAuthReducerUserField } from './auth/types'
 import { setUserAndAccessTokenFields, setToInitialState } from './auth/actions'
 import { IUserPostDTO, IUserUpdateDTO } from '../../server/users/users.dto'
@@ -16,12 +26,13 @@ import {
 } from '../../server/userlanguages/userlanguages.dto'
 import axios, { AxiosResponse } from 'axios'
 
-interface IPlainObject {
-  [key: string]: true
-}
-
 interface IUserCountByLanguageMap {
   [key: string]: number | undefined
+}
+
+interface IUsersAndUserChatGroups {
+  users: User[]
+  userChatGroups: UserChatGroup[]
 }
 
 export const signupNewUserProcess = (
@@ -49,8 +60,8 @@ export const logoutUserProcess = (
     await axios.put(`/api/user/${userId}`, partialUpdatedUser)
     dispatch(setChatGroups([]))
     dispatch(setUserLanguages([]))
-    dispatch(setUsers([]))
-    dispatch(setUserChatGroups([]))
+    dispatch(setMyAndCurrentLanguageUsers([], []))
+    dispatch(setMyAndCurrentLanguageUserChatGroups([], []))
     return axios.delete('/api/auth').then((): void => {
       dispatch(setToInitialState())
     })
@@ -60,25 +71,44 @@ export const logoutUserProcess = (
   return innerFunction
 }
 
+export const languagePageDataRetrival = (language: string, userId: string) => {
+  return async (dispatch: any) => {
+    const [userLanguages, usersWithChatGroups]: [
+      AxiosResponse<UserLanguage[]>,
+      AxiosResponse<IUserAndChatGroupGetReturn[]>
+    ] = await Promise.all([
+      axios.get(`/api/userlanguage/language/${language}`),
+      axios.get(`/api/user/linked/language/${language}/withchatgroup`)
+    ])
+    dispatch(setUserLanguages(userLanguages.data))
+    const { users, userChatGroups } = separateUserAndChatGroupFields(
+      usersWithChatGroups.data,
+      userId
+    )
+    dispatch(setCurrentLanguageUsers(users))
+    dispatch(setCurrentLanguageUserChatGroups(userChatGroups))
+  }
+}
+
 export const getAndSetSingleUserRelatedData = async (
   userAndExpireTime: IUserAndExpireTime,
   dispatch: any
 ): Promise<void> => {
   const { expireTime, user } = userAndExpireTime
-  const [languages, chatGroups, userCountByLanguage, userChatGroups]: [
+  const [languages, chatGroups, userCountByLanguage, usersWithChatGroups]: [
     AxiosResponse<ILanguageWithActiveAndTypeFields[]>,
-    AxiosResponse<ChatGroup[]>,
+    AxiosResponse<IChatGroupReducer[]>,
     AxiosResponse<IUserCountByLanguage[]>,
-    AxiosResponse<UserChatGroup[]>
+    AxiosResponse<IUserAndChatGroupGetReturn[]>
   ] = await Promise.all([
     axios.get(`/api/language/${user.id}`),
-    axios.get(`/api/chatgroup/${user.id}`),
+    axios.get(`/api/chatgroup/${user.id}/favorite`),
     axios.get(`/api/userlanguage/linked/${user.id}/countbylanguage`),
-    axios.get(`/api/userchatgroup/linked/${user.id}`)
+    axios.get(`/api/user/linked/${user.id}/withchatgroup`)
   ])
-  const uniqueUserIds: string[] = getUniqueUserIds(userChatGroups.data)
-  const usersResponse: AxiosResponse<User[]> = await axios.get(
-    `/api/user/specified/${uniqueUserIds.join(',')}`
+  const { users, userChatGroups } = separateUserAndChatGroupFields(
+    usersWithChatGroups.data,
+    user.id
   )
   let userWithLanguagesArray: IAuthReducerUserField = generateAuthReducerUserField(
     user,
@@ -89,8 +119,8 @@ export const getAndSetSingleUserRelatedData = async (
     setUserAndAccessTokenFields(userWithLanguagesArray, 'RECEIVED', expireTime)
   )
   dispatch(setChatGroups(chatGroups.data))
-  dispatch(setUsers(usersResponse.data))
-  dispatch(setUserChatGroups(userChatGroups.data))
+  dispatch(setMyUsers(users))
+  dispatch(setMyUserChatGroups(userChatGroups))
 }
 
 const generateAuthReducerUserField = (
@@ -112,11 +142,30 @@ const generateAuthReducerUserField = (
   return userWithLanguagesArray
 }
 
-const getUniqueUserIds = (users: UserChatGroup[]): string[] => {
-  const uniqueUserIds: IPlainObject = {}
-  for (let i = 0; i < users.length; ++i) {
-    const { userId } = users[i]
-    if (!uniqueUserIds[userId]) uniqueUserIds[userId] = true
+const separateUserAndChatGroupFields = (
+  usersWithChatGroups: IUserAndChatGroupGetReturn[],
+  userIdToFilterOn: string
+): IUsersAndUserChatGroups => {
+  let uniqueUserIds: Set<string> = new Set()
+  let users: User[] = []
+  let userChatGroups: UserChatGroup[] = []
+  for (let i = 0; i < usersWithChatGroups.length; ++i) {
+    if (usersWithChatGroups[i].userId !== userIdToFilterOn) {
+      const {
+        userTableId,
+        firstName,
+        lastName,
+        email,
+        loggedIn,
+        ...userChatGroupFields
+      } = usersWithChatGroups[i]
+      const { userChatGroupId, ...nonTableIdFields } = userChatGroupFields
+      userChatGroups.push({ id: userChatGroupId, ...nonTableIdFields })
+      if (!uniqueUserIds.has(userTableId)) {
+        users.push({ id: userTableId, firstName, lastName, email, loggedIn })
+        uniqueUserIds.add(userTableId)
+      }
+    }
   }
-  return Object.keys(uniqueUserIds)
+  return { users, userChatGroups }
 }

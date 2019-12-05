@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react'
-import { Redirect } from 'react-router-dom'
+import { Redirect, RouteComponentProps } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { ReduxState } from '../store/index'
 import { User } from '../../entities'
@@ -9,11 +9,11 @@ const ProtectedLoggedInPageHOC = (Component: any): any => {
     user: User
   }
 
-  const ProtectedLoggedInPage: React.FC<IReduxStateProps> = ({
-    user
-  }): ReactElement => {
+  const ProtectedLoggedInPage: React.FC<IReduxStateProps &
+    RouteComponentProps> = (props): ReactElement => {
+    const { user, ...routeComponentProps } = props
     if (!user.id) return <Redirect to="/" />
-    return <Component />
+    return <Component {...{ ...routeComponentProps }} />
   }
 
   const mapStateToProps = ({

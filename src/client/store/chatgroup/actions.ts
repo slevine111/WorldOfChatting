@@ -1,7 +1,7 @@
 import { SET_CHAT_GROUPS } from './types'
-import { ChatGroup } from '../../../entities'
+import { IChatGroupReducer } from '../../../shared-types'
 
-export const setChatGroups = (chatGroups: ChatGroup[]) => ({
+export const setChatGroups = (chatGroups: IChatGroupReducer[]) => ({
   type: SET_CHAT_GROUPS,
   chatGroups
 })

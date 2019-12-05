@@ -1,6 +1,6 @@
 import React from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { IUsersByChatGroup } from './index'
+import { IUsersByChatGroup } from './shared-types'
 import Typography from '@material-ui/core/Typography'
 import Badge from '@material-ui/core/Badge'
 import Avatar from '@material-ui/core/Avatar'

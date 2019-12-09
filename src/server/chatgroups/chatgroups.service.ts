@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ChatGroup } from '../../entities'
-import { IChatGroupReducer } from '../../shared-types'
+import {
+  IChatGroupReducer,
+  IChatGroupWithFavoriteField
+} from '../../shared-types'
 
 @Injectable()
 export default class ChatGroupService {
@@ -11,15 +14,26 @@ export default class ChatGroupService {
     private readonly chatGroupRepository: Repository<ChatGroup>
   ) {}
 
-  getFavoriteChatGroupsOfSingleUser(
-    userId: string
-  ): Promise<IChatGroupReducer[]> {
-    return this.chatGroupRepository.query(
-      `SELECT A.*, favorite
+  getChatGroupsOfSingleUser(userId: string): Promise<IChatGroupReducer> {
+    return this.chatGroupRepository
+      .query(
+        `SELECT A.*, favorite
        FROM chat_group A
        JOIN user_chat_group B ON A.id = B."chatGroupId"
-       WHERE "userId" = $1 AND favorite = true`,
-      [userId]
-    )
+       WHERE "userId" = $1`,
+        [userId]
+      )
+      .then((chatGroups: IChatGroupWithFavoriteField[]) => {
+        let chatGroupsByLanguage: IChatGroupReducer = {}
+        for (let i = 0; i < chatGroups.length; ++i) {
+          const { language } = chatGroups[i]
+          if (chatGroupsByLanguage[language]) {
+            chatGroupsByLanguage[language].push(chatGroups[i])
+          } else {
+            chatGroupsByLanguage[language] = [chatGroups[i]]
+          }
+        }
+        return chatGroupsByLanguage
+      })
   }
 }

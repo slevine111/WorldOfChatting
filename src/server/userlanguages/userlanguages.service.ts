@@ -13,7 +13,12 @@ export default class UserLanguageService {
   ) {}
 
   getUserLanguagesOfLanguage(language: string): Promise<UserLanguage[]> {
-    return this.userLanguageRepository.find({ where: { language } })
+    return this.userLanguageRepository.query(
+      `SELECT *
+       FROM user_language
+       WHERE language = $1`,
+      [language]
+    )
   }
 
   getUserCountByLanguage(userId: string): Promise<IUserCountByLanguage[]> {

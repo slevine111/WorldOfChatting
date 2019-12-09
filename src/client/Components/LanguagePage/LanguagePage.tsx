@@ -4,17 +4,25 @@ import { ReduxState } from '../../store'
 import { IAuthReducerUserField } from '../../store/auth/types'
 import { RouteComponentProps } from 'react-router-dom'
 import { languagePageDataRetrival } from '../../store/shared-actions'
+import { checkIfDataExists } from '../utilityfunctions'
+import { getUsersOfLanguageInformation } from './helperfunctions'
+import { IUsersofLanguageInformation } from './shared-types'
+import CurrentChats from './CurrentChats'
+import AllUsers from './AllUsers'
+import Typography from '@material-ui/core/Typography'
+import Paper from '@material-ui/core/Paper'
 
 interface IMatchParams {
   language: string
 }
 
-interface IReduxStateProps {
+interface IReduxStateProps extends IUsersofLanguageInformation {
   user: IAuthReducerUserField
+  dataExists: boolean
 }
 
 interface IDispatchProps {
-  languagePageDataRetrival: (language: string, userId: string) => void
+  languagePageDataRetrival: (language: string) => void
 }
 
 interface ILanguagePageProps
@@ -23,25 +31,68 @@ interface ILanguagePageProps
     IReduxStateProps {}
 
 const LanguagePage: React.FC<ILanguagePageProps> = ({
-  match,
+  match: {
+    params: { language }
+  },
   languagePageDataRetrival,
-  user
+  dataExists,
+  usersByChatGroup,
+  userIdsOfSoloChats,
+  usersMap
 }) => {
   useEffect(() => {
-    languagePageDataRetrival(match.params.language, user.id)
-  })
+    languagePageDataRetrival(language)
+  }, [language])
 
-  return <div>23</div>
+  if (!dataExists) return <div>not ready</div>
+  return (
+    <div>
+      <Typography variant="h6">{language}</Typography>
+      <Paper>
+        <CurrentChats {...{ ...{ language, usersByChatGroup } }} />
+        <AllUsers {...{ ...{ language, userIdsOfSoloChats, usersMap } }} />
+      </Paper>
+    </div>
+  )
 }
 
-const mapStateToProps = ({ auth }: ReduxState): IReduxStateProps => ({
-  user: auth.user
-})
+const mapStateToProps = (
+  {
+    auth: { user },
+    userChatGroups,
+    userLanguages,
+    users,
+    chatGroups
+  }: ReduxState,
+  { match: { params } }: RouteComponentProps<IMatchParams>
+): IReduxStateProps => {
+  const dataExists: boolean = checkIfDataExists({
+    objects: [user],
+    arrays: [users.currentLanguageUsers, userLanguages]
+  })
+  if (dataExists) {
+    const usersOfLanguageInfo = getUsersOfLanguageInformation(
+      users.currentLanguageUsers,
+      chatGroups,
+      userChatGroups,
+      params.language
+    )
+    return { user, dataExists, ...usersOfLanguageInfo }
+  } else {
+    return {
+      user,
+      dataExists,
+      usersByChatGroup: [],
+      usersMap: {},
+      userIdsOfSoloChats: {}
+    }
+  }
+}
 
 const mapDispatchToProps = (dispatch: any): IDispatchProps => {
   return {
-    languagePageDataRetrival: (language: string, userId: string) => {
-      dispatch(languagePageDataRetrival(language, userId))
+    languagePageDataRetrival: (language: string) => {
+      dispatch(languagePageDataRetrival(language))
     }
   }
 }

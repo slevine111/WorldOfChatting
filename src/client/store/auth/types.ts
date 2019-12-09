@@ -12,7 +12,7 @@ export const ADD_POSTPONNED_ACTION = <const>'ADD_POSTPONNED_ACTION'
 
 export type PossibleStatuses = 'NONE' | 'FETCHING' | 'RECEIVED'
 
-interface ILanguageExpanded extends ILanguageWithActiveAndTypeFields {
+export interface ILanguageExpanded extends ILanguageWithActiveAndTypeFields {
   usersOnlineCount: number
 }
 

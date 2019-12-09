@@ -1,9 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { ReduxState } from '../../store'
-import { IUsersByChatGroup } from './shared-types'
+import { IUsersByChatGroup } from '../intercomponent-types'
+import { checkIfDataExists } from '../utilityfunctions'
 import { getFavoriteChatGroupsOfUser } from './helperfunctions'
-import ChatBio from './ChatBio'
+import ChatBio from '../_shared/ChatBio'
 import Typography from '@material-ui/core/Typography'
 
 interface IReduxStateProps {
@@ -20,7 +21,9 @@ const FavoriteChats: React.FC<IFavoriteChatsProps> = ({
       <Typography variant="h6">My Favorite Chats</Typography>
       {favoriteChatGroups.length &&
         favoriteChatGroups.map((ch: IUsersByChatGroup, idx: number) => {
-          return <ChatBio key={idx} usersByChatGroup={ch} />
+          return (
+            <ChatBio key={idx} usersByChatGroup={ch} displayLanguage={true} />
+          )
         })}
     </div>
   )
@@ -31,10 +34,15 @@ const mapStateToProps = ({
   chatGroups,
   userChatGroups
 }: ReduxState): IReduxStateProps => {
+  const dataExists: boolean = checkIfDataExists({
+    objects: [],
+    arrays: [users.myUsers, userChatGroups, Object.keys(chatGroups)]
+  })
+  if (!dataExists) return { favoriteChatGroups: [] }
   const favoriteChatGroups: IUsersByChatGroup[] = getFavoriteChatGroupsOfUser(
     users.myUsers,
     chatGroups,
-    userChatGroups.myUserCGs
+    userChatGroups
   )
   return {
     favoriteChatGroups

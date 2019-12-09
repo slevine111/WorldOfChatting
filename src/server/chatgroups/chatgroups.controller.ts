@@ -8,10 +8,10 @@ import { IChatGroupReducer } from '../../shared-types'
 export default class ChatGroupController {
   constructor(private chatGroupService: ChatGroupService) {}
 
-  @Get('/:userId/favorite')
-  getFavoriteChatGroupsOfSingleUser(
+  @Get('/:userId')
+  getChatGroupsOfSingleUser(
     @Param('userId') userId: string
-  ): Promise<IChatGroupReducer[]> {
-    return this.chatGroupService.getFavoriteChatGroupsOfSingleUser(userId)
+  ): Promise<IChatGroupReducer> {
+    return this.chatGroupService.getChatGroupsOfSingleUser(userId)
   }
 }

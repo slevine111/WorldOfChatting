@@ -62,26 +62,8 @@ export default class UserService {
   }
 
   getUsersAndTheirChatGroups(
-    filteringValue: string,
-    entityLinkedTo: 'user' | 'language'
+    userId: string
   ): Promise<IUserAndChatGroupGetReturn[]> {
-    let queryNonSelectPart: string = ''
-    if (entityLinkedTo === 'user') {
-      queryNonSelectPart = `
-        FROM user_chat_group ucg
-        JOIN (SELECT "chatGroupId" FROM user_chat_group WHERE "userId" = $1 AND favorite = true) filter
-        ON ucg."chatGroupId" = filter."chatGroupId"
-        JOIN "user" u ON ucg."userId" = u.id
-        WHERE ucg."userId" != $2`
-    } else {
-      queryNonSelectPart = `
-        FROM "user" u
-        JOIN (SELECT language, "userId" FROM user_language WHERE language = $1) filter ON u.id = filter."userId"
-        JOIN user_chat_group ucg ON u.id = ucg."userId"
-        JOIN chat_group cg ON ucg."chatGroupId" = cg.id
-        WHERE cg.language = $2`
-    }
-
     return this.userRepository.query(
       `SELECT u.id as "userTableId",
               u."firstName",
@@ -91,10 +73,29 @@ export default class UserService {
               ucg.id as "userChatGroupId",
               ucg."userId",
               ucg."chatGroupId",
-              ucg.favorite\n
-       ${queryNonSelectPart}
+              ucg.favorite
+      FROM user_chat_group ucg
+      JOIN (SELECT "chatGroupId" FROM user_chat_group WHERE "userId" = $1) filter
+      ON ucg."chatGroupId" = filter."chatGroupId"
+      JOIN "user" u ON ucg."userId" = u.id
+      WHERE ucg."userId" != $2
     `,
-      [filteringValue, filteringValue]
+      [userId, userId]
+    )
+  }
+
+  getUsersLinkedToLanguage(language: string): Promise<User[]> {
+    return this.userRepository.query(
+      `SELECT A.id,
+              A."firstName",
+              A."lastName",
+              A.email,
+              A."loggedIn"
+       FROM "user" A
+       JOIN user_language B ON A.id = B."userId"
+       WHERE language = $1
+      `,
+      [language]
     )
   }
 

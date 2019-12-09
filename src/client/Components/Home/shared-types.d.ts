@@ -6,9 +6,3 @@ export interface IWordCloudArrayObject {
   value: number
   userType: UserLanguageTypeFieldOptions
 }
-
-export interface IUsersByChatGroup {
-  name: string
-  language: string
-  users: User[]
-}

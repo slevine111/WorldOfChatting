@@ -1,51 +1,12 @@
+import { User, UserChatGroup } from '../../../entities'
+import { IUsersByChatGroup } from '../intercomponent-types'
 import {
-  User,
-  /*UserLanguage,*/ UserChatGroup,
-  ChatGroup
-} from '../../../entities'
+  IChatGroupReducer,
+  IChatGroupWithFavoriteField
+} from '../../../shared-types'
 import { IAuthReducerUserField } from '../../store/auth/types'
-import { IUsersByChatGroup, IWordCloudArrayObject } from './shared-types'
-
-interface IObjectOfUserArrays {
-  [key: string]: User[]
-}
-
-interface IObjectOfUsers {
-  [key: string]: User
-}
-
-const mapUserById = (users: User[]): IObjectOfUsers => {
-  let usersMap: IObjectOfUsers = {}
-  for (let i = 0; i < users.length; ++i) {
-    usersMap[users[i].id] = users[i]
-  }
-  return usersMap
-}
-
-export const getFavoriteChatGroupsOfUser = (
-  users: User[],
-  chatGroups: ChatGroup[],
-  userChatGroups: UserChatGroup[]
-): IUsersByChatGroup[] => {
-  const usersMap: IObjectOfUsers = mapUserById(users)
-  let objectByChatGroup: IObjectOfUserArrays = {}
-  for (let i = 0; i < userChatGroups.length; ++i) {
-    const { userId, chatGroupId } = userChatGroups[i]
-    if (objectByChatGroup[chatGroupId]) {
-      objectByChatGroup[chatGroupId].push(usersMap[userId])
-    } else {
-      objectByChatGroup[chatGroupId] = [usersMap[userId]]
-    }
-  }
-  let usersByChatGroup: IUsersByChatGroup[] = []
-  for (let i = 0; i < chatGroups.length; ++i) {
-    const { id, name, language } = chatGroups[i]
-    if (objectByChatGroup[id]) {
-      usersByChatGroup.push({ name, language, users: objectByChatGroup[id]! })
-    }
-  }
-  return usersByChatGroup
-}
+import { IWordCloudArrayObject } from './shared-types'
+import { groupUserChatGroups } from '../utilityfunctions'
 
 export const generateWordCloudArray = (
   loggedInUser: IAuthReducerUserField
@@ -57,6 +18,32 @@ export const generateWordCloudArray = (
     wordCloudArray.push({ text: language, value: usersOnlineCount, userType })
   }
   return wordCloudArray
+}
+
+export const getFavoriteChatGroupsOfUser = (
+  users: User[],
+  chatGroups: IChatGroupReducer,
+  userChatGroups: UserChatGroup[]
+): IUsersByChatGroup[] => {
+  const { usersGrouped } = groupUserChatGroups(users, userChatGroups)
+  let usersByChatGroup: IUsersByChatGroup[] = []
+  const languages: string[] = Object.keys(chatGroups)
+  for (let j = 0; j < languages.length; ++j) {
+    const language: string = languages[j]
+    const chatGroupsOfLanguage: IChatGroupWithFavoriteField[] =
+      chatGroups[language]
+    for (let k = 0; k < chatGroupsOfLanguage.length; ++k) {
+      const { id, name, favorite } = chatGroupsOfLanguage[k]
+      if (favorite) {
+        usersByChatGroup.push({
+          name,
+          language,
+          users: usersGrouped[id]!
+        })
+      }
+    }
+  }
+  return usersByChatGroup
 }
 
 /*export const groupUsersByLanguage = (

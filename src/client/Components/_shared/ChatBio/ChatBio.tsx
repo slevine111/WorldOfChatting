@@ -1,6 +1,6 @@
 import React from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { IUsersByChatGroup } from './shared-types'
+import { IUsersByChatGroup } from '../../intercomponent-types'
 import Typography from '@material-ui/core/Typography'
 import Badge from '@material-ui/core/Badge'
 import Avatar from '@material-ui/core/Avatar'
@@ -9,11 +9,16 @@ import styles from './styles'
 
 interface IOwnProps {
   usersByChatGroup: IUsersByChatGroup
+  displayLanguage: boolean
 }
 
 interface IChatBioProps extends IOwnProps, RouteComponentProps {}
 
-const ChatBio: React.FC<IChatBioProps> = ({ usersByChatGroup, history }) => {
+const ChatBio: React.FC<IChatBioProps> = ({
+  usersByChatGroup,
+  history,
+  displayLanguage
+}) => {
   const {
     loggedInBadge,
     loggedOutBadge,
@@ -22,6 +27,8 @@ const ChatBio: React.FC<IChatBioProps> = ({ usersByChatGroup, history }) => {
     avatarColor
   } = styles()
   const { users, language, name } = usersByChatGroup
+  if (!users || !users[0] || users.includes(undefined))
+    return <div>not ready</div>
   const { loggedIn, firstName, lastName } = users[0]
   const groupChat: boolean = users.length > 1
   const numberUsersOnline: number = users.reduce(
@@ -63,7 +70,7 @@ const ChatBio: React.FC<IChatBioProps> = ({ usersByChatGroup, history }) => {
             className={blockDisplay}
           >{`${numberUsersOnline}/${users.length} online`}</b>
         )}
-        <em>{language}</em>
+        {displayLanguage && <em>{language}</em>}
       </Typography>
     </div>
   )

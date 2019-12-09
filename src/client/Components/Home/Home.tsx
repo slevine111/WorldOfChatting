@@ -31,7 +31,7 @@ const mapStateToProps = ({
 }: ReduxState): IReduxStateProps => {
   const dataExistsInput: IGroupedArraysAndObjects = {
     objects: [auth.user],
-    arrays: [users.myUsers, chatGroups]
+    arrays: [users.myUsers, Object.keys(chatGroups)]
   }
   const dataLoaded: boolean = checkIfDataExists(dataExistsInput)
   return { dataLoaded }

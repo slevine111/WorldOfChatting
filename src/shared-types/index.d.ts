@@ -11,8 +11,12 @@ export interface ILanguageWithActiveAndTypeFields extends Language {
   userType: UserLanguageTypeFieldOptions
 }
 
-export interface IChatGroupReducer extends ChatGroup {
+export interface IChatGroupWithFavoriteField extends ChatGroup {
   favorite: boolean
+}
+
+export interface IChatGroupReducer {
+  [key: string]: IChatGroupWithFavoriteField[]
 }
 
 export interface IUserAndChatGroupGetReturn {

@@ -22,15 +22,15 @@ export default class UserController {
   getUsersAndTheirChatGroups(
     @Param('userId') userId: string
   ): Promise<IUserAndChatGroupGetReturn[]> {
-    return this.userService.getUsersAndTheirChatGroups(userId, 'user')
+    return this.userService.getUsersAndTheirChatGroups(userId)
   }
 
-  @Get('/linked/language/:language/withchatgroup')
+  @Get('/linked/language/:language')
   @UseGuards(AuthGuard)
   getUsersLinkedToLanguage(
     @Param('language') language: string
-  ): Promise<IUserAndChatGroupGetReturn[]> {
-    return this.userService.getUsersAndTheirChatGroups(language, 'language')
+  ): Promise<User[]> {
+    return this.userService.getUsersLinkedToLanguage(language)
   }
 
   @Post()

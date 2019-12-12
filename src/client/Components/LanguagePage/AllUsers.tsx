@@ -4,10 +4,13 @@ import { ReduxState } from '../../store'
 import { IUserWithLanguageFields } from './shared-types'
 import { getAllUsersOfLanguage } from './helperfunctions'
 import { IObjectOfOneType } from '../intercomponent-types'
-import { User } from '../../../entities'
+import { IUserFieldsForStore } from '../../../shared-types'
 import PersonIconList from './PersonIconList'
+import TableList from './TableList'
 import InviteToChatDialog from './InviteToChatDialog'
+import UsersFilterSidebar from './UsersFilterSidebar'
 import Typography from '@material-ui/core/Typography'
+import Grid from '@material-ui/core/Grid'
 
 interface IReduxStateProps {
   usersOfLanguage: IUserWithLanguageFields[]
@@ -15,14 +18,14 @@ interface IReduxStateProps {
 
 interface IOwnProps {
   language: string
-  usersMap: IObjectOfOneType<User>
+  usersMap: IObjectOfOneType<IUserFieldsForStore>
   userIdsOfSoloChats: IObjectOfOneType<true>
 }
 
 const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
   usersOfLanguage
 }) => {
-  const [display, setDisplay] = useState<'icon' | 'table'>('icon')
+  const [display, setDisplay] = useState<'icon' | 'table'>('table')
   const [selectedUser, setSelectedUser] = useState<IUserWithLanguageFields>(
     {} as IUserWithLanguageFields
   )
@@ -36,9 +39,19 @@ const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
         }}
       />
       <Typography variant="h6">All Users</Typography>
-      {display === 'icon' && (
-        <PersonIconList {...{ ...{ usersOfLanguage, setSelectedUser } }} />
-      )}
+      <Grid container>
+        <Grid item xs={12} sm={2}>
+          <UsersFilterSidebar />{' '}
+        </Grid>
+        <Grid item xs={12} sm={10}>
+          {display === 'icon' && (
+            <PersonIconList {...{ ...{ usersOfLanguage, setSelectedUser } }} />
+          )}
+          {display === 'table' && (
+            <TableList {...{ ...{ usersOfLanguage, setSelectedUser } }} />
+          )}
+        </Grid>
+      </Grid>
     </div>
   )
 }

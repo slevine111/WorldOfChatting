@@ -1,8 +1,9 @@
-import { User, UserChatGroup } from '../../../entities'
+import { UserChatGroup } from '../../../entities'
 import { IUsersByChatGroup } from '../intercomponent-types'
 import {
   IChatGroupReducer,
-  IChatGroupWithFavoriteField
+  IChatGroupWithFavoriteField,
+  IUserFieldsForStore
 } from '../../../shared-types'
 import { IAuthReducerUserField } from '../../store/auth/types'
 import { IWordCloudArrayObject } from './shared-types'
@@ -21,7 +22,7 @@ export const generateWordCloudArray = (
 }
 
 export const getFavoriteChatGroupsOfUser = (
-  users: User[],
+  users: IUserFieldsForStore[],
   chatGroups: IChatGroupReducer,
   userChatGroups: UserChatGroup[]
 ): IUsersByChatGroup[] => {

@@ -1,4 +1,5 @@
-import { User, UserChatGroup } from '../../entities'
+import { UserChatGroup } from '../../entities'
+import { IUserFieldsForStore } from '../../shared-types'
 import {
   IObjectOfUserArrays,
   IObjectOfOneType,
@@ -26,10 +27,10 @@ export const mapValuesById = <T extends IObjectWithIdProperty>(
 }
 
 export const groupUserChatGroups = (
-  users: User[],
+  users: IUserFieldsForStore[],
   userChatGroups: UserChatGroup[]
 ): IUsersInformation => {
-  const usersMap: IObjectOfOneType<User> = mapValuesById(users)
+  const usersMap: IObjectOfOneType<IUserFieldsForStore> = mapValuesById(users)
   let objectByChatGroup: IObjectOfUserArrays = {}
   for (let i = 0; i < userChatGroups.length; ++i) {
     const { userId, chatGroupId } = userChatGroups[i]

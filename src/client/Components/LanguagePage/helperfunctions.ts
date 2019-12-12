@@ -1,9 +1,10 @@
-import { User, UserChatGroup, UserLanguage } from '../../../entities'
+import { UserChatGroup, UserLanguage } from '../../../entities'
 import { IUsersByChatGroup, IObjectOfOneType } from '../intercomponent-types'
 import { groupUserChatGroups } from '../utilityfunctions'
 import {
   IChatGroupReducer,
-  IChatGroupWithFavoriteField
+  IChatGroupWithFavoriteField,
+  IUserFieldsForStore
 } from '../../../shared-types'
 import {
   IUserWithLanguageFields,
@@ -16,7 +17,7 @@ import {
 } from '../../store/auth/types'
 
 export const getUsersOfLanguageInformation = (
-  users: User[],
+  users: IUserFieldsForStore[],
   chatGroups: IChatGroupReducer,
   userChatGroups: UserChatGroup[],
   language: string
@@ -32,7 +33,7 @@ export const getUsersOfLanguageInformation = (
 
   for (let k = 0; k < chatGroupsOfLanguage.length; ++k) {
     const { id, name } = chatGroupsOfLanguage[k]
-    const usersOfChatGroup: User[] = usersGrouped[id]
+    const usersOfChatGroup = usersGrouped[id]
     if (Array.isArray(usersOfChatGroup)) {
       usersByChatGroup.push({
         name,
@@ -55,7 +56,7 @@ export const getAllUsersOfLanguage = (
   language: string,
   loggedInUser: IAuthReducerUserField,
   userLanguages: UserLanguage[],
-  usersMap: IObjectOfOneType<User>,
+  usersMap: IObjectOfOneType<IUserFieldsForStore>,
   userIdsOfSoloChats: IObjectOfOneType<true>
 ): IUserWithLanguageFields[] => {
   const loggedInUserLanguages: ILanguageExpanded[] = loggedInUser.languages

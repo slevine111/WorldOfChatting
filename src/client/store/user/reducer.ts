@@ -4,11 +4,11 @@ import {
   SET_MY_AND_CURRENT_LANGUAGE_USERS
 } from './types'
 import { UserActionTypes } from './actions'
-import { User } from '../../../entities'
+import { IUserFieldsForStore } from '../../../shared-types'
 
 export interface IUserReducerState {
-  myUsers: User[]
-  currentLanguageUsers: User[]
+  myUsers: IUserFieldsForStore[]
+  currentLanguageUsers: IUserFieldsForStore[]
 }
 
 export default (

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { ReduxState } from '../../store'
 import { IAuthReducerUserField } from '../../store/auth/types'
@@ -40,6 +40,7 @@ const LanguagePage: React.FC<ILanguagePageProps> = ({
   userIdsOfSoloChats,
   usersMap
 }) => {
+  const [selectedLanguage, setSelectedLanguage] = useState(language)
   useEffect(() => {
     languagePageDataRetrival(language)
   }, [language])

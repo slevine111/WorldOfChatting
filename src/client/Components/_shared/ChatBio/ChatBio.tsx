@@ -29,7 +29,7 @@ const ChatBio: React.FC<IChatBioProps> = ({
   const { users, language, name } = usersByChatGroup
   if (!users || !users[0] || users.includes(undefined))
     return <div>not ready</div>
-  const { loggedIn, firstName, lastName } = users[0]
+  const { loggedIn, firstName, lastName, fullName } = users[0]
   const groupChat: boolean = users.length > 1
   const numberUsersOnline: number = users.reduce(
     (sum, user) => sum + Number(user.loggedIn),
@@ -57,12 +57,10 @@ const ChatBio: React.FC<IChatBioProps> = ({
         </Avatar>{' '}
       </Badge>
       <Typography variant="body1">
-        {!groupChat && (
-          <b className={blockDisplay}>{`${firstName} ${lastName}`}</b>
-        )}
+        {!groupChat && <b className={blockDisplay}>{fullName}</b>}
         {groupChat && (
           <b className={blockDisplay}>
-            {name || `${firstName} ${lastName} & ${users.length - 1} more`}
+            {name || `${fullName} & ${users.length - 1} more`}
           </b>
         )}
         {groupChat && (

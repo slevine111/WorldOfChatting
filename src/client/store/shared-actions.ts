@@ -3,7 +3,8 @@ import {
   IUserCountByLanguage,
   ILanguageWithActiveAndTypeFields,
   IChatGroupReducer,
-  IUserAndChatGroupGetReturn
+  IUserAndChatGroupGetReturn,
+  IUserFieldsForStore
 } from '../../shared-types'
 import {
   setMyUsers,
@@ -27,7 +28,7 @@ interface IUserCountByLanguageMap {
 }
 
 interface IUsersAndUserChatGroups {
-  users: User[]
+  users: IUserFieldsForStore[]
   userChatGroups: UserChatGroup[]
 }
 
@@ -71,7 +72,7 @@ export const languagePageDataRetrival = (language: string) => {
   return async (dispatch: any) => {
     const [userLanguages, users]: [
       AxiosResponse<UserLanguage[]>,
-      AxiosResponse<User[]>
+      AxiosResponse<IUserFieldsForStore[]>
     ] = await Promise.all([
       axios.get(`/api/userlanguage/language/${language}`),
       axios.get(`/api/user/linked/language/${language}`)
@@ -138,7 +139,7 @@ const separateUserAndChatGroupFields = (
   userIdToFilterOn: string
 ): IUsersAndUserChatGroups => {
   let uniqueUserIds: Set<string> = new Set()
-  let users: User[] = []
+  let users: IUserFieldsForStore[] = []
   let userChatGroups: UserChatGroup[] = []
   for (let i = 0; i < usersWithChatGroups.length; ++i) {
     if (usersWithChatGroups[i].userId !== userIdToFilterOn) {
@@ -146,6 +147,7 @@ const separateUserAndChatGroupFields = (
         userTableId,
         firstName,
         lastName,
+        fullName,
         email,
         loggedIn,
         ...userChatGroupFields
@@ -157,7 +159,14 @@ const separateUserAndChatGroupFields = (
       })
 
       if (!uniqueUserIds.has(userTableId)) {
-        users.push({ id: userTableId, firstName, lastName, email, loggedIn })
+        users.push({
+          id: userTableId,
+          firstName,
+          lastName,
+          fullName,
+          email,
+          loggedIn
+        })
         uniqueUserIds.add(userTableId)
       }
     }

@@ -2,7 +2,7 @@ import { Repository } from 'typeorm'
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'
-import { IUserAndChatGroupGetReturn } from '../../shared-types'
+import { IUserAndChatGroupGetReturn, IUserFieldsForStore } from '../../shared-types'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
 import { compare, hash } from 'bcrypt'
 
@@ -68,6 +68,7 @@ export default class UserService {
       `SELECT u.id as "userTableId",
               u."firstName",
               u."lastName",
+              CONCAT(u."firstName",' ',u."lastName") as "fullName",
               u."loggedIn",
               u.email,
               ucg.id as "userChatGroupId",
@@ -84,11 +85,12 @@ export default class UserService {
     )
   }
 
-  getUsersLinkedToLanguage(language: string): Promise<User[]> {
+  getUsersLinkedToLanguage(language: string): Promise<IUserFieldsForStore[]> {
     return this.userRepository.query(
       `SELECT A.id,
               A."firstName",
               A."lastName",
+              CONCAT(A."firstName",' ',A."lastName") as "fullName",
               A.email,
               A."loggedIn"
        FROM "user" A

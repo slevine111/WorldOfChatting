@@ -1,4 +1,4 @@
-import { Language, ChatGroup } from '../entities'
+import { Language, ChatGroup, User } from '../entities'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
 
 export interface IUserCountByLanguage {
@@ -23,6 +23,7 @@ export interface IUserAndChatGroupGetReturn {
   userTableId: string
   firstName: string
   lastName: string
+  fullName: string
   email: string
   password: string
   loggedIn: boolean
@@ -30,4 +31,8 @@ export interface IUserAndChatGroupGetReturn {
   userId: string
   chatGroupId: string
   favorite: boolean
+}
+
+export interface IUserFieldsForStore extends User {
+  fullName: string
 }

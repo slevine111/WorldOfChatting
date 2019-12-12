@@ -26,7 +26,7 @@ const PersonIconList: React.FC<IOwnProps> = ({
   return (
     <div>
       {usersOfLanguage.map(user => {
-        const { loggedIn, firstName, lastName, userType, id } = user
+        const { loggedIn, firstName, lastName, userType, id, fullName } = user
         return (
           <div key={id}>
             <Badge
@@ -45,7 +45,7 @@ const PersonIconList: React.FC<IOwnProps> = ({
               </Avatar>{' '}
             </Badge>
             <Typography variant="body1">
-              <b className={blockDisplay}>{`${firstName} ${lastName}`}</b>
+              <b className={blockDisplay}>{fullName}</b>
               <b className={blockDisplay}>{userType}</b>
             </Typography>
           </div>

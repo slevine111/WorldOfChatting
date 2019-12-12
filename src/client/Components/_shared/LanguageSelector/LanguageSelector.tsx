@@ -38,10 +38,7 @@ const LanguageSelector: React.FC<ILanguageSelectorProps> = ({
   languagesToTeach,
   languages
 }): ReactElement => {
-  let [orderDirection, setOrderDirection]: [
-    'desc' | 'asc' | undefined,
-    any
-  ] = useState('asc')
+  let [orderDirection, setOrderDirection] = useState<'desc' | 'asc'>('asc')
   let [selectedAndLetterFilter, setSelectedAndLetterFilter] = useState('')
   let languagesToDisplay: Language[] = sortLanguages(orderDirection, languages)
   if (selectedAndLetterFilter === 'Selected Languages') {

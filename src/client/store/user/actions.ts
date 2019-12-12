@@ -1,25 +1,25 @@
-import { User } from '../../../entities'
+import { IUserFieldsForStore } from '../../../shared-types'
 import {
   SET_MY_USERS,
   SET_CURRENT_LANGUAGE_USERS,
   SET_MY_AND_CURRENT_LANGUAGE_USERS
 } from './types'
 
-export const setMyUsers = (users: User[]) => ({
+export const setMyUsers = (users: IUserFieldsForStore[]) => ({
   type: SET_MY_USERS,
   users
 })
 type SetMyUsersType = ReturnType<typeof setMyUsers>
 
-export const setCurrentLanguageUsers = (users: User[]) => ({
+export const setCurrentLanguageUsers = (users: IUserFieldsForStore[]) => ({
   type: SET_CURRENT_LANGUAGE_USERS,
   users
 })
 type SetCurrentLanguageUsersType = ReturnType<typeof setCurrentLanguageUsers>
 
 export const setMyAndCurrentLanguageUsers = (
-  myUsers: User[],
-  currentLanguageUsers: User[]
+  myUsers: IUserFieldsForStore[],
+  currentLanguageUsers: IUserFieldsForStore[]
 ) => ({
   type: SET_MY_AND_CURRENT_LANGUAGE_USERS,
   myUsers,

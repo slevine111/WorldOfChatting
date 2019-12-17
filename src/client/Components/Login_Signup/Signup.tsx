@@ -84,18 +84,17 @@ const Signup: React.FC<ISignupProps> = ({
   }
 
   const onSubmit = (event: ChangeEvent<HTMLFormElement>): void => {
-    const learnerType: UserLanguageTypeFieldOptions = 'learner'
-    const teacherType: UserLanguageTypeFieldOptions = 'teacher'
     event.preventDefault()
+    const { LEARNER, TEACHER } = UserLanguageTypeFieldOptions
     const { languagesToLearn, languagesToTeach, ...otherUserInfo } = signupInfo
     const userLanguagePayload: IUserLanguagePostDTOSubset[] = [
       ...languagesToLearn.map(language => ({
         language,
-        type: learnerType
+        type: LEARNER
       })),
       ...languagesToTeach.map(language => ({
         language,
-        type: teacherType
+        type: TEACHER
       }))
     ]
     signupNewUserProcess(otherUserInfo, userLanguagePayload).then(() => {

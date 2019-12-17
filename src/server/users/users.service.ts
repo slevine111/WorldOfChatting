@@ -2,7 +2,11 @@ import { Repository } from 'typeorm'
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'
-import { IUserAndChatGroupGetReturn, IUserFieldsForStore } from '../../shared-types'
+import {
+  IUserAndChatGroupGetReturn,
+  IUserFieldsForStore
+} from '../../shared-types'
+import { OnlineStatusesEnum } from '../../shared-types/shared-enums'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
 import { compare, hash } from 'bcrypt'
 
@@ -70,6 +74,8 @@ export default class UserService {
               u."lastName",
               CONCAT(u."firstName",' ',u."lastName") as "fullName",
               u."loggedIn",
+              CASE WHEN u."loggedIn" = true THEN '${OnlineStatusesEnum.Online}'
+                   ELSE '${OnlineStatusesEnum.Offline}' END AS "loggedInAsString",
               u.email,
               ucg.id as "userChatGroupId",
               ucg."userId",
@@ -92,7 +98,9 @@ export default class UserService {
               A."lastName",
               CONCAT(A."firstName",' ',A."lastName") as "fullName",
               A.email,
-              A."loggedIn"
+              A."loggedIn",
+              CASE WHEN A."loggedIn" = true THEN '${OnlineStatusesEnum.Online}'
+                   ELSE '${OnlineStatusesEnum.Offline}' END AS "loggedInAsString"
        FROM "user" A
        JOIN user_language B ON A.id = B."userId"
        WHERE language = $1

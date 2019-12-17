@@ -59,14 +59,14 @@ const ChatBio: React.FC<IChatBioProps> = ({
       <Typography variant="body1">
         {!groupChat && <b className={blockDisplay}>{fullName}</b>}
         {groupChat && (
-          <b className={blockDisplay}>
+          <em className={blockDisplay}>
             {name || `${fullName} & ${users.length - 1} more`}
-          </b>
+          </em>
         )}
         {groupChat && (
-          <b
+          <em
             className={blockDisplay}
-          >{`${numberUsersOnline}/${users.length} online`}</b>
+          >{`${numberUsersOnline}/${users.length} online`}</em>
         )}
         {displayLanguage && <em>{language}</em>}
       </Typography>

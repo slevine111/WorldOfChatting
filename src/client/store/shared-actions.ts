@@ -150,6 +150,7 @@ const separateUserAndChatGroupFields = (
         fullName,
         email,
         loggedIn,
+        loggedInAsString,
         ...userChatGroupFields
       } = usersWithChatGroups[i]
       const { userChatGroupId, ...otherUserTableFields } = userChatGroupFields
@@ -165,7 +166,8 @@ const separateUserAndChatGroupFields = (
           lastName,
           fullName,
           email,
-          loggedIn
+          loggedIn,
+          loggedInAsString
         })
         uniqueUserIds.add(userTableId)
       }

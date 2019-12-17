@@ -14,7 +14,7 @@ import { Word } from 'd3-cloud'
 
 declare module 'd3-cloud' {
   interface Word {
-    userType: UserLanguageTypeFieldOptions | null
+    userType: UserLanguageTypeFieldOptions
   }
 }
 
@@ -28,13 +28,14 @@ const MyLanguages: React.FC<IMyLanguagesProps> = ({
   usersCountByLanguage,
   history
 }) => {
+  const { LEARNER } = UserLanguageTypeFieldOptions
   const [
     selectedLanguageDOMElement,
     setSelectedLanguageDOMElement
   ] = useState<HTMLButtonElement | null>(null)
   const wordCloudCallbacks: CallbacksProp = {
     getWordColor: (word: Word): string => {
-      return word.userType === 'teacher' ? 'blue' : 'red'
+      return word.userType === LEARNER ? 'blue' : 'red'
     },
     onWordClick: (_word: Word, event: MouseEvent | undefined): void => {
       setSelectedLanguageDOMElement(

@@ -8,14 +8,17 @@ import {
 import User from './User'
 import Language from './Language'
 
-export type UserLanguageTypeFieldOptions = 'learner' | 'teacher'
+export enum UserLanguageTypeFieldOptions {
+  LEARNER = 'Learner',
+  TEACHER = 'Teacher'
+}
 
 @Entity()
 export default class UserLanguage {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ enum: ['learner', 'teacher'] })
+  @Column({ enum: UserLanguageTypeFieldOptions })
   type: UserLanguageTypeFieldOptions
 
   @Column({ type: 'int', nullable: true })

@@ -1,5 +1,6 @@
 import { Language, ChatGroup, User } from '../entities'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
+import { OnlineStatusesEnum } from './shared-enums'
 
 export interface IUserCountByLanguage {
   language: string
@@ -27,6 +28,7 @@ export interface IUserAndChatGroupGetReturn {
   email: string
   password: string
   loggedIn: boolean
+  loggedInAsString: keyof typeof OnlineStatusesEnum
   userChatGroupId: string
   userId: string
   chatGroupId: string
@@ -35,4 +37,5 @@ export interface IUserAndChatGroupGetReturn {
 
 export interface IUserFieldsForStore extends User {
   fullName: string
+  loggedInAsString: keyof typeof OnlineStatusesEnum
 }

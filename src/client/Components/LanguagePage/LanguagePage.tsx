@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { ReduxState } from '../../store'
-import { IAuthReducerUserField } from '../../store/auth/types'
 import { RouteComponentProps } from 'react-router-dom'
 import { languagePageDataRetrival } from '../../store/shared-actions'
 import { checkIfDataExists } from '../utilityfunctions'
@@ -11,13 +10,14 @@ import CurrentChats from './CurrentChats'
 import AllUsers from './AllUsers'
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
+import Grid from '@material-ui/core/Grid'
+import styles from './styles'
 
 interface IMatchParams {
   language: string
 }
 
 interface IReduxStateProps extends IUsersofLanguageInformation {
-  user: IAuthReducerUserField
   dataExists: boolean
 }
 
@@ -40,7 +40,7 @@ const LanguagePage: React.FC<ILanguagePageProps> = ({
   userIdsOfSoloChats,
   usersMap
 }) => {
-  const [selectedLanguage, setSelectedLanguage] = useState(language)
+  const { paperPageSection } = styles()
   useEffect(() => {
     languagePageDataRetrival(language)
   }, [language])
@@ -48,27 +48,30 @@ const LanguagePage: React.FC<ILanguagePageProps> = ({
   if (!dataExists) return <div>not ready</div>
   return (
     <div>
-      <Typography variant="h6">{language}</Typography>
-      <Paper>
-        <CurrentChats {...{ ...{ language, usersByChatGroup } }} />
-        <AllUsers {...{ ...{ language, userIdsOfSoloChats, usersMap } }} />
-      </Paper>
+      <Typography variant="h6">{language.toLocaleUpperCase()}</Typography>
+      <Grid container>
+        <Grid item xs={12} sm={9}>
+          <Paper className={paperPageSection}>
+            <CurrentChats {...{ ...{ language, usersByChatGroup } }} />
+          </Paper>
+          <Paper className={paperPageSection}>
+            <AllUsers {...{ ...{ language, userIdsOfSoloChats, usersMap } }} />
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={3}>
+          <div>under construction</div>
+        </Grid>
+      </Grid>
     </div>
   )
 }
 
 const mapStateToProps = (
-  {
-    auth: { user },
-    userChatGroups,
-    userLanguages,
-    users,
-    chatGroups
-  }: ReduxState,
+  { userChatGroups, userLanguages, users, chatGroups }: ReduxState,
   { match: { params } }: RouteComponentProps<IMatchParams>
 ): IReduxStateProps => {
   const dataExists: boolean = checkIfDataExists({
-    objects: [user],
+    objects: [],
     arrays: [users.currentLanguageUsers, userLanguages]
   })
   if (dataExists) {
@@ -78,10 +81,9 @@ const mapStateToProps = (
       userChatGroups,
       params.language
     )
-    return { user, dataExists, ...usersOfLanguageInfo }
+    return { dataExists, ...usersOfLanguageInfo }
   } else {
     return {
-      user,
       dataExists,
       usersByChatGroup: [],
       usersMap: {},

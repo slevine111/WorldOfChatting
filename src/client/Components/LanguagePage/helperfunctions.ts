@@ -1,4 +1,5 @@
 import { UserChatGroup, UserLanguage } from '../../../entities'
+import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
 import { IUsersByChatGroup, IObjectOfOneType } from '../intercomponent-types'
 import { groupUserChatGroups } from '../utilityfunctions'
 import {
@@ -6,10 +7,14 @@ import {
   IChatGroupWithFavoriteField,
   IUserFieldsForStore
 } from '../../../shared-types'
+import { OnlineStatusesEnum } from '../../../shared-types/shared-enums'
 import {
   IUserWithLanguageFields,
   LanguageTypesCombos,
-  IUsersofLanguageInformation
+  IUsersofLanguageInformation,
+  IOnlineStatusesChecked,
+  IUserLangsTypesChecked,
+  IOrderDirectionAndColumn
 } from './shared-types'
 import {
   ILanguageExpanded,
@@ -60,11 +65,11 @@ export const getAllUsersOfLanguage = (
   userIdsOfSoloChats: IObjectOfOneType<true>
 ): IUserWithLanguageFields[] => {
   const loggedInUserLanguages: ILanguageExpanded[] = loggedInUser.languages
-  let firstLetterOfAuthUserLanguageType: 'l' | 't' | '' = ''
+  let firstLetterOfAuthUserLanguageType: 'L' | 'T' | '' = ''
   for (let i = 0; i < loggedInUserLanguages.length; ++i) {
     if (loggedInUserLanguages[i].language === language) {
       firstLetterOfAuthUserLanguageType = loggedInUserLanguages[i]
-        .userType[0] as 'l' | 't'
+        .userType[0] as 'L' | 'T'
       break
     }
   }
@@ -89,11 +94,65 @@ export const generateStringFromLanguageTypeCombo = (
   selectedUser: IUserWithLanguageFields
 ): string => {
   const { language, userAndAuthUserLanguageTypes, firstName } = selectedUser
-  if (userAndAuthUserLanguageTypes === 'll')
+  if (userAndAuthUserLanguageTypes === 'LL')
     return `learn and master ${language} together`
-  if (userAndAuthUserLanguageTypes === 'lt')
+  if (userAndAuthUserLanguageTypes === 'LT')
     return `help ${firstName} become a master at ${language}`
-  if (userAndAuthUserLanguageTypes === 'tl')
+  if (userAndAuthUserLanguageTypes === 'TL')
     return `watch as you reach ${firstName}\'s level of mastery of ${language}`
-  return `become even strong masters of ${language}`
+  return `become even stronger masters of ${language}`
+}
+
+export const filterUsers = (
+  users: IUserWithLanguageFields[],
+  onlineStatusesChecked: IOnlineStatusesChecked,
+  userLangsTypesChecked: IUserLangsTypesChecked,
+  searchUserText: string
+): IUserWithLanguageFields[] => {
+  const { Online, Offline } = OnlineStatusesEnum
+  const { LEARNER, TEACHER } = UserLanguageTypeFieldOptions
+  if (
+    onlineStatusesChecked[Online] === true &&
+    onlineStatusesChecked[Offline] === true &&
+    userLangsTypesChecked[LEARNER] === true &&
+    userLangsTypesChecked[TEACHER] === true &&
+    searchUserText === ''
+  ) {
+    return users
+  }
+  let filteredUsers: IUserWithLanguageFields[] = []
+  let searchTextRegExp: RegExp = generateRegExp(searchUserText)
+  for (let i = 0; i < users.length; ++i) {
+    const { loggedInAsString, userType, fullName } = users[i]
+    if (
+      onlineStatusesChecked[loggedInAsString] === true &&
+      userLangsTypesChecked[userType] === true &&
+      (searchUserText === '' || searchTextRegExp.test(fullName))
+    )
+      filteredUsers.push(users[i])
+  }
+  return filteredUsers
+}
+
+const generateRegExp = (string: string): RegExp => {
+  return RegExp(string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
+}
+
+export const getUsersToDisplayFromFilteredUsers = (
+  users: IUserWithLanguageFields[],
+  currentPage: number,
+  rowsPerPage: number,
+  orderDirectionAndColumn: IOrderDirectionAndColumn
+): IUserWithLanguageFields[] => {
+  const { orderColumn, orderDirection } = orderDirectionAndColumn
+  return users
+    .slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage)
+    .sort((a, b) => {
+      const firstItemValue: string = a[orderColumn] as string
+      const secondItemValue: string = b[orderColumn] as string
+      return (
+        (orderDirection === 'asc' ? 1 : -1) *
+        firstItemValue.localeCompare(secondItemValue)
+      )
+    })
 }

@@ -2,6 +2,7 @@ import React from 'react'
 import { IUsersByChatGroup } from '../intercomponent-types'
 import ChatBio from '../_shared/ChatBio'
 import Typography from '@material-ui/core/Typography'
+import Grid from '@material-ui/core/Grid'
 
 interface IOwnProps {
   language: string
@@ -15,12 +16,16 @@ const FavoriteChats: React.FC<IOwnProps> = ({ usersByChatGroup, language }) => {
       {!usersByChatGroup.length && (
         <Typography variant="body1">{`You are not currently chatting with anybody in ${language}`}</Typography>
       )}
-      {!!usersByChatGroup.length &&
-        usersByChatGroup.map((ch: IUsersByChatGroup, idx: number) => {
-          return (
-            <ChatBio key={idx} usersByChatGroup={ch} displayLanguage={false} />
-          )
-        })}
+      <Grid container>
+        {!!usersByChatGroup.length &&
+          usersByChatGroup.map((ch: IUsersByChatGroup, idx: number) => {
+            return (
+              <Grid item xs={4} key={idx}>
+                <ChatBio usersByChatGroup={ch} displayLanguage={false} />
+              </Grid>
+            )
+          })}
+      </Grid>
     </div>
   )
 }

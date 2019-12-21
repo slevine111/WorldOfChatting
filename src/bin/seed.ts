@@ -242,29 +242,21 @@ export function createUserChatGroups(
     [kim, mike],
     [joe, mike]
   ]
+  let otherUsersIndex: number = 3
   for (let i = 0; i < chatGroups.length; ++i) {
-    const favorite: boolean = i % 2 === 0
+    const favorite: boolean = i % (i < 4 ? 2 : 5) === 0
     let currentUsers: User[] = []
     if (i < 4) {
       currentUsers = usersInEachGroup[i]
     } else if (i < 60) {
-      const randomNum: number = Math.floor(Math.random() * users.length)
-      const secondRandonNum: number =
-        randomNum === users.length - 1 ? 0 : randomNum + 1
-      currentUsers = [users[randomNum], users[secondRandonNum]]
+      currentUsers = [users[i % 3], users[i]]
     } else {
       let numberUsers: number = 3 + Math.floor(Math.random() * 3)
-      let usersSubset: User[] = [...users]
-      for (let k = 0; k < numberUsers; ++k) {
-        const userToPick: number = Math.floor(
-          Math.random() * usersSubset.length
-        )
-        currentUsers.push(usersSubset[userToPick])
-        usersSubset = [
-          ...usersSubset.slice(0, userToPick),
-          ...usersSubset.slice(userToPick + 1)
-        ]
-      }
+      currentUsers = [
+        users[i % 3],
+        ...users.slice(otherUsersIndex, otherUsersIndex + numberUsers)
+      ]
+      otherUsersIndex = otherUsersIndex + numberUsers
     }
     for (let j = 0; j < currentUsers.length; ++j) {
       userChatGroupsArray.push({

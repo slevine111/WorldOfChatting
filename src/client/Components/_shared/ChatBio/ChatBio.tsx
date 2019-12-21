@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { IUsersByChatGroup } from '../../intercomponent-types'
 import Typography from '@material-ui/core/Typography'
@@ -36,7 +36,7 @@ const ChatBio: React.FC<IChatBioProps> = ({
     0
   )
   return (
-    <div>
+    <span>
       <Badge
         overlap="circle"
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -57,7 +57,7 @@ const ChatBio: React.FC<IChatBioProps> = ({
         </Avatar>{' '}
       </Badge>
       <Typography variant="body1">
-        {!groupChat && <b className={blockDisplay}>{fullName}</b>}
+        {!groupChat && <em className={blockDisplay}>{fullName}</em>}
         {groupChat && (
           <em className={blockDisplay}>
             {name || `${fullName} & ${users.length - 1} more`}
@@ -70,7 +70,7 @@ const ChatBio: React.FC<IChatBioProps> = ({
         )}
         {displayLanguage && <em>{language}</em>}
       </Typography>
-    </div>
+    </span>
   )
 }
 

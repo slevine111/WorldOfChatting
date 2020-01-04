@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react'
 import { connect } from 'react-redux'
 import { ReduxState } from '../store/index'
 import { User } from '../../entities'
-import { logoutUserProcess } from '../store/shared-actions'
+import { logoutUserProcessThunk } from '../store/shared-actions'
 import { IUserUpdateDTO } from '../../server/users/users.dto'
 import { ThunkDispatch } from 'redux-thunk'
 import { History } from 'history'
@@ -89,7 +89,7 @@ const mapDispatchToProps = (
 ): IDispatchProps => {
   return {
     logoutUser: (userId, updatedUserFields) =>
-      dispatch(logoutUserProcess(userId, updatedUserFields))
+      dispatch(logoutUserProcessThunk(userId, updatedUserFields))
   }
 }
 

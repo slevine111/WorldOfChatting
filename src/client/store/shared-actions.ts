@@ -6,12 +6,15 @@ import {
   IUserAndChatGroupGetReturn,
   IUserFieldsForStore
 } from '../../shared-types'
-import { setMyUsers, setMyAndCurrentLanguageUsers } from './user/actions'
+import { setMyUsers /*setMyAndCurrentLanguageUsers*/ } from './user/actions'
 import { setChatGroups } from './chatgroup/actions'
 import { setUserChatGroups } from './userchatgroup/actions'
-import { setUserLanguages } from './userlanguage/actions'
+//import { setUserLanguages } from './userlanguage/actions'
 import { IUserAndExpireTime, IAuthReducerUserField } from './auth/types'
-import { setUserAndAccessTokenFields, setToInitialState } from './auth/actions'
+import {
+  setUserAndAccessTokenFields //,
+  //setAuthReducerToInitialState
+} from './auth/actions'
 import { IUserPostDTO, IUserUpdateDTO } from '../../server/users/users.dto'
 import {
   IUserLanguagePostDTO,
@@ -45,19 +48,21 @@ export const signupNewUserProcess = (
   }
 }
 
-export const logoutUserProcess = (
+export const LOGOUT_USER_PROCESS = <const>'LOGOUT_USER_PROCESS'
+
+const logoutUserProcess = () => ({
+  type: LOGOUT_USER_PROCESS
+})
+export type LogoutUserProcessType = ReturnType<typeof logoutUserProcess>
+
+export const logoutUserProcessThunk = (
   userId: string,
   partialUpdatedUser: IUserUpdateDTO
 ) => {
-  const innerFunction = async (dispatch: any) => {
+  const innerFunction = async (dispatch: any): Promise<void> => {
     await axios.put(`/api/user/${userId}`, partialUpdatedUser)
-    dispatch(setChatGroups({}))
-    dispatch(setUserLanguages([]))
-    dispatch(setMyAndCurrentLanguageUsers([], []))
-    dispatch(setUserChatGroups([]))
-    return axios.delete('/api/auth').then((): void => {
-      dispatch(setToInitialState())
-    })
+    await axios.delete('/api/auth')
+    dispatch(logoutUserProcess())
   }
   innerFunction.bypassRefreshTokenMiddleware = true
 

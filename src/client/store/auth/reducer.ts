@@ -1,4 +1,5 @@
 import * as types from './types'
+import { LOGOUT_USER_PROCESS, LogoutUserProcessType } from '../shared-actions'
 import { AuthActionTypes } from './actions'
 
 const initialState: types.IAuthReducerState = {
@@ -9,9 +10,11 @@ const initialState: types.IAuthReducerState = {
 
 export default (
   state: types.IAuthReducerState = initialState,
-  action: AuthActionTypes
+  action: AuthActionTypes | LogoutUserProcessType
 ): types.IAuthReducerState => {
   switch (action.type) {
+    case LOGOUT_USER_PROCESS:
+      return { ...initialState }
     case types.SET_TO_INITIAL_STATE:
       return initialState
     case types.SET_STATUS:

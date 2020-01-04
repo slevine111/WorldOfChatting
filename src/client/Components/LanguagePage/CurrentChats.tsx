@@ -20,9 +20,11 @@ const FavoriteChats: React.FC<IOwnProps> = ({ usersByChatGroup, language }) => {
         {!!usersByChatGroup.length &&
           usersByChatGroup.map((ch: IUsersByChatGroup, idx: number) => {
             return (
-              <Grid item xs={4} key={idx}>
-                <ChatBio usersByChatGroup={ch} displayLanguage={false} />
-              </Grid>
+              <ChatBio
+                usersByChatGroup={ch}
+                displayLanguage={false}
+                key={idx}
+              />
             )
           })}
       </Grid>

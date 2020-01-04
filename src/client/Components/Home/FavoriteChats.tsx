@@ -6,6 +6,7 @@ import { checkIfDataExists } from '../utilityfunctions'
 import { getFavoriteChatGroupsOfUser } from './helperfunctions'
 import ChatBio from '../_shared/ChatBio'
 import Typography from '@material-ui/core/Typography'
+import Grid from '@material-ui/core/Grid'
 
 interface IReduxStateProps {
   favoriteChatGroups: IUsersByChatGroup[]
@@ -19,12 +20,14 @@ const FavoriteChats: React.FC<IFavoriteChatsProps> = ({
   return (
     <div>
       <Typography variant="h6">My Favorite Chats</Typography>
-      {favoriteChatGroups.length &&
-        favoriteChatGroups.map((ch: IUsersByChatGroup, idx: number) => {
-          return (
-            <ChatBio key={idx} usersByChatGroup={ch} displayLanguage={true} />
-          )
-        })}
+      <Grid container>
+        {favoriteChatGroups.length &&
+          favoriteChatGroups.map((ch: IUsersByChatGroup, idx: number) => {
+            return (
+              <ChatBio key={idx} usersByChatGroup={ch} displayLanguage={true} />
+            )
+          })}
+      </Grid>
     </div>
   )
 }

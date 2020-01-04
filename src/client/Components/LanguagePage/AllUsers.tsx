@@ -21,6 +21,7 @@ import UsersFilterSidebar from './UsersFilterSidebar'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import TablePagination from '@material-ui/core/TablePagination'
+import styles from './styles'
 
 interface IReduxStateProps {
   usersOfLanguage: IUserWithLanguageFields[]
@@ -36,6 +37,7 @@ const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
   usersOfLanguage
 }) => {
   if (!Array.isArray(usersOfLanguage)) return <div>not ready</div>
+  const { allUsersListPadding, allUsersContainerLeftPadding } = styles()
   const [display, setDisplay] = useState<'icon' | 'table'>('icon')
   const [onlineStatusesChecked, setOnlineStatusesChecked] = useState<
     IOnlineStatusesChecked
@@ -48,7 +50,7 @@ const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
   )
   const [searchUserText, setSearchUserText] = useState('')
 
-  const [rowsPerPage, setRowsPerPage] = useState(2)
+  const [rowsPerPage, setRowsPerPage] = useState(50)
   const [page, setPage] = useState(0)
 
   const [orderDirectionAndColumn, setOrderDirectionAndColumn] = useState<
@@ -77,20 +79,18 @@ const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
         }}
       />
       <Typography variant="h6">All Users</Typography>
-      <Grid container>
-        <Grid item xs={12} sm={2}>
+      <Grid container className={allUsersContainerLeftPadding}>
+        <Grid item xs={12} sm={3}>
           <UsersFilterSidebar
             {...{
               onlineStatusesChecked,
               setOnlineStatusesChecked,
               userLangsTypesChecked,
-              setUserLangsTypesChecked,
-              searchUserText,
-              setSearchUserText
+              setUserLangsTypesChecked
             }}
           />{' '}
         </Grid>
-        <Grid item xs={12} sm={10}>
+        <Grid item xs={12} sm={9} className={allUsersListPadding}>
           {display === 'icon' && (
             <PersonIconList
               {...{
@@ -98,7 +98,9 @@ const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
                   orderDirectionAndColumn,
                   setOrderDirectionAndColumn,
                   rowsToDisplay,
-                  setSelectedUser
+                  setSelectedUser,
+                  searchUserText,
+                  setSearchUserText
                 }
               }}
             />
@@ -117,7 +119,7 @@ const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
           )}
         </Grid>
         <TablePagination
-          rowsPerPageOptions={[1, 2]}
+          rowsPerPageOptions={[25, 50, 100]}
           component="div"
           count={filteredUsers.length}
           page={page}

@@ -1,4 +1,4 @@
-import { User, UserChatGroup, UserLanguage } from '../../entities'
+import { User, UserChatGroup } from '../../entities'
 import {
   IUserCountByLanguage,
   ILanguageWithActiveAndTypeFields,
@@ -6,11 +6,7 @@ import {
   IUserAndChatGroupGetReturn,
   IUserFieldsForStore
 } from '../../shared-types'
-import {
-  setMyUsers,
-  setCurrentLanguageUsers,
-  setMyAndCurrentLanguageUsers
-} from './user/actions'
+import { setMyUsers, setMyAndCurrentLanguageUsers } from './user/actions'
 import { setChatGroups } from './chatgroup/actions'
 import { setUserChatGroups } from './userchatgroup/actions'
 import { setUserLanguages } from './userlanguage/actions'
@@ -66,20 +62,6 @@ export const logoutUserProcess = (
   innerFunction.bypassRefreshTokenMiddleware = true
 
   return innerFunction
-}
-
-export const languagePageDataRetrival = (language: string) => {
-  return async (dispatch: any) => {
-    const [userLanguages, users]: [
-      AxiosResponse<UserLanguage[]>,
-      AxiosResponse<IUserFieldsForStore[]>
-    ] = await Promise.all([
-      axios.get(`/api/userlanguage/language/${language}`),
-      axios.get(`/api/user/linked/language/${language}`)
-    ])
-    dispatch(setUserLanguages(userLanguages.data))
-    dispatch(setCurrentLanguageUsers(users.data))
-  }
 }
 
 export const getAndSetSingleUserRelatedData = async (

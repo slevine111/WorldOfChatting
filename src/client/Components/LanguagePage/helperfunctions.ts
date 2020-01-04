@@ -14,8 +14,10 @@ import {
   IUsersofLanguageInformation,
   IOnlineStatusesChecked,
   IUserLangsTypesChecked,
-  IOrderDirectionAndColumn
+  IOrderDirectionAndColumn,
+  IDisplayAndDataNames
 } from './shared-types'
+import { displayAndDataNames } from './constants'
 import {
   ILanguageExpanded,
   IAuthReducerUserField
@@ -146,7 +148,6 @@ export const getUsersToDisplayFromFilteredUsers = (
 ): IUserWithLanguageFields[] => {
   const { orderColumn, orderDirection } = orderDirectionAndColumn
   return users
-    .slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage)
     .sort((a, b) => {
       const firstItemValue: string = a[orderColumn] as string
       const secondItemValue: string = b[orderColumn] as string
@@ -155,4 +156,14 @@ export const getUsersToDisplayFromFilteredUsers = (
         firstItemValue.localeCompare(secondItemValue)
       )
     })
+    .slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage)
+}
+
+export const generateOrderByOptionsIconDisplay = (): IDisplayAndDataNames[] => {
+  let returnArr: IDisplayAndDataNames[] = []
+  for (let i = 0; i < displayAndDataNames.length; ++i) {
+    returnArr.push({ ...displayAndDataNames[i], orderDirection: 'asc' })
+    returnArr.push({ ...displayAndDataNames[i], orderDirection: 'desc' })
+  }
+  return returnArr
 }

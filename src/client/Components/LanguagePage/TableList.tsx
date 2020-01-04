@@ -10,9 +10,9 @@ import AddIcon from '@material-ui/icons/Add'
 import styles from './styles'
 import {
   IOrderDirectionAndColumn,
-  IUserWithLanguageFields,
-  IColumnAndDB
+  IUserWithLanguageFields
 } from './shared-types'
+import { displayAndDataNames } from './constants'
 
 interface IOwnProps {
   orderDirectionAndColumn: IOrderDirectionAndColumn
@@ -33,30 +33,24 @@ const TableList: React.FC<IOwnProps> = ({
 
   const { orderDirection, orderColumn } = orderDirectionAndColumn
 
-  const columnAndDBNames: IColumnAndDB[] = [
-    { column: 'User', db: 'fullName' },
-    { column: 'Online Status', db: 'loggedInAsString' },
-    { column: 'Language Type', db: 'userType' }
-  ]
-
   return (
     <div className={maxTableWidth}>
       <Table stickyHeader aria-label="table-of-users-of-language">
         <TableHead>
           <TableRow>
-            {columnAndDBNames.map(row => {
-              const { column, db } = row
+            {displayAndDataNames.map(row => {
+              const { display, data } = row
               return (
-                <TableCell key={column} scope="col">
-                  {column}
+                <TableCell key={display} scope="col">
+                  {display}
                   <TableSortLabel
                     direction={orderDirection}
-                    active={orderColumn === db}
+                    active={orderColumn === data}
                     onClick={() => {
                       setOrderDirectionAndColumn({
                         orderDirection:
                           orderDirection === 'asc' ? 'desc' : 'asc',
-                        orderColumn: db
+                        orderColumn: data
                       })
                     }}
                   />

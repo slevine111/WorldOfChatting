@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react'
+import React, { useState } from 'react'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
@@ -7,12 +7,6 @@ import Checkbox from '@material-ui/core/Checkbox'
 import Collapse from '@material-ui/core/Collapse'
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
-import SearchIcon from '@material-ui/icons/Search'
-import Input from '@material-ui/core/Input'
-import InputLabel from '@material-ui/core/InputLabel'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import FormControl from '@material-ui/core/FormControl'
-
 import { IOnlineStatusesChecked, IUserLangsTypesChecked } from './shared-types'
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
 import { OnlineStatusesEnum } from '../../../shared-types/shared-enums'
@@ -30,6 +24,7 @@ interface IOwnPropsSidebarSingleColumn<
   checkedOptions: T[]
   checkedOptionsCurrentState: { [key in T]: boolean }
   setCheckedOptions: (input: { [key in T]: boolean }) => void
+  otherClasses?: any[]
 }
 
 const SidebarSingleColumn = <
@@ -38,13 +33,25 @@ const SidebarSingleColumn = <
   filterHeading,
   checkedOptions,
   checkedOptionsCurrentState,
-  setCheckedOptions
+  setCheckedOptions,
+  otherClasses
 }: IOwnPropsSidebarSingleColumn<T>) => {
   const [open, setOpen] = useState(false)
-  const { nestedListItem } = styles()
+  const { hoverNoBackground, sidebarColumn, listItemRoot } = styles()
   return (
-    <List>
-      <ListItem button onClick={() => setOpen(!open)}>
+    <List
+      disablePadding={true}
+      className={`${sidebarColumn} ${
+        otherClasses === undefined ? '' : otherClasses.join(' ')
+      }`}
+    >
+      <ListItem
+        button
+        disableGutters={true}
+        disableRipple={true}
+        classes={{ button: hoverNoBackground, root: listItemRoot }}
+        onClick={() => setOpen(!open)}
+      >
         <ListItemText primary={filterHeading} />
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItem>
@@ -52,7 +59,7 @@ const SidebarSingleColumn = <
         <List component="div" disablePadding dense>
           {checkedOptions.map(curOption => {
             return (
-              <ListItem key={curOption} className={nestedListItem}>
+              <ListItem key={curOption}>
                 <ListItemText primary={curOption}></ListItemText>
                 <ListItemSecondaryAction>
                   <Checkbox
@@ -63,7 +70,10 @@ const SidebarSingleColumn = <
                         [curOption]: !checkedOptionsCurrentState[curOption]
                       })
                     }}
+                    disableRipple={true}
                     edge="end"
+                    size="small"
+                    color="primary"
                   />
                 </ListItemSecondaryAction>
               </ListItem>
@@ -80,41 +90,21 @@ interface IOwnProps {
   setOnlineStatusesChecked: (olStsChecked: IOnlineStatusesChecked) => void
   userLangsTypesChecked: IUserLangsTypesChecked
   setUserLangsTypesChecked: (ulTypesChecked: IUserLangsTypesChecked) => void
-  searchUserText: string
-  setSearchUserText: (searchUserText: string) => void
 }
 
 const UsersFilterSidebar: React.FC<IOwnProps> = ({
   onlineStatusesChecked,
   setOnlineStatusesChecked,
   userLangsTypesChecked,
-  setUserLangsTypesChecked,
-  searchUserText,
-  setSearchUserText
+  setUserLangsTypesChecked
 }) => {
+  const { langTypeBottomMargin } = styles()
   const { ONLINE_STATUS, USER_LANG_TYPE } = DisplayFilters
   const { Online, Offline } = OnlineStatusesEnum
   const { LEARNER, TEACHER } = UserLanguageTypeFieldOptions
 
-  const handleTextChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    setSearchUserText(event.target.value)
-  }
-
   return (
     <div>
-      <FormControl>
-        <InputLabel htmlFor="search-user-text">Search Users...</InputLabel>
-        <Input
-          id="search-user-text"
-          value={searchUserText}
-          onChange={handleTextChange}
-          endAdornment={
-            <InputAdornment position="end">
-              <SearchIcon />
-            </InputAdornment>
-          }
-        ></Input>
-      </FormControl>
       <SidebarSingleColumn
         filterHeading={ONLINE_STATUS}
         checkedOptions={[Online, Offline]}
@@ -126,6 +116,7 @@ const UsersFilterSidebar: React.FC<IOwnProps> = ({
         checkedOptions={[LEARNER, TEACHER]}
         checkedOptionsCurrentState={userLangsTypesChecked}
         setCheckedOptions={setUserLangsTypesChecked}
+        otherClasses={[langTypeBottomMargin]}
       />
     </div>
   )

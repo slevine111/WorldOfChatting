@@ -13,6 +13,12 @@ export default makeStyles(() => {
     },
     dot: { height: '10px', minWidth: '10px' },
     blockDisplay: { display: 'block' },
-    avatarColor: { backgroundColor: 'dodgerblue' }
+    avatarColor: { backgroundColor: 'dodgerblue' },
+    itemBottomMargin: {
+      marginBottom: '10px'
+    },
+    badgeRightMargin: {
+      marginRight: '5px'
+    }
   }
 })

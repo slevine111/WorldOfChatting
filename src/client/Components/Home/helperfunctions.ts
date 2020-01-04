@@ -1,3 +1,4 @@
+import { History } from 'history'
 import { UserChatGroup } from '../../../entities'
 import { IUsersByChatGroup } from '../intercomponent-types'
 import {
@@ -45,6 +46,32 @@ export const getFavoriteChatGroupsOfUser = (
     }
   }
   return usersByChatGroup
+}
+
+export const onMyLanguageClick = (
+  history: History,
+  selectedLang: string,
+  curRecentViewedLangs: string[],
+  dispatchSetViewedLangs: (langs: string[]) => void
+): void => {
+  const copyLangs: string[] = [...curRecentViewedLangs]
+  const langsSet: Set<string> = new Set(copyLangs)
+  let newRecentViewedLangs: string[] = []
+  if (!langsSet.has(selectedLang)) {
+    const numberLangs: number = curRecentViewedLangs.length
+    if (numberLangs === 5) copyLangs.shift()
+    newRecentViewedLangs = [...copyLangs, selectedLang]
+  } else if (copyLangs[copyLangs.length - 1] !== selectedLang) {
+    const langIndex: number = copyLangs.indexOf(selectedLang)
+    newRecentViewedLangs = [
+      ...copyLangs.slice(0, langIndex),
+      ...copyLangs.slice(langIndex + 1),
+      selectedLang
+    ]
+  }
+  dispatchSetViewedLangs(newRecentViewedLangs)
+
+  history.push(`/language/${selectedLang}`)
 }
 
 /*export const groupUsersByLanguage = (
@@ -111,4 +138,9 @@ export interface ILanguageObjects {
   usersByLanguageMap: IObjectOfUsersByLanguage
   userCountByLanguageMap: IObjectOfUserCountByLanguage
   userCountByLanguage: IUserCountByLanguage[]
-}*/
+}
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap"
+    />*/

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { ReduxState } from '../../store'
 import { RouteComponentProps } from 'react-router-dom'
-import { languagePageDataRetrival } from '../../store/shared-actions'
+import { languagePageDataRetrival } from './dispatch_functions'
 import { checkIfDataExists } from '../utilityfunctions'
 import { getUsersOfLanguageInformation } from './helperfunctions'
 import { IUsersofLanguageInformation } from './shared-types'
@@ -68,7 +68,11 @@ const LanguagePage: React.FC<ILanguagePageProps> = ({
 
 const mapStateToProps = (
   { userChatGroups, userLanguages, users, chatGroups }: ReduxState,
-  { match: { params } }: RouteComponentProps<IMatchParams>
+  {
+    match: {
+      params: { language }
+    }
+  }: RouteComponentProps<IMatchParams>
 ): IReduxStateProps => {
   const dataExists: boolean = checkIfDataExists({
     objects: [],
@@ -79,7 +83,7 @@ const mapStateToProps = (
       users.currentLanguageUsers,
       chatGroups,
       userChatGroups,
-      params.language
+      language
     )
     return { dataExists, ...usersOfLanguageInfo }
   } else {

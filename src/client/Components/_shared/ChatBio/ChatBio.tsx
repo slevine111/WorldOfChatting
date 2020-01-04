@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography'
 import Badge from '@material-ui/core/Badge'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
+import Grid from '@material-ui/core/Grid'
 import styles from './styles'
 
 interface IOwnProps {
@@ -23,54 +24,63 @@ const ChatBio: React.FC<IChatBioProps> = ({
     loggedInBadge,
     loggedOutBadge,
     dot,
-    blockDisplay,
-    avatarColor
+    avatarColor,
+    itemBottomMargin,
+    badgeRightMargin
   } = styles()
   const { users, language, name } = usersByChatGroup
   if (!users || !users[0] || users.includes(undefined))
     return <div>not ready</div>
-  const { loggedIn, firstName, lastName, fullName } = users[0]
   const groupChat: boolean = users.length > 1
   const numberUsersOnline: number = users.reduce(
     (sum, user) => sum + Number(user.loggedIn),
     0
   )
   return (
-    <span>
-      <Badge
-        overlap="circle"
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        variant="dot"
-        classes={
-          groupChat
-            ? {}
-            : {
-                badge: loggedIn ? loggedInBadge : loggedOutBadge,
-                dot
-              }
-        }
-      >
-        <Avatar className={avatarColor}>
-          <Button onClick={() => history.push('/about')}>
-            {groupChat ? users.length : `${firstName[0]}${lastName[0]}`}
-          </Button>
-        </Avatar>{' '}
-      </Badge>
-      <Typography variant="body1">
-        {!groupChat && <em className={blockDisplay}>{fullName}</em>}
-        {groupChat && (
-          <em className={blockDisplay}>
-            {name || `${fullName} & ${users.length - 1} more`}
-          </em>
-        )}
-        {groupChat && (
-          <em
-            className={blockDisplay}
-          >{`${numberUsersOnline}/${users.length} online`}</em>
-        )}
-        {displayLanguage && <em>{language}</em>}
-      </Typography>
-    </span>
+    <Grid item xs={6} sm={4} className={itemBottomMargin}>
+      {users.slice(0, 3).map((user, idx) => {
+        const { loggedIn, firstName, lastName, id } = user
+        return (
+          <Badge
+            key={id}
+            overlap="circle"
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            variant="dot"
+            className={badgeRightMargin}
+            classes={{
+              badge: loggedIn ? loggedInBadge : loggedOutBadge,
+              dot
+            }}
+          >
+            <Avatar className={avatarColor}>
+              {idx === 0 && (
+                <Button onClick={() => history.push('/about')}>
+                  {`${firstName[0]}${lastName[0]}`}
+                </Button>
+              )}
+              {idx !== 0 && `${firstName[0]}${lastName[0]}`}
+            </Avatar>{' '}
+          </Badge>
+        )
+      })}
+
+      {!groupChat && (
+        <Typography variant="body1">{users[0].fullName}</Typography>
+      )}
+      {groupChat && (
+        <Typography variant="body1">
+          {name || `${users[0].fullName} & ${users.length - 1} more`}
+        </Typography>
+      )}
+      {groupChat && (
+        <Typography variant="body1">{`${numberUsersOnline}/${users.length} online`}</Typography>
+      )}
+      {displayLanguage && (
+        <Typography variant="body1">
+          <em>{language}</em>
+        </Typography>
+      )}
+    </Grid>
   )
 }
 

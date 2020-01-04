@@ -34,8 +34,8 @@ export interface IOrderDirectionAndColumn {
   orderDirection: OrderDirections
 }
 
-export interface IColumnAndDB {
-  column: string
-  db: OrderColumns
+export interface IDisplayAndDataNames {
+  display: string
+  data: OrderColumns
   orderDirection?: OrderDirections
 }

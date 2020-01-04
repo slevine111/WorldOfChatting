@@ -3,8 +3,6 @@ import React, { useState, ReactElement, ChangeEvent } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import { History } from 'history'
 import { connect } from 'react-redux'
-import { ThunkDispatch } from 'redux-thunk'
-import { AnyAction } from 'redux'
 
 //Components
 import PersonalInfoForm from './PersonalInfoForm'
@@ -13,9 +11,8 @@ import SignupStepButtons from './SignupStepButtons'
 
 //My modules
 import { ISignupInfo } from './index'
-import { signupNewUserProcess } from '../../store/common/shared-actions'
+import { signupNewUserProcess } from './helperfunctions'
 import { ReduxState } from '../../store/index'
-import { IUserPostDTO } from '../../../server/users/users.dto'
 import { IUserLanguagePostDTOSubset } from '../../../server/userlanguages/userlanguages.dto'
 import { User } from '../../../entities'
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
@@ -31,22 +28,11 @@ interface IReduxStateProps {
   user: User
 }
 
-interface IDispatchProps {
-  signupNewUserProcess: (
-    newUser: IUserPostDTO,
-    newUserLanguages: IUserLanguagePostDTOSubset[]
-  ) => Promise<void>
-}
-
-interface ISignupProps extends IDispatchProps, IReduxStateProps {
+interface ISignupProps extends IReduxStateProps {
   history: History
 }
 
-const Signup: React.FC<ISignupProps> = ({
-  user,
-  signupNewUserProcess,
-  history
-}): ReactElement => {
+const Signup: React.FC<ISignupProps> = ({ user, history }): ReactElement => {
   if (user.id) return <Redirect to="/home" />
 
   let [signupInfo, setSignupFields] = useState<ISignupInfo>({
@@ -159,15 +145,4 @@ const mapStateToProps = ({ auth: { user } }: ReduxState): IReduxStateProps => ({
   user
 })
 
-const mapDispatchToProps = (
-  dispatch: ThunkDispatch<any, any, AnyAction>
-): IDispatchProps => {
-  return {
-    signupNewUserProcess: (
-      newUser: IUserPostDTO,
-      newUserLanguages: IUserLanguagePostDTOSubset[]
-    ) => dispatch(signupNewUserProcess(newUser, newUserLanguages))
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Signup)
+export default connect(mapStateToProps)(Signup)

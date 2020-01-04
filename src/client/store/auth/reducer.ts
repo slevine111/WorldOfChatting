@@ -1,21 +1,42 @@
 import * as types from './types'
-import { LOGOUT_USER_PROCESS } from '../common/types'
-import { LogoutUserProcessType } from '../common/actions'
+import { LOGOUT_USER_PROCESS, USER_LOGGED_IN } from '../shared/types'
+import { SharedActionsTypes } from '../shared/actions'
 import { AuthActionTypes } from './actions'
+import { AnyAction } from 'redux'
+import { PossibleStatuses, IAuthReducerUserField } from './types'
+
+interface IAccessTokenFields {
+  status: PossibleStatuses
+  expireTime: number
+}
+
+export interface IAuthReducerState {
+  user: IAuthReducerUserField
+  accessTokenFields: IAccessTokenFields
+  postponnedActions: AnyAction[]
+}
 
 const initialState: types.IAuthReducerState = {
-  user: {} as types.IAuthReducerUserField,
-  accessTokenFields: { status: 'NONE', expireTime: Number.POSITIVE_INFINITY },
+  user: {} as IAuthReducerUserField,
+  accessTokenFields: {
+    status: PossibleStatuses.NONE,
+    expireTime: Number.POSITIVE_INFINITY
+  },
   postponnedActions: []
 }
 
 export default (
   state: types.IAuthReducerState = initialState,
-  action: AuthActionTypes | LogoutUserProcessType
+  action: AuthActionTypes | SharedActionsTypes
 ): types.IAuthReducerState => {
   switch (action.type) {
     case LOGOUT_USER_PROCESS:
       return { ...initialState }
+    case USER_LOGGED_IN:
+      return {
+        ...state,
+        user: action.loggedInUserWithLanguagesArray
+      }
     case types.SET_TO_INITIAL_STATE:
       return initialState
     case types.SET_STATUS:

@@ -4,8 +4,8 @@ import {
   SET_MY_AND_CURRENT_LANGUAGE_USERS
 } from './types'
 import { UserActionTypes } from './actions'
-import { LOGOUT_USER_PROCESS } from '../common/types'
-import { LogoutUserProcessType } from '../common/actions'
+import { LOGOUT_USER_PROCESS, USER_LOGGED_IN } from '../shared/types'
+import { SharedActionsTypes } from '../shared/actions'
 import { IUserFieldsForStore } from '../../../shared-types'
 
 export interface IUserReducerState {
@@ -15,7 +15,7 @@ export interface IUserReducerState {
 
 export default (
   state: IUserReducerState = { myUsers: [], currentLanguageUsers: [] },
-  action: UserActionTypes | LogoutUserProcessType
+  action: UserActionTypes | SharedActionsTypes
 ): IUserReducerState => {
   switch (action.type) {
     case SET_MY_AND_CURRENT_LANGUAGE_USERS:
@@ -29,6 +29,8 @@ export default (
       return { ...state, currentLanguageUsers: action.users }
     case LOGOUT_USER_PROCESS:
       return { myUsers: [], currentLanguageUsers: [] }
+    case USER_LOGGED_IN:
+      return { ...state, myUsers: action.users }
     default:
       return state
   }

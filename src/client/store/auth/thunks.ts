@@ -1,6 +1,9 @@
-import { setAccessTokenStatus, setAccessTokenFields } from './actions'
-import { IUserAndExpireTime } from './types'
-import { getAndSetSingleUserRelatedData } from '../common/shared-actions'
+import {
+  setAccessTokenStatus,
+  setAccessTokenFields,
+  setUserAndAccessTokenFields
+} from './actions'
+import { IUserAndExpireTime, PossibleStatuses } from './types'
 import { IUserSignInDTO } from '../../../server/auth/auth.dto'
 import axios, { AxiosResponse } from 'axios'
 import { ThunkAction } from 'redux-thunk'
@@ -13,11 +16,11 @@ export const refreshToken = (): ThunkAction<
   AnyAction
 > => {
   return dispatch => {
-    dispatch(setAccessTokenStatus('FETCHING'))
+    dispatch(setAccessTokenStatus(PossibleStatuses.FETCHING))
     return axios
       .get('/api/auth/refreshToken')
       .then(({ data }: AxiosResponse<number>) => {
-        dispatch(setAccessTokenFields('RECEIVED', data))
+        dispatch(setAccessTokenFields(PossibleStatuses.RECEIVED, data))
       })
   }
 }
@@ -27,7 +30,14 @@ export const loginUserProcess = (userEmailAndPassword: IUserSignInDTO) => {
     return axios
       .post('/api/auth/login', userEmailAndPassword)
       .then(({ data }: AxiosResponse<IUserAndExpireTime>) => {
-        getAndSetSingleUserRelatedData(data, dispatch)
+        let { user, expireTime } = data
+        dispatch(
+          setUserAndAccessTokenFields(
+            { ...user, languages: [] },
+            PossibleStatuses.RECEIVED,
+            expireTime
+          )
+        )
       })
   }
 }
@@ -37,7 +47,14 @@ export const checkIfUserLoggedInProcess = () => {
     return axios
       .get('/api/auth')
       .then(({ data }: AxiosResponse<IUserAndExpireTime>) => {
-        getAndSetSingleUserRelatedData(data, dispatch)
+        let { user, expireTime } = data
+        dispatch(
+          setUserAndAccessTokenFields(
+            { ...user, languages: [] },
+            PossibleStatuses.RECEIVED,
+            expireTime
+          )
+        )
       })
   }
 }

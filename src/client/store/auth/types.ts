@@ -10,7 +10,11 @@ export const SET_USER_AND_ACCESS_TOKEN_FIELDS = <const>(
 )
 export const ADD_POSTPONNED_ACTION = <const>'ADD_POSTPONNED_ACTION'
 
-export type PossibleStatuses = 'NONE' | 'FETCHING' | 'RECEIVED'
+export enum PossibleStatuses {
+  NONE = 'NONE',
+  FETCHING = 'FETCHING',
+  RECEIVED = 'RECEIVED'
+}
 
 export interface ILanguageExpanded extends ILanguageWithActiveAndTypeFields {
   usersOnlineCount: number

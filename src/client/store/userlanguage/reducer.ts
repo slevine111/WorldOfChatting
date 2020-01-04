@@ -1,7 +1,7 @@
 import { SET_USER_LANGUAGES } from './types'
 import { UserLanguageActionTypes } from './actions'
-import { LOGOUT_USER_PROCESS } from '../common/types'
-import { LogoutUserProcessType } from '../common/actions'
+import { LOGOUT_USER_PROCESS } from '../shared/types'
+import { LogoutUserProcessType } from '../shared/actions'
 import { UserLanguage } from '../../../entities'
 
 export default (

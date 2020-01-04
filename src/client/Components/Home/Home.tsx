@@ -1,5 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
+import { userLoggedInThunk } from '../../store/shared/thunks'
+import { IUserAndExpireTime } from '../../store/auth/types'
+import { User } from '../../../entities'
 import { ReduxState } from '../../store'
 import {
   checkIfDataExists,
@@ -10,11 +13,25 @@ import MyLanguages from './MyLanguages'
 
 interface IReduxStateProps {
   dataLoaded: boolean
+  user: User
+  tokenExpireTime: number
 }
 
-interface IHomeProps extends IReduxStateProps {}
+interface IDispatchProps {
+  userLoggedInDataRetrival: (userAndExpireTime: IUserAndExpireTime) => void
+}
 
-const Home: React.FC<IHomeProps> = ({ dataLoaded }) => {
+interface IHomeProps extends IReduxStateProps, IDispatchProps {}
+
+const Home: React.FC<IHomeProps> = ({
+  dataLoaded,
+  user,
+  tokenExpireTime,
+  userLoggedInDataRetrival
+}) => {
+  useEffect(() => {
+    userLoggedInDataRetrival({ user, expireTime: tokenExpireTime })
+  }, [])
   if (!dataLoaded) return <div>not ready</div>
   return (
     <div>
@@ -29,12 +46,23 @@ const mapStateToProps = ({
   auth,
   chatGroups
 }: ReduxState): IReduxStateProps => {
+  const {
+    user,
+    accessTokenFields: { expireTime }
+  } = auth
   const dataExistsInput: IGroupedArraysAndObjects = {
-    objects: [auth.user],
+    objects: [user],
     arrays: [users.myUsers, Object.keys(chatGroups)]
   }
   const dataLoaded: boolean = checkIfDataExists(dataExistsInput)
-  return { dataLoaded }
+  return { dataLoaded, user, tokenExpireTime: expireTime }
 }
 
-export default connect(mapStateToProps)(Home)
+const mapDispatchToProps = (dispatch: any): IDispatchProps => {
+  return {
+    userLoggedInDataRetrival: (userAndExpireTime: IUserAndExpireTime): void =>
+      dispatch(userLoggedInThunk(userAndExpireTime))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)

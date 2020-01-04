@@ -8,11 +8,10 @@ import {
   createUsers,
   createChatGroups,
   createUserLanguages,
-  createMessages,
-  getSelectedLanguages
+  createMessages
 } from './src/bin/seed'
 import { User, Language } from './src/entities'
-import { ISelectedLanguages, IChatGroupSeed } from './src/bin/seed'
+import { IChatGroupSeed } from './src/bin/seed'
 
 declare global {
   namespace NodeJS {
@@ -25,6 +24,17 @@ declare global {
 interface ILanguageAndCountries {
   language: string
   countries: string[]
+}
+
+interface ISelectedLanguages {
+  English: Language
+  Swahili: Language
+  French: Language
+  Spanish: Language
+  Japanese: Language
+  Turkish: Language
+  Mandarin: Language
+  [key: string]: Language
 }
 
 const createLanguages = async (): Promise<Language[]> => {
@@ -41,6 +51,24 @@ const createLanguages = async (): Promise<Language[]> => {
     'test'
   ).getRepository(Language)
   return repository.save(languagesArray)
+}
+
+const getSelectedLanguages = (allLanguages: Language[]): ISelectedLanguages => {
+  let selectedLanguages: string[] = [
+    'Swahili',
+    'French',
+    'Japanese',
+    'Spanish',
+    'English',
+    'Mandarin',
+    'Turkish'
+  ]
+  return selectedLanguages.reduce((acc: any, currentLanguage: string) => {
+    acc[currentLanguage] = allLanguages.find(
+      language => language.language === currentLanguage
+    )
+    return acc
+  }, {})
 }
 
 export default async () => {

@@ -1,6 +1,6 @@
 import { setAccessTokenStatus, setAccessTokenFields } from './actions'
 import { IUserAndExpireTime } from './types'
-import { getAndSetSingleUserRelatedData } from '../shared-actions'
+import { getAndSetSingleUserRelatedData } from '../common/shared-actions'
 import { IUserSignInDTO } from '../../../server/auth/auth.dto'
 import axios, { AxiosResponse } from 'axios'
 import { ThunkAction } from 'redux-thunk'

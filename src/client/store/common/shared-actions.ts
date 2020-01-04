@@ -1,25 +1,25 @@
-import { User, UserChatGroup } from '../../entities'
+import { User, UserChatGroup } from '../../../entities'
 import {
   IUserCountByLanguage,
   ILanguageWithActiveAndTypeFields,
   IChatGroupReducer,
   IUserAndChatGroupGetReturn,
   IUserFieldsForStore
-} from '../../shared-types'
-import { setMyUsers /*setMyAndCurrentLanguageUsers*/ } from './user/actions'
-import { setChatGroups } from './chatgroup/actions'
-import { setUserChatGroups } from './userchatgroup/actions'
+} from '../../../shared-types'
+import { setMyUsers /*setMyAndCurrentLanguageUsers*/ } from '../user/actions'
+import { setChatGroups } from '../chatgroup/actions'
+import { setUserChatGroups } from '../userchatgroup/actions'
 //import { setUserLanguages } from './userlanguage/actions'
-import { IUserAndExpireTime, IAuthReducerUserField } from './auth/types'
+import { IUserAndExpireTime, IAuthReducerUserField } from '../auth/types'
 import {
   setUserAndAccessTokenFields //,
   //setAuthReducerToInitialState
-} from './auth/actions'
-import { IUserPostDTO, IUserUpdateDTO } from '../../server/users/users.dto'
+} from '../auth/actions'
+import { IUserPostDTO } from '../../../server/users/users.dto'
 import {
   IUserLanguagePostDTO,
   IUserLanguagePostDTOSubset
-} from '../../server/userlanguages/userlanguages.dto'
+} from '../../../server/userlanguages/userlanguages.dto'
 import axios, { AxiosResponse } from 'axios'
 
 interface IUserCountByLanguageMap {
@@ -46,27 +46,6 @@ export const signupNewUserProcess = (
     }))
     await axios.post('/api/userlanguage', newULsForDB)
   }
-}
-
-export const LOGOUT_USER_PROCESS = <const>'LOGOUT_USER_PROCESS'
-
-const logoutUserProcess = () => ({
-  type: LOGOUT_USER_PROCESS
-})
-export type LogoutUserProcessType = ReturnType<typeof logoutUserProcess>
-
-export const logoutUserProcessThunk = (
-  userId: string,
-  partialUpdatedUser: IUserUpdateDTO
-) => {
-  const innerFunction = async (dispatch: any): Promise<void> => {
-    await axios.put(`/api/user/${userId}`, partialUpdatedUser)
-    await axios.delete('/api/auth')
-    dispatch(logoutUserProcess())
-  }
-  innerFunction.bypassRefreshTokenMiddleware = true
-
-  return innerFunction
 }
 
 export const getAndSetSingleUserRelatedData = async (

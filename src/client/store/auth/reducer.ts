@@ -1,5 +1,6 @@
 import * as types from './types'
-import { LOGOUT_USER_PROCESS, LogoutUserProcessType } from '../shared-actions'
+import { LOGOUT_USER_PROCESS } from '../common/types'
+import { LogoutUserProcessType } from '../common/actions'
 import { AuthActionTypes } from './actions'
 
 const initialState: types.IAuthReducerState = {

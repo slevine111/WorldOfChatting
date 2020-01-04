@@ -13,7 +13,7 @@ import SignupStepButtons from './SignupStepButtons'
 
 //My modules
 import { ISignupInfo } from './index'
-import { signupNewUserProcess } from '../../store/shared-actions'
+import { signupNewUserProcess } from '../../store/common/shared-actions'
 import { ReduxState } from '../../store/index'
 import { IUserPostDTO } from '../../../server/users/users.dto'
 import { IUserLanguagePostDTOSubset } from '../../../server/userlanguages/userlanguages.dto'

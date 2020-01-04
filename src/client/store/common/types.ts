@@ -1,0 +1,1 @@
+export const LOGOUT_USER_PROCESS = <const>'LOGOUT_USER_PROCESS'

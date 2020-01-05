@@ -11,7 +11,10 @@ import UserService from './users.service'
 import AuthGuard from '../auth/auth.guard'
 import { User } from '../../entities'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
-import { IUserAndChatGroupGetReturn, IUserFieldsForStore } from '../../shared-types'
+import {
+  IUserAndChatGroupGetReturn,
+  IReduxStoreUserFields
+} from '../../shared-types'
 
 @Controller('/api/user')
 export default class UserController {
@@ -29,7 +32,7 @@ export default class UserController {
   @UseGuards(AuthGuard)
   getUsersLinkedToLanguage(
     @Param('language') language: string
-  ): Promise<IUserFieldsForStore[]> {
+  ): Promise<IReduxStoreUserFields[]> {
     return this.userService.getUsersLinkedToLanguage(language)
   }
 

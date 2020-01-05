@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { ReduxState } from '../../store'
 import { RouteComponentProps } from 'react-router-dom'
-import { languagePageDataRetrival } from './dispatch_functions'
+import { languagePageDataRetrivalThunk } from '../../store/shared/thunks'
 import { checkIfDataExists } from '../utilityfunctions'
 import { getUsersOfLanguageInformation } from './helperfunctions'
 import { IUsersofLanguageInformation } from './shared-types'
@@ -99,7 +99,7 @@ const mapStateToProps = (
 const mapDispatchToProps = (dispatch: any): IDispatchProps => {
   return {
     languagePageDataRetrival: (language: string) => {
-      dispatch(languagePageDataRetrival(language))
+      dispatch(languagePageDataRetrivalThunk(language))
     }
   }
 }

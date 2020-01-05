@@ -1,11 +1,11 @@
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
-import { IUserFieldsForStore } from '../../../shared-types'
+import { IReduxStoreUserFields } from '../../../shared-types'
 import { OnlineStatusesEnum } from '../../../shared-types/shared-enums'
 import { IUsersByChatGroup, IObjectOfOneType } from '../intercomponent-types'
 
 export type LanguageTypesCombos = 'LL' | 'LT' | 'TL' | 'TT'
 
-export interface IUserWithLanguageFields extends IUserFieldsForStore {
+export interface IUserWithLanguageFields extends IReduxStoreUserFields {
   userType: UserLanguageTypeFieldOptions
   userAndAuthUserLanguageTypes: LanguageTypesCombos
   language: string
@@ -14,7 +14,7 @@ export interface IUserWithLanguageFields extends IUserFieldsForStore {
 
 export interface IUsersofLanguageInformation {
   usersByChatGroup: IUsersByChatGroup[]
-  usersMap: IObjectOfOneType<IUserFieldsForStore>
+  usersMap: IObjectOfOneType<IReduxStoreUserFields>
   userIdsOfSoloChats: IObjectOfOneType<true>
 }
 

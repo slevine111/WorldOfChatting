@@ -7,11 +7,6 @@ export const addPostponnedAction = (postponnedAction: AnyAction) => ({
 })
 type AddPostponnedActionType = ReturnType<typeof addPostponnedAction>
 
-export const setToInitialState = () => ({
-  type: types.SET_TO_INITIAL_STATE
-})
-type SetToInitialStateActionType = ReturnType<typeof setToInitialState>
-
 export const setAccessTokenStatus = (status: types.PossibleStatuses) => ({
   type: types.SET_STATUS,
   status
@@ -41,7 +36,6 @@ export type SetUserAndAccessTokenFieldsActionType = ReturnType<
 >
 
 export type AuthActionTypes =
-  | SetToInitialStateActionType
   | AddPostponnedActionType
   | SetAccessTokenStatusActionType
   | SetAccessTokenFieldsActionType

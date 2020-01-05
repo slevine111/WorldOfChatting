@@ -1,17 +1,21 @@
-import { LOGOUT_USER_PROCESS, USER_LOGGED_IN } from './types'
+import {
+  LOGOUT_USER_PROCESS,
+  USER_LOGGED_IN,
+  WENT_TO_LANGUAGE_PAGE_VIEW
+} from './types'
 import { IAuthReducerUserField } from '../auth/types'
-import { IChatGroupReducer, IUserFieldsForStore } from '../../../shared-types'
-import { UserChatGroup } from '../../../entities'
+import { IChatGroupReducer, IReduxStoreUserFields } from '../../../shared-types'
+import { UserChatGroup, UserLanguage } from '../../../entities'
 
 export const logoutUserProcess = () => ({
   type: LOGOUT_USER_PROCESS
 })
-export type LogoutUserProcessType = ReturnType<typeof logoutUserProcess>
+type LogoutUserProcessType = ReturnType<typeof logoutUserProcess>
 
 export const userLoggedIn = (
   loggedInUserWithLanguagesArray: IAuthReducerUserField,
   chatGroups: IChatGroupReducer,
-  users: IUserFieldsForStore[],
+  users: IReduxStoreUserFields[],
   userChatGroups: UserChatGroup[]
 ) => ({
   type: USER_LOGGED_IN,
@@ -22,4 +26,17 @@ export const userLoggedIn = (
 })
 type UserLoggedInType = ReturnType<typeof userLoggedIn>
 
-export type SharedActionsTypes = LogoutUserProcessType | UserLoggedInType
+export const wentToLanguagePageView = (
+  userLanguages: UserLanguage[],
+  users: IReduxStoreUserFields[]
+) => ({
+  type: WENT_TO_LANGUAGE_PAGE_VIEW,
+  userLanguages,
+  users
+})
+type WentToLanguagePageViewType = ReturnType<typeof wentToLanguagePageView>
+
+export type SharedActionsTypes =
+  | LogoutUserProcessType
+  | UserLoggedInType
+  | WentToLanguagePageViewType

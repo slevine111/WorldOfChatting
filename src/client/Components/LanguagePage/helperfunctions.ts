@@ -5,7 +5,7 @@ import { groupUserChatGroups } from '../utilityfunctions'
 import {
   IChatGroupReducer,
   IChatGroupWithFavoriteField,
-  IUserFieldsForStore
+  IReduxStoreUserFields
 } from '../../../shared-types'
 import { OnlineStatusesEnum } from '../../../shared-types/shared-enums'
 import {
@@ -24,7 +24,7 @@ import {
 } from '../../store/auth/types'
 
 export const getUsersOfLanguageInformation = (
-  users: IUserFieldsForStore[],
+  users: IReduxStoreUserFields[],
   chatGroups: IChatGroupReducer,
   userChatGroups: UserChatGroup[],
   language: string
@@ -63,7 +63,7 @@ export const getAllUsersOfLanguage = (
   language: string,
   loggedInUser: IAuthReducerUserField,
   userLanguages: UserLanguage[],
-  usersMap: IObjectOfOneType<IUserFieldsForStore>,
+  usersMap: IObjectOfOneType<IReduxStoreUserFields>,
   userIdsOfSoloChats: IObjectOfOneType<true>
 ): IUserWithLanguageFields[] => {
   const loggedInUserLanguages: ILanguageExpanded[] = loggedInUser.languages

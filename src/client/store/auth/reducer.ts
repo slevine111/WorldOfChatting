@@ -37,15 +37,6 @@ export default (
         ...state,
         user: action.loggedInUserWithLanguagesArray
       }
-    case types.SET_TO_INITIAL_STATE:
-      return initialState
-    case types.SET_STATUS:
-      return {
-        ...state,
-        accessTokenFields: { ...state.accessTokenFields, status: action.status }
-      }
-    case types.SET_ACCESS_TOKEN_FIELDS:
-      return { ...state, accessTokenFields: action.accessTokenFields }
     case types.SET_USER_AND_ACCESS_TOKEN_FIELDS:
       return {
         ...state,
@@ -57,6 +48,13 @@ export default (
         ...state,
         postponnedActions: [...state.postponnedActions, action.postponnedAction]
       }
+    case types.SET_STATUS:
+      return {
+        ...state,
+        accessTokenFields: { ...state.accessTokenFields, status: action.status }
+      }
+    case types.SET_ACCESS_TOKEN_FIELDS:
+      return { ...state, accessTokenFields: action.accessTokenFields }
     default:
       return state
   }

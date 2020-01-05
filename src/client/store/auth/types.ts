@@ -2,7 +2,6 @@ import { User } from '../../../entities'
 import { ILanguageWithActiveAndTypeFields } from '../../../shared-types'
 import { AnyAction } from 'redux'
 
-export const SET_TO_INITIAL_STATE = <const>'SET_TO_INITIAL_STATE'
 export const SET_STATUS = <const>'SET_STATUS'
 export const SET_ACCESS_TOKEN_FIELDS = <const>'SET_ACCESS_TOKEN_FIELDS'
 export const SET_USER_AND_ACCESS_TOKEN_FIELDS = <const>(

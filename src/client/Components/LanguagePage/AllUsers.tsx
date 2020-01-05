@@ -13,7 +13,7 @@ import {
   getUsersToDisplayFromFilteredUsers
 } from './helperfunctions'
 import { IObjectOfOneType } from '../intercomponent-types'
-import { IUserFieldsForStore } from '../../../shared-types'
+import { IReduxStoreUserFields } from '../../../shared-types'
 import PersonIconList from './PersonIconList'
 import TableList from './TableList'
 import InviteToChatDialog from './InviteToChatDialog'
@@ -29,7 +29,7 @@ interface IReduxStateProps {
 
 interface IOwnProps {
   language: string
-  usersMap: IObjectOfOneType<IUserFieldsForStore>
+  usersMap: IObjectOfOneType<IReduxStoreUserFields>
   userIdsOfSoloChats: IObjectOfOneType<true>
 }
 

@@ -1,1 +1,0 @@
-export const SET_USER_CHAT_GROUPS = <const>'SET_USER_CHAT_GROUPS'

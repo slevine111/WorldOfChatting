@@ -1,2 +1,3 @@
 export const LOGOUT_USER_PROCESS = <const>'LOGOUT_USER_PROCESS'
 export const USER_LOGGED_IN = <const>'USER_LOGGED_IN'
+export const WENT_TO_LANGUAGE_PAGE_VIEW = <const>'WENT_TO_LANGUAGE_PAGE_VIEW'

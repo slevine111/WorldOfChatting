@@ -3,7 +3,7 @@ import {
   IUserCountByLanguage,
   ILanguageWithActiveAndTypeFields,
   IUserAndChatGroupGetReturn,
-  IUserFieldsForStore
+  IReduxStoreUserFields
 } from '../../../shared-types'
 import { IAuthReducerUserField } from '../auth/types'
 
@@ -12,7 +12,7 @@ interface IUserCountByLanguageMap {
 }
 
 interface IUsersAndUserChatGroups {
-  users: IUserFieldsForStore[]
+  users: IReduxStoreUserFields[]
   userChatGroups: UserChatGroup[]
 }
 
@@ -40,7 +40,7 @@ export const separateUserAndChatGroupFields = (
   userIdToFilterOn: string
 ): IUsersAndUserChatGroups => {
   let uniqueUserIds: Set<string> = new Set()
-  let users: IUserFieldsForStore[] = []
+  let users: IReduxStoreUserFields[] = []
   let userChatGroups: UserChatGroup[] = []
   for (let i = 0; i < usersWithChatGroups.length; ++i) {
     if (usersWithChatGroups[i].userId !== userIdToFilterOn) {

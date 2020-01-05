@@ -1,18 +1,19 @@
-import { SET_USER_LANGUAGES } from './types'
-import { UserLanguageActionTypes } from './actions'
-import { LOGOUT_USER_PROCESS } from '../shared/types'
-import { LogoutUserProcessType } from '../shared/actions'
+import {
+  LOGOUT_USER_PROCESS,
+  WENT_TO_LANGUAGE_PAGE_VIEW
+} from '../shared/types'
+import { SharedActionsTypes } from '../shared/actions'
 import { UserLanguage } from '../../../entities'
 
 export default (
   state: UserLanguage[] = [],
-  action: UserLanguageActionTypes | LogoutUserProcessType
+  action: SharedActionsTypes
 ): UserLanguage[] => {
   switch (action.type) {
-    case SET_USER_LANGUAGES:
-      return action.userLanguges
     case LOGOUT_USER_PROCESS:
       return []
+    case WENT_TO_LANGUAGE_PAGE_VIEW:
+      return action.userLanguages
     default:
       return state
   }

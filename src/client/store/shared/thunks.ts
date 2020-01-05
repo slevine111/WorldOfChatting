@@ -1,4 +1,8 @@
-import { logoutUserProcess, userLoggedIn } from './actions'
+import {
+  logoutUserProcess,
+  userLoggedIn,
+  wentToLanguagePageView
+} from './actions'
 import {
   generateAuthReducerUserField,
   separateUserAndChatGroupFields
@@ -9,8 +13,10 @@ import {
   IUserCountByLanguage,
   ILanguageWithActiveAndTypeFields,
   IChatGroupReducer,
-  IUserAndChatGroupGetReturn
+  IUserAndChatGroupGetReturn,
+  IReduxStoreUserFields
 } from '../../../shared-types'
+import { UserLanguage } from '../../../entities'
 import axios, { AxiosResponse } from 'axios'
 
 export const logoutUserProcessThunk = (
@@ -58,5 +64,18 @@ export const userLoggedInThunk = (userAndExpireTime: IUserAndExpireTime) => {
         userChatGroups
       )
     )
+  }
+}
+
+export const languagePageDataRetrivalThunk = (language: string) => {
+  return async (dispatch: any) => {
+    const [userLanguages, users]: [
+      AxiosResponse<UserLanguage[]>,
+      AxiosResponse<IReduxStoreUserFields[]>
+    ] = await Promise.all([
+      axios.get(`/api/userlanguage/language/${language}`),
+      axios.get(`/api/user/linked/language/${language}`)
+    ])
+    dispatch(wentToLanguagePageView(userLanguages.data, users.data))
   }
 }

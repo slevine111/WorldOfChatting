@@ -35,7 +35,7 @@ export interface IUserAndChatGroupGetReturn {
   favorite: boolean
 }
 
-export interface IUserFieldsForStore extends User {
+export interface IReduxStoreUserFields extends User {
   fullName: string
   loggedInAsString: keyof typeof OnlineStatusesEnum
 }

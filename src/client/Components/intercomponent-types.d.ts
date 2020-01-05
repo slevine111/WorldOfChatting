@@ -1,19 +1,19 @@
 import { User } from '../../entities'
-import { IUserFieldsForStore } from '../../shared-types'
+import { IReduxStoreUserFields } from '../../shared-types'
 
 export interface IUsersByChatGroup {
   name: string
   language: string
-  users: IUserFieldsForStore[]
+  users: IReduxStoreUserFields[]
 }
 
 export interface IObjectOfOneType<T> {
   [key: string]: T
 }
 
-export type IObjectOfUserArrays = IObjectOfOneType<IUserFieldsForStore[]>
+export type IObjectOfUserArrays = IObjectOfOneType<IReduxStoreUserFields[]>
 
 export interface IUsersInformation {
   usersGrouped: IObjectOfUserArrays
-  usersMap: IObjectOfOneType<IUserFieldsForStore>
+  usersMap: IObjectOfOneType<IReduxStoreUserFields>
 }

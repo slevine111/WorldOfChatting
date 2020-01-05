@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'
 import {
   IUserAndChatGroupGetReturn,
-  IUserFieldsForStore
+  IReduxStoreUserFields
 } from '../../shared-types'
 import { OnlineStatusesEnum } from '../../shared-types/shared-enums'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
@@ -91,7 +91,7 @@ export default class UserService {
     )
   }
 
-  getUsersLinkedToLanguage(language: string): Promise<IUserFieldsForStore[]> {
+  getUsersLinkedToLanguage(language: string): Promise<IReduxStoreUserFields[]> {
     return this.userRepository.query(
       `SELECT A.id,
               A."firstName",

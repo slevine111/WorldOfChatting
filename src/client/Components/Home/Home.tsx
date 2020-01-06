@@ -52,7 +52,7 @@ const mapStateToProps = ({
   } = auth
   const dataExistsInput: IGroupedArraysAndObjects = {
     objects: [user],
-    arrays: [users.myUsers, Object.keys(chatGroups)]
+    arrays: [users.data.myUsers, Object.keys(chatGroups)]
   }
   const dataLoaded: boolean = checkIfDataExists(dataExistsInput)
   return { dataLoaded, user, tokenExpireTime: expireTime }

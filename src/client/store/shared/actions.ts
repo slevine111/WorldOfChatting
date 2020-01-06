@@ -1,7 +1,8 @@
 import {
   LOGOUT_USER_PROCESS,
   USER_LOGGED_IN,
-  WENT_TO_LANGUAGE_PAGE_VIEW
+  WENT_TO_LANGUAGE_PAGE_VIEW,
+  REQUEST_DATA_API
 } from './types'
 import { IAuthReducerUserField } from '../auth/types'
 import { IChatGroupReducer, IReduxStoreUserFields } from '../../../shared-types'
@@ -27,16 +28,21 @@ export const userLoggedIn = (
 type UserLoggedInType = ReturnType<typeof userLoggedIn>
 
 export const wentToLanguagePageView = (
-  userLanguages: UserLanguage[],
-  users: IReduxStoreUserFields[]
+  data: [UserLanguage[], IReduxStoreUserFields[]],
+  isLoading: boolean
 ) => ({
   type: WENT_TO_LANGUAGE_PAGE_VIEW,
-  userLanguages,
-  users
+  userLanguages: data[0],
+  users: data[1],
+  isLoading
 })
 type WentToLanguagePageViewType = ReturnType<typeof wentToLanguagePageView>
+
+export const requestDataAPI = () => ({ type: REQUEST_DATA_API })
+type RequestDataAPIType = ReturnType<typeof requestDataAPI>
 
 export type SharedActionsTypes =
   | LogoutUserProcessType
   | UserLoggedInType
   | WentToLanguagePageViewType
+  | RequestDataAPIType

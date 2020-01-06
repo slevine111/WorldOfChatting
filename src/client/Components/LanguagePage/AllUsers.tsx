@@ -18,7 +18,6 @@ import PersonIconList from './PersonIconList'
 import TableList from './TableList'
 import InviteToChatDialog from './InviteToChatDialog'
 import UsersFilterSidebar from './UsersFilterSidebar'
-import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import TablePagination from '@material-ui/core/TablePagination'
 import styles from './styles'
@@ -78,7 +77,6 @@ const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
           setSelectedUser({} as IUserWithLanguageFields)
         }}
       />
-      <Typography variant="h6">All Users</Typography>
       <Grid container className={allUsersContainerLeftPadding}>
         <Grid item xs={12} sm={3}>
           <UsersFilterSidebar
@@ -143,7 +141,7 @@ const mapStateToProps = (
     usersOfLanguage: getAllUsersOfLanguage(
       language,
       auth.user,
-      userLanguages,
+      userLanguages.data,
       usersMap,
       userIdsOfSoloChats
     )

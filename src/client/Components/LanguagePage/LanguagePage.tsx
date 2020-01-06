@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { ReduxState } from '../../store'
 import { RouteComponentProps } from 'react-router-dom'
 import { languagePageDataRetrivalThunk } from '../../store/shared/thunks'
-import { checkIfDataExists } from '../utilityfunctions'
 import { getUsersOfLanguageInformation } from './helperfunctions'
 import { IUsersofLanguageInformation } from './shared-types'
 import CurrentChats from './CurrentChats'
@@ -11,31 +10,35 @@ import AllUsers from './AllUsers'
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import styles from './styles'
 
 interface IMatchParams {
   language: string
 }
 
-interface IReduxStateProps extends IUsersofLanguageInformation {
-  dataExists: boolean
+interface IReduxStatePropsSubset {
+  isLoading: boolean
+  userLanguagesLength: number
 }
+
+interface IReduxStateProps
+  extends IUsersofLanguageInformation,
+    IReduxStatePropsSubset {}
 
 interface IDispatchProps {
   languagePageDataRetrival: (language: string) => void
 }
 
-interface ILanguagePageProps
-  extends RouteComponentProps<IMatchParams>,
-    IDispatchProps,
-    IReduxStateProps {}
-
-const LanguagePage: React.FC<ILanguagePageProps> = ({
+const LanguagePage: React.FC<RouteComponentProps<IMatchParams> &
+  IDispatchProps &
+  IReduxStateProps> = ({
   match: {
     params: { language }
   },
   languagePageDataRetrival,
-  dataExists,
+  isLoading,
+  userLanguagesLength,
   usersByChatGroup,
   userIdsOfSoloChats,
   usersMap
@@ -45,23 +48,39 @@ const LanguagePage: React.FC<ILanguagePageProps> = ({
     languagePageDataRetrival(language)
   }, [language])
 
-  if (!dataExists) return <div>not ready</div>
   return (
     <div>
       <Typography variant="h6">{language.toLocaleUpperCase()}</Typography>
-      <Grid container>
-        <Grid item xs={12} sm={9}>
-          <Paper className={paperPageSection}>
-            <CurrentChats {...{ ...{ language, usersByChatGroup } }} />
-          </Paper>
-          <Paper className={paperPageSection}>
-            <AllUsers {...{ ...{ language, userIdsOfSoloChats, usersMap } }} />
-          </Paper>
+      {isLoading && <CircularProgress disableShrink />}
+      {!isLoading && (
+        <Grid container>
+          <Grid item xs={12} sm={9}>
+            <Paper className={paperPageSection}>
+              <Typography variant="h6">Current Chats</Typography>
+              {!usersByChatGroup.length && (
+                <Typography variant="body1">{`You are not currently chatting with anybody in ${language}. Click on someone below to start chatting!!`}</Typography>
+              )}
+              {!!usersByChatGroup.length && (
+                <CurrentChats {...{ ...{ usersByChatGroup } }} />
+              )}
+            </Paper>
+            <Paper className={paperPageSection}>
+              <Typography variant="h6">All Users</Typography>
+              {userLanguagesLength === 1 && (
+                <Typography variant="body1">{`No other users are signed up for ${language}. More will sign up soon :)`}</Typography>
+              )}
+              {userLanguagesLength > 1 && (
+                <AllUsers
+                  {...{ ...{ language, userIdsOfSoloChats, usersMap } }}
+                />
+              )}
+            </Paper>
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <div>under construction</div>
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={3}>
-          <div>under construction</div>
-        </Grid>
-      </Grid>
+      )}
     </div>
   )
 }
@@ -74,21 +93,22 @@ const mapStateToProps = (
     }
   }: RouteComponentProps<IMatchParams>
 ): IReduxStateProps => {
-  const dataExists: boolean = checkIfDataExists({
-    objects: [],
-    arrays: [users.currentLanguageUsers, userLanguages]
-  })
-  if (dataExists) {
+  const isLoading: boolean = [users, userLanguages].some(data => data.isLoading)
+  let returnObject: IReduxStatePropsSubset = {
+    isLoading,
+    userLanguagesLength: userLanguages.data.length
+  }
+  if (!isLoading) {
     const usersOfLanguageInfo = getUsersOfLanguageInformation(
-      users.currentLanguageUsers,
+      users.data.currentLanguageUsers,
       chatGroups,
-      userChatGroups,
+      userChatGroups.data,
       language
     )
-    return { dataExists, ...usersOfLanguageInfo }
+    return { ...returnObject, ...usersOfLanguageInfo }
   } else {
     return {
-      dataExists,
+      ...returnObject,
       usersByChatGroup: [],
       usersMap: {},
       userIdsOfSoloChats: {}

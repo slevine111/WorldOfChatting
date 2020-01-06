@@ -39,13 +39,13 @@ const mapStateToProps = ({
 }: ReduxState): IReduxStateProps => {
   const dataExists: boolean = checkIfDataExists({
     objects: [],
-    arrays: [users.myUsers, userChatGroups, Object.keys(chatGroups)]
+    arrays: [users.data.myUsers, userChatGroups.data, Object.keys(chatGroups)]
   })
   if (!dataExists) return { favoriteChatGroups: [] }
   const favoriteChatGroups: IUsersByChatGroup[] = getFavoriteChatGroupsOfUser(
-    users.myUsers,
+    users.data.myUsers,
     chatGroups,
-    userChatGroups
+    userChatGroups.data
   )
   return {
     favoriteChatGroups

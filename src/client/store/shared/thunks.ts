@@ -18,6 +18,7 @@ import {
 } from '../../../shared-types'
 import { UserLanguage } from '../../../entities'
 import axios, { AxiosResponse } from 'axios'
+import { IThunkReturnObject } from '../callAPIMiddleware'
 
 export const logoutUserProcessThunk = (
   userId: string,
@@ -67,15 +68,20 @@ export const userLoggedInThunk = (userAndExpireTime: IUserAndExpireTime) => {
   }
 }
 
-export const languagePageDataRetrivalThunk = (language: string) => {
-  return async (dispatch: any) => {
-    const [userLanguages, users]: [
-      AxiosResponse<UserLanguage[]>,
-      AxiosResponse<IReduxStoreUserFields[]>
-    ] = await Promise.all([
-      axios.get(`/api/userlanguage/language/${language}`),
-      axios.get(`/api/user/linked/language/${language}`)
-    ])
-    dispatch(wentToLanguagePageView(userLanguages.data, users.data))
+export const languagePageDataRetrivalThunk = (
+  language: string
+): IThunkReturnObject<[UserLanguage[], IReduxStoreUserFields[]]> => {
+  return {
+    isAPICall: true,
+    apiCall: (): Promise<[UserLanguage[], IReduxStoreUserFields[]]> => {
+      return Promise.all([
+        axios.get(`/api/userlanguage/language/${language}`),
+        axios.get(`/api/user/linked/language/${language}`)
+      ]).then(data => data.map((dataItem: any) => dataItem.data)) as Promise<
+        [UserLanguage[], IReduxStoreUserFields[]]
+      >
+    },
+    dispatchAction: wentToLanguagePageView,
+    dispatchProps: {}
   }
 }

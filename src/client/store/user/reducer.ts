@@ -1,27 +1,43 @@
 import {
   LOGOUT_USER_PROCESS,
   USER_LOGGED_IN,
-  WENT_TO_LANGUAGE_PAGE_VIEW
+  WENT_TO_LANGUAGE_PAGE_VIEW,
+  REQUEST_DATA_API
 } from '../shared/types'
 import { SharedActionsTypes } from '../shared/actions'
 import { IReduxStoreUserFields } from '../../../shared-types'
 
 export interface IUserReducerState {
-  myUsers: IReduxStoreUserFields[]
-  currentLanguageUsers: IReduxStoreUserFields[]
+  data: {
+    myUsers: IReduxStoreUserFields[]
+    currentLanguageUsers: IReduxStoreUserFields[]
+  }
+
+  isLoading: boolean
+}
+
+const initialState: IUserReducerState = {
+  data: { myUsers: [], currentLanguageUsers: [] },
+  isLoading: false
 }
 
 export default (
-  state: IUserReducerState = { myUsers: [], currentLanguageUsers: [] },
+  state: IUserReducerState = { ...initialState },
   action: SharedActionsTypes
 ): IUserReducerState => {
+  const { data } = state
   switch (action.type) {
     case LOGOUT_USER_PROCESS:
-      return { myUsers: [], currentLanguageUsers: [] }
+      return { ...state }
     case USER_LOGGED_IN:
-      return { ...state, myUsers: action.users }
+      return { ...state, data: { ...data, myUsers: action.users } }
     case WENT_TO_LANGUAGE_PAGE_VIEW:
-      return { ...state, currentLanguageUsers: action.users }
+      return {
+        isLoading: action.isLoading,
+        data: { ...data, currentLanguageUsers: action.users }
+      }
+    case REQUEST_DATA_API:
+      return { ...state, isLoading: true }
     default:
       return state
   }

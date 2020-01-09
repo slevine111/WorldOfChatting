@@ -2,11 +2,10 @@ import {
   LOGOUT_USER_PROCESS,
   USER_LOGGED_IN,
   WENT_TO_LANGUAGE_PAGE_VIEW,
-  REQUEST_DATA_API
+  ActionRequestData,
+  LanguagePageDataRetrivalArrayDataTypes,
+  UserLoggedInDataRetrivalArrayDataTypes
 } from './types'
-import { IAuthReducerUserField } from '../auth/types'
-import { IChatGroupReducer, IReduxStoreUserFields } from '../../../shared-types'
-import { UserChatGroup, UserLanguage } from '../../../entities'
 
 export const logoutUserProcess = () => ({
   type: LOGOUT_USER_PROCESS
@@ -14,21 +13,20 @@ export const logoutUserProcess = () => ({
 type LogoutUserProcessType = ReturnType<typeof logoutUserProcess>
 
 export const userLoggedIn = (
-  loggedInUserWithLanguagesArray: IAuthReducerUserField,
-  chatGroups: IChatGroupReducer,
-  users: IReduxStoreUserFields[],
-  userChatGroups: UserChatGroup[]
+  data: UserLoggedInDataRetrivalArrayDataTypes,
+  isLoading: boolean
 ) => ({
   type: USER_LOGGED_IN,
-  loggedInUserWithLanguagesArray,
-  chatGroups,
-  users,
-  userChatGroups
+  loggedInUserWithLanguagesArray: data[0],
+  chatGroups: data[1],
+  users: data[2],
+  userChatGroups: data[3],
+  isLoading
 })
 type UserLoggedInType = ReturnType<typeof userLoggedIn>
 
 export const wentToLanguagePageView = (
-  data: [UserLanguage[], IReduxStoreUserFields[]],
+  data: LanguagePageDataRetrivalArrayDataTypes,
   isLoading: boolean
 ) => ({
   type: WENT_TO_LANGUAGE_PAGE_VIEW,
@@ -38,11 +36,8 @@ export const wentToLanguagePageView = (
 })
 type WentToLanguagePageViewType = ReturnType<typeof wentToLanguagePageView>
 
-export const requestDataAPI = () => ({ type: REQUEST_DATA_API })
-type RequestDataAPIType = ReturnType<typeof requestDataAPI>
-
 export type SharedActionsTypes =
   | LogoutUserProcessType
   | UserLoggedInType
   | WentToLanguagePageViewType
-  | RequestDataAPIType
+  | ActionRequestData

@@ -17,14 +17,9 @@ interface IMatchParams {
   language: string
 }
 
-interface IReduxStatePropsSubset {
+interface IReduxStateProps extends IUsersofLanguageInformation {
   isLoading: boolean
-  userLanguagesLength: number
 }
-
-interface IReduxStateProps
-  extends IUsersofLanguageInformation,
-    IReduxStatePropsSubset {}
 
 interface IDispatchProps {
   languagePageDataRetrival: (language: string) => void
@@ -38,7 +33,6 @@ const LanguagePage: React.FC<RouteComponentProps<IMatchParams> &
   },
   languagePageDataRetrival,
   isLoading,
-  userLanguagesLength,
   usersByChatGroup,
   userIdsOfSoloChats,
   usersMap
@@ -56,24 +50,12 @@ const LanguagePage: React.FC<RouteComponentProps<IMatchParams> &
         <Grid container>
           <Grid item xs={12} sm={9}>
             <Paper className={paperPageSection}>
-              <Typography variant="h6">Current Chats</Typography>
-              {!usersByChatGroup.length && (
-                <Typography variant="body1">{`You are not currently chatting with anybody in ${language}. Click on someone below to start chatting!!`}</Typography>
-              )}
-              {!!usersByChatGroup.length && (
-                <CurrentChats {...{ ...{ usersByChatGroup } }} />
-              )}
+              <CurrentChats {...{ ...{ language, usersByChatGroup } }} />
             </Paper>
             <Paper className={paperPageSection}>
-              <Typography variant="h6">All Users</Typography>
-              {userLanguagesLength === 1 && (
-                <Typography variant="body1">{`No other users are signed up for ${language}. More will sign up soon :)`}</Typography>
-              )}
-              {userLanguagesLength > 1 && (
-                <AllUsers
-                  {...{ ...{ language, userIdsOfSoloChats, usersMap } }}
-                />
-              )}
+              <AllUsers
+                {...{ ...{ language, userIdsOfSoloChats, usersMap } }}
+              />
             </Paper>
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -93,22 +75,19 @@ const mapStateToProps = (
     }
   }: RouteComponentProps<IMatchParams>
 ): IReduxStateProps => {
-  const isLoading: boolean = [users, userLanguages].some(data => data.isLoading)
-  let returnObject: IReduxStatePropsSubset = {
-    isLoading,
-    userLanguagesLength: userLanguages.data.length
-  }
+  const isLoading: boolean =
+    users.currentLanguageUsers.isLoading || userLanguages.isLoading
   if (!isLoading) {
     const usersOfLanguageInfo = getUsersOfLanguageInformation(
-      users.data.currentLanguageUsers,
-      chatGroups,
+      users.currentLanguageUsers.data,
+      chatGroups.data,
       userChatGroups.data,
       language
     )
-    return { ...returnObject, ...usersOfLanguageInfo }
+    return { isLoading, ...usersOfLanguageInfo }
   } else {
     return {
-      ...returnObject,
+      isLoading,
       usersByChatGroup: [],
       usersMap: {},
       userIdsOfSoloChats: {}

@@ -20,6 +20,7 @@ import InviteToChatDialog from './InviteToChatDialog'
 import UsersFilterSidebar from './UsersFilterSidebar'
 import Grid from '@material-ui/core/Grid'
 import TablePagination from '@material-ui/core/TablePagination'
+import Typography from '@material-ui/core/Typography'
 import styles from './styles'
 
 interface IReduxStateProps {
@@ -33,7 +34,8 @@ interface IOwnProps {
 }
 
 const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
-  usersOfLanguage
+  usersOfLanguage,
+  language
 }) => {
   if (!Array.isArray(usersOfLanguage)) return <div>not ready</div>
   const { allUsersListPadding, allUsersContainerLeftPadding } = styles()
@@ -77,58 +79,64 @@ const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
           setSelectedUser({} as IUserWithLanguageFields)
         }}
       />
-      <Grid container className={allUsersContainerLeftPadding}>
-        <Grid item xs={12} sm={3}>
-          <UsersFilterSidebar
-            {...{
-              onlineStatusesChecked,
-              setOnlineStatusesChecked,
-              userLangsTypesChecked,
-              setUserLangsTypesChecked
+      <Typography variant="h6">All Users</Typography>
+      {!usersOfLanguage.length && (
+        <Typography variant="body1">{`No other users are signed up for ${language}. More will sign up soon :)`}</Typography>
+      )}
+      {usersOfLanguage.length && (
+        <Grid container className={allUsersContainerLeftPadding}>
+          <Grid item xs={12} sm={3}>
+            <UsersFilterSidebar
+              {...{
+                onlineStatusesChecked,
+                setOnlineStatusesChecked,
+                userLangsTypesChecked,
+                setUserLangsTypesChecked
+              }}
+            />{' '}
+          </Grid>
+          <Grid item xs={12} sm={9} className={allUsersListPadding}>
+            {display === 'icon' && (
+              <PersonIconList
+                {...{
+                  ...{
+                    orderDirectionAndColumn,
+                    setOrderDirectionAndColumn,
+                    rowsToDisplay,
+                    setSelectedUser,
+                    searchUserText,
+                    setSearchUserText
+                  }
+                }}
+              />
+            )}
+            {display === 'table' && (
+              <TableList
+                {...{
+                  ...{
+                    orderDirectionAndColumn,
+                    setOrderDirectionAndColumn,
+                    rowsToDisplay,
+                    setSelectedUser
+                  }
+                }}
+              />
+            )}
+          </Grid>
+          <TablePagination
+            rowsPerPageOptions={[25, 50, 100]}
+            component="div"
+            count={filteredUsers.length}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            onChangePage={(_event, page) => setPage(page)}
+            onChangeRowsPerPage={event => {
+              setRowsPerPage(Number(event.target.value))
+              setPage(0)
             }}
-          />{' '}
+          />
         </Grid>
-        <Grid item xs={12} sm={9} className={allUsersListPadding}>
-          {display === 'icon' && (
-            <PersonIconList
-              {...{
-                ...{
-                  orderDirectionAndColumn,
-                  setOrderDirectionAndColumn,
-                  rowsToDisplay,
-                  setSelectedUser,
-                  searchUserText,
-                  setSearchUserText
-                }
-              }}
-            />
-          )}
-          {display === 'table' && (
-            <TableList
-              {...{
-                ...{
-                  orderDirectionAndColumn,
-                  setOrderDirectionAndColumn,
-                  rowsToDisplay,
-                  setSelectedUser
-                }
-              }}
-            />
-          )}
-        </Grid>
-        <TablePagination
-          rowsPerPageOptions={[25, 50, 100]}
-          component="div"
-          count={filteredUsers.length}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          onChangePage={(_event, page) => setPage(page)}
-          onChangeRowsPerPage={event => {
-            setRowsPerPage(Number(event.target.value))
-            setPage(0)
-          }}
-        />
-      </Grid>
+      )}
     </div>
   )
 }
@@ -138,13 +146,16 @@ const mapStateToProps = (
   { language, usersMap, userIdsOfSoloChats }: IOwnProps
 ): IReduxStateProps => {
   return {
-    usersOfLanguage: getAllUsersOfLanguage(
-      language,
-      auth.user,
-      userLanguages.data,
-      usersMap,
-      userIdsOfSoloChats
-    )
+    usersOfLanguage:
+      userLanguages.data.length === 1
+        ? []
+        : getAllUsersOfLanguage(
+            language,
+            auth.user,
+            userLanguages.data,
+            usersMap,
+            userIdsOfSoloChats
+          )
   }
 }
 

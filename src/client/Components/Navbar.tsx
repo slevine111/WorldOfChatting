@@ -4,7 +4,6 @@ import { ReduxState } from '../store/index'
 import { User } from '../../entities'
 import { logoutUserProcessThunk } from '../store/shared/thunks'
 import { IUserUpdateDTO } from '../../server/users/users.dto'
-import { ThunkDispatch } from 'redux-thunk'
 import { History } from 'history'
 
 //Material-UI components
@@ -16,7 +15,6 @@ import Button from '@material-ui/core/Button'
 //MaterIal-UI style imports
 import { makeStyles } from '@material-ui/core/styles'
 import { Style } from 'jss'
-import { AnyAction } from 'redux'
 
 interface IReduxStateProps {
   user: User
@@ -84,9 +82,7 @@ const mapStateToProps = ({ auth: { user } }: ReduxState): IReduxStateProps => ({
   user
 })
 
-const mapDispatchToProps = (
-  dispatch: ThunkDispatch<any, any, AnyAction>
-): IDispatchProps => {
+const mapDispatchToProps = (dispatch: any): IDispatchProps => {
   return {
     logoutUser: (userId, updatedUserFields) =>
       dispatch(logoutUserProcessThunk(userId, updatedUserFields))

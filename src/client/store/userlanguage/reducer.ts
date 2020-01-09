@@ -1,29 +1,30 @@
 import {
   LOGOUT_USER_PROCESS,
   WENT_TO_LANGUAGE_PAGE_VIEW,
-  REQUEST_DATA_API
+  RequestDataConstants
 } from '../shared/types'
 import { SharedActionsTypes } from '../shared/actions'
 import { UserLanguage } from '../../../entities'
+const { REQUEST_DATA_API } = RequestDataConstants
 
-export interface IUserLangugeReducer {
+export interface IUserLangugeReducerState {
   data: UserLanguage[]
   isLoading: boolean
 }
 
-const initialState: IUserLangugeReducer = { data: [], isLoading: false }
+const initialState: IUserLangugeReducerState = { data: [], isLoading: false }
 
 export default (
-  state: IUserLangugeReducer = { ...initialState },
+  state: IUserLangugeReducerState = { ...initialState },
   action: SharedActionsTypes
-): IUserLangugeReducer => {
+): IUserLangugeReducerState => {
   switch (action.type) {
     case LOGOUT_USER_PROCESS:
       return { ...initialState }
     case WENT_TO_LANGUAGE_PAGE_VIEW:
       return { data: action.userLanguages, isLoading: action.isLoading }
     case REQUEST_DATA_API:
-      return { ...state, isLoading: true }
+      return { ...state, isLoading: action.isLoading }
     default:
       return state
   }

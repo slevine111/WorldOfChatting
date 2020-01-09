@@ -2,7 +2,6 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { ReduxState } from '../../store'
 import { IUsersByChatGroup } from '../intercomponent-types'
-import { checkIfDataExists } from '../utilityfunctions'
 import { getFavoriteChatGroupsOfUser } from './helperfunctions'
 import ChatBio from '../_shared/ChatBio'
 import Typography from '@material-ui/core/Typography'
@@ -21,6 +20,11 @@ const FavoriteChats: React.FC<IFavoriteChatsProps> = ({
     <div>
       <Typography variant="h6">My Favorite Chats</Typography>
       <Grid container>
+        {!favoriteChatGroups.length && (
+          <Typography variant="body1">
+            You have no favorite chats. Go to your chats and add some!!
+          </Typography>
+        )}
         {favoriteChatGroups.length &&
           favoriteChatGroups.map((ch: IUsersByChatGroup, idx: number) => {
             return (
@@ -37,14 +41,9 @@ const mapStateToProps = ({
   chatGroups,
   userChatGroups
 }: ReduxState): IReduxStateProps => {
-  const dataExists: boolean = checkIfDataExists({
-    objects: [],
-    arrays: [users.data.myUsers, userChatGroups.data, Object.keys(chatGroups)]
-  })
-  if (!dataExists) return { favoriteChatGroups: [] }
   const favoriteChatGroups: IUsersByChatGroup[] = getFavoriteChatGroupsOfUser(
-    users.data.myUsers,
-    chatGroups,
+    users.myUsers.data,
+    chatGroups.data,
     userChatGroups.data
   )
   return {

@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { IUsersByChatGroup } from '../../intercomponent-types'
 import Typography from '@material-ui/core/Typography'
@@ -29,8 +29,6 @@ const ChatBio: React.FC<IChatBioProps> = ({
     badgeRightMargin
   } = styles()
   const { users, language, name } = usersByChatGroup
-  if (!users || !users[0] || users.includes(undefined))
-    return <div>not ready</div>
   const groupChat: boolean = users.length > 1
   const numberUsersOnline: number = users.reduce(
     (sum, user) => sum + Number(user.loggedIn),

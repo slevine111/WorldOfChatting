@@ -1,13 +1,9 @@
 import { User } from '../../../entities'
 import { ILanguageWithActiveAndTypeFields } from '../../../shared-types'
-import { AnyAction } from 'redux'
 
-export const SET_STATUS = <const>'SET_STATUS'
-export const SET_ACCESS_TOKEN_FIELDS = <const>'SET_ACCESS_TOKEN_FIELDS'
-export const SET_USER_AND_ACCESS_TOKEN_FIELDS = <const>(
-  'SET_USER_AND_ACCESS_TOKEN_FIELDS'
-)
 export const ADD_POSTPONNED_ACTION = <const>'ADD_POSTPONNED_ACTION'
+export const USER_LOGGING_IN_FOUND = <const>'USER_LOGGING_IN_FOUND'
+export const ACCESS_TOKEN_REFRESHED = <const>'ACCESS_TOKEN_REFRESHED'
 
 export enum PossibleStatuses {
   NONE = 'NONE',
@@ -19,11 +15,6 @@ export interface ILanguageExpanded extends ILanguageWithActiveAndTypeFields {
   usersOnlineCount: number
 }
 
-interface IAccessTokenFields {
-  status: PossibleStatuses
-  expireTime: number
-}
-
 export interface IUserAndExpireTime {
   user: User
   expireTime: number
@@ -31,10 +22,4 @@ export interface IUserAndExpireTime {
 
 export interface IAuthReducerUserField extends User {
   languages: ILanguageExpanded[]
-}
-
-export interface IAuthReducerState {
-  user: IAuthReducerUserField
-  accessTokenFields: IAccessTokenFields
-  postponnedActions: AnyAction[]
 }

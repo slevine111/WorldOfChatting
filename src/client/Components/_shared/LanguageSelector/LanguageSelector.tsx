@@ -21,7 +21,11 @@ const sortLanguages = (
   })
 }
 
-interface ILanguageSelectorProps {
+interface IReduxStateProps {
+  languages: Language[]
+}
+
+interface IOwnProps {
   handleChange: (
     event: ChangeEvent<HTMLInputElement>,
     language: string,
@@ -29,10 +33,9 @@ interface ILanguageSelectorProps {
   ) => void
   languagesToLearn: string[]
   languagesToTeach: string[]
-  languages: Language[]
 }
 
-const LanguageSelector: React.FC<ILanguageSelectorProps> = ({
+const LanguageSelector: React.FC<IReduxStateProps & IOwnProps> = ({
   handleChange,
   languagesToLearn,
   languagesToTeach,
@@ -128,6 +131,8 @@ const LanguageSelector: React.FC<ILanguageSelectorProps> = ({
   )
 }
 
-const mapStateToProps = ({ languages }: ReduxState) => ({ languages })
+const mapStateToProps = ({ languages }: ReduxState): IReduxStateProps => ({
+  languages: languages.data
+})
 
 export default connect(mapStateToProps)(LanguageSelector)

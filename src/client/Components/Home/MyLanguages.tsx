@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { ReduxState } from '../../store'
@@ -51,26 +51,38 @@ const MyLanguages: React.FC<IMyLanguagesProps> = ({
   return (
     <div>
       <Typography variant="h6">My Languages</Typography>
-      <ReactWordCloud
-        words={usersCountByLanguage}
-        options={{
-          enableTooltip: false,
-          fontSizes: [30, 60],
-          rotations: 0,
-          deterministic: true
-        }}
-        callbacks={wordCloudCallbacks}
-      />
-      <Popover
-        open={selectedLanguageDOMElement !== null}
-        anchorEl={selectedLanguageDOMElement}
-        onClose={() => setSelectedLanguageDOMElement(null)}
-        anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
-      >
-        <MenuItem onClick={() => history.push(`/language/${selectedLanguage}`)}>
-          {selectedLanguage !== '' ? `Go to ${selectedLanguage} page` : ''}
-        </MenuItem>
-      </Popover>
+      {!usersCountByLanguage.length && (
+        <Typography variant="body1">
+          You are not signed up for any languges. Go to your account page and
+          add some!!
+        </Typography>
+      )}
+      {usersCountByLanguage.length && (
+        <Fragment>
+          <ReactWordCloud
+            words={usersCountByLanguage}
+            options={{
+              enableTooltip: false,
+              fontSizes: [30, 60],
+              rotations: 0,
+              deterministic: true
+            }}
+            callbacks={wordCloudCallbacks}
+          />
+          <Popover
+            open={selectedLanguageDOMElement !== null}
+            anchorEl={selectedLanguageDOMElement}
+            onClose={() => setSelectedLanguageDOMElement(null)}
+            anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
+          >
+            <MenuItem
+              onClick={() => history.push(`/language/${selectedLanguage}`)}
+            >
+              {selectedLanguage !== '' ? `Go to ${selectedLanguage} page` : ''}
+            </MenuItem>
+          </Popover>
+        </Fragment>
+      )}
     </div>
   )
 }

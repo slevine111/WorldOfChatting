@@ -1,23 +1,30 @@
-import { LOGOUT_USER_PROCESS, USER_LOGGED_IN } from '../shared/types'
+import {
+  LOGOUT_USER_PROCESS,
+  USER_LOGGED_IN,
+  RequestDataConstants
+} from '../shared/types'
 import { SharedActionsTypes } from '../shared/actions'
 import { UserChatGroup } from '../../../entities'
+const { REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
 
-export interface IUserChatGroupReducer {
+export interface IUserChatGroupReducerState {
   data: UserChatGroup[]
   isLoading: boolean
 }
 
-const initialState: IUserChatGroupReducer = { data: [], isLoading: false }
+const initialState: IUserChatGroupReducerState = { data: [], isLoading: false }
 
 export default (
-  state: IUserChatGroupReducer = { ...initialState },
+  state: IUserChatGroupReducerState = { ...initialState },
   action: SharedActionsTypes
-): IUserChatGroupReducer => {
+): IUserChatGroupReducerState => {
   switch (action.type) {
     case LOGOUT_USER_PROCESS:
       return { ...initialState }
     case USER_LOGGED_IN:
-      return { ...state, data: action.userChatGroups }
+      return { data: action.userChatGroups, isLoading: action.isLoading }
+    case REQUEST_DATA_USER_LOGGED_IN:
+      return { data: [], isLoading: true }
     default:
       return state
   }

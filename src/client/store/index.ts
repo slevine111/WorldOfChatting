@@ -1,29 +1,24 @@
 import { createStore, combineReducers, applyMiddleware, Reducer } from 'redux'
-import { Language } from '../../entities'
-import { IChatGroupReducer } from '../../shared-types'
-import languageReducer from './language/reducer'
+import languageReducer, { ILanguageReducerState } from './language/reducer'
 import userReducer, { IUserReducerState } from './user/reducer'
 import userLanguageReducer, {
-  IUserLangugeReducer
+  IUserLangugeReducerState
 } from './userlanguage/reducer'
-import chatGroupReducer from './chatgroup/reducer'
+import chatGroupReducer, { IChatGroupReducerState } from './chatgroup/reducer'
 import userChatGroupReducer, {
-  IUserChatGroupReducer
+  IUserChatGroupReducerState
 } from './userchatgroup/reducer'
-import authReducer from './auth/reducer'
-import { IAuthReducerState } from './auth/types'
-
+import authReducer, { IAuthReducerState } from './auth/reducer'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
-import refreshTokenMiddleware from './auth/middleware'
-import callAPIMiddleware from './callAPIMiddleware'
+import { refreshTokenMiddleware, callAPIMiddleware } from './apiMiddleware'
 
 interface ICombinedReducer {
-  languages: Language[]
+  languages: ILanguageReducerState
   users: IUserReducerState
-  userLanguages: IUserLangugeReducer
-  chatGroups: IChatGroupReducer
-  userChatGroups: IUserChatGroupReducer
+  userLanguages: IUserLangugeReducerState
+  chatGroups: IChatGroupReducerState
+  userChatGroups: IUserChatGroupReducerState
   auth: IAuthReducerState
 }
 
@@ -40,8 +35,8 @@ export type ReduxState = ReturnType<typeof rootReducer>
 
 const getMiddlewareArray = (environmentMode: string | undefined): any[] => {
   return [
-    callAPIMiddleware,
     refreshTokenMiddleware,
+    callAPIMiddleware,
     thunk,
     ...(environmentMode === 'development' ? [logger] : [])
   ]

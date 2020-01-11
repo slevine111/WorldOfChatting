@@ -29,7 +29,7 @@ export const logoutUserProcessThunk = (
       await axios.put(`/api/user/${userId}`, partialUpdatedUser)
       return axios.delete('/api/auth')
     },
-    dispatchAction: logoutUserProcess,
+    dispatchActionOnSuccess: logoutUserProcess,
     dispatchProps: {},
     bypassRefreshTokenMiddleware: true
   }
@@ -67,7 +67,7 @@ export const userLoggedInThunk = (
       )
       return [userLangsOfLoggedInUser, chatGroups, users, userChatGroups]
     },
-    dispatchAction: userLoggedIn,
+    dispatchActionOnSuccess: userLoggedIn,
     dispatchProps: {}
   }
 }
@@ -83,7 +83,7 @@ export const languagePageDataRetrivalThunk = (
         axios.get(`/api/user/linked/language/${language}`)
       ])
     },
-    dispatchAction: wentToLanguagePageView,
+    dispatchActionOnSuccess: wentToLanguagePageView,
     dispatchProps: {}
   }
 }

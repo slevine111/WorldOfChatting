@@ -83,7 +83,7 @@ const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
       {!usersOfLanguage.length && (
         <Typography variant="body1">{`No other users are signed up for ${language}. More will sign up soon :)`}</Typography>
       )}
-      {usersOfLanguage.length && (
+      {!!usersOfLanguage.length && (
         <Grid container className={allUsersContainerLeftPadding}>
           <Grid item xs={12} sm={3}>
             <UsersFilterSidebar

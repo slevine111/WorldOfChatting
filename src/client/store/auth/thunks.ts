@@ -15,14 +15,14 @@ export const refreshToken = (): IThunkReturnObject<number> => {
     apiCall: (): Promise<AxiosResponse<number>> => {
       return axios.get('/api/auth/refreshToken')
     },
-    dispatchAction: accessTokenRefreshed,
+    dispatchActionOnSuccess: accessTokenRefreshed,
     dispatchProps: {}
   }
 }
 
 const authenticateUserThunkReturnObject: IThunkReturnObjectSubset<IUserAndExpireTime> = {
   requestDataActionType: AUTHENTICATING_USER_REQUEST,
-  dispatchAction: userLoggingInFound,
+  dispatchActionOnSuccess: userLoggingInFound,
   dispatchProps: {}
 }
 

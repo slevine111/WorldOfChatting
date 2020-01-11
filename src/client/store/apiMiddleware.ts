@@ -8,7 +8,7 @@ import { refreshToken } from './auth/thunks'
 export interface IThunkReturnObjectSubset<T = any> {
   requestDataActionType: RequestDataConstants
   dataTransformationCall?: (apiResponseData: any) => T
-  dispatchAction: (
+  dispatchActionOnSuccess: (
     data: T,
     isLoading: boolean,
     otherInputs: { [key: string]: any }
@@ -68,7 +68,7 @@ export const callAPIMiddleware = () => {
 
     const {
       apiCall,
-      dispatchAction,
+      dispatchActionOnSuccess,
       dispatchProps,
       dataTransformationCall
     } = action
@@ -81,6 +81,6 @@ export const callAPIMiddleware = () => {
       data = apiResponse.data
     }
     if (dataTransformationCall) data = dataTransformationCall(data)
-    next(dispatchAction(data, false, dispatchProps))
+    next(dispatchActionOnSuccess(data, false, dispatchProps))
   }
 }

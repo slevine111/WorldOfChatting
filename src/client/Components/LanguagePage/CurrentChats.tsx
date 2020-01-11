@@ -16,7 +16,7 @@ const FavoriteChats: React.FC<IOwnProps> = ({ usersByChatGroup, language }) => {
       {!usersByChatGroup.length && (
         <Typography variant="body1">{`You are not currently chatting with anybody in ${language}. Click on someone below to start chatting!!`}</Typography>
       )}
-      {usersByChatGroup.length && (
+      {!!usersByChatGroup.length && (
         <Grid container>
           {usersByChatGroup.map((ch: IUsersByChatGroup, idx: number) => {
             return (

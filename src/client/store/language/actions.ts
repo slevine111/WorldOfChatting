@@ -22,7 +22,7 @@ export const getAllLanguagesThunk = (): IThunkReturnObject<Language[]> => {
     apiCall: (): Promise<AxiosResponse<Language[]>> => {
       return axios.get('/api/language')
     },
-    dispatchAction: gotAllLanguages,
+    dispatchActionOnSuccess: gotAllLanguages,
     dispatchProps: {}
   }
 }

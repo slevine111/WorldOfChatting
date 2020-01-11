@@ -53,7 +53,7 @@ const App: React.FC<IAppProps> = ({
             <Route path="/about" exact render={() => <h4>the about page</h4>} />
             <Route path="/signup" exact component={Signup} />
             <Route path="/login" exact component={Login} />
-            {user.id && <LoggedInUserController />}
+            {user.data.id && <LoggedInUserController />}
             <Route exact render={() => <h4>url does not exist</h4>} />
           </Switch>
         </Fragment>

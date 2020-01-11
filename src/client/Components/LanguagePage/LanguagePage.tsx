@@ -76,7 +76,8 @@ const mapStateToProps = (
   }: RouteComponentProps<IMatchParams>
 ): IReduxStateProps => {
   const isLoading: boolean =
-    users.currentLanguageUsers.isLoading || userLanguages.isLoading
+    users.currentLanguageUsers.isLoading ||
+    userLanguages.ofLanguagePage.isLoading
   if (!isLoading) {
     const usersOfLanguageInfo = getUsersOfLanguageInformation(
       users.currentLanguageUsers.data,

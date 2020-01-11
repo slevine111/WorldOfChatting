@@ -3,18 +3,18 @@ import { connect } from 'react-redux'
 import { Route } from 'react-router'
 import Home from './Home/'
 import LanguagePage from './LanguagePage'
-import { IAuthReducerUserField } from '../store/auth/types'
 import { userLoggedInThunk } from '../store/shared/thunks'
+import { User } from '../../entities'
 import { ReduxState } from '../store'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 interface IReduxStateProps {
   dataLoading: boolean
-  user: IAuthReducerUserField
+  user: User
 }
 
 interface IDispatchProps {
-  loggedInUserDataRetrival: (user: IAuthReducerUserField) => void
+  loggedInUserDataRetrival: (user: User) => void
 }
 
 const LoggedInUserController: React.FC<IReduxStateProps & IDispatchProps> = ({
@@ -35,21 +35,23 @@ const LoggedInUserController: React.FC<IReduxStateProps & IDispatchProps> = ({
 }
 
 const mapStateToProps = ({
-  users,
   auth,
+  users,
+  userLanguages,
   chatGroups,
   userChatGroups
 }: ReduxState): IReduxStateProps => {
   const { user } = auth
   const dataLoading: boolean =
     users.myUsers.isLoading ||
-    [auth, chatGroups, userChatGroups].some(dataItem => dataItem.isLoading)
-  return { dataLoading, user }
+    userLanguages.ofUser.isLoading ||
+    [chatGroups, userChatGroups].some(dataItem => dataItem.isLoading)
+  return { dataLoading, user: user.data }
 }
 
 const mapDispatchToProps = (dispatch: any): IDispatchProps => {
   return {
-    loggedInUserDataRetrival: (user: IAuthReducerUserField): void =>
+    loggedInUserDataRetrival: (user: User): void =>
       dispatch(userLoggedInThunk(user))
   }
 }

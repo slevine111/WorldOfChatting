@@ -17,7 +17,7 @@ export const userLoggedIn = (
   isLoading: boolean
 ) => ({
   type: USER_LOGGED_IN,
-  loggedInUserWithLanguagesArray: data[0],
+  userLangsOfLoggedInUser: data[0],
   chatGroups: data[1],
   users: data[2],
   userChatGroups: data[3],

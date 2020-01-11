@@ -87,8 +87,10 @@ const MyLanguages: React.FC<IMyLanguagesProps> = ({
   )
 }
 
-const mapStateToProps = ({ auth }: ReduxState): IReduxStateProps => {
-  return { usersCountByLanguage: generateWordCloudArray(auth.user) }
+const mapStateToProps = ({ userLanguages }: ReduxState): IReduxStateProps => {
+  return {
+    usersCountByLanguage: generateWordCloudArray(userLanguages.ofUser.data)
+  }
 }
 
 export default withRouter(connect(mapStateToProps)(MyLanguages))

@@ -1,15 +1,9 @@
-import { Language, ChatGroup, User } from '../entities'
+import { ChatGroup, User, UserLanguage } from '../entities'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
 import { OnlineStatusesEnum } from './shared-enums'
 
-export interface IUserCountByLanguage {
-  language: string
+export interface IUserLangugeWithOnlineUserCount extends UserLanguage {
   usersOnlineCount: number
-}
-
-export interface ILanguageWithActiveAndTypeFields extends Language {
-  active: boolean
-  userType: UserLanguageTypeFieldOptions
 }
 
 export interface IChatGroupWithFavoriteField extends ChatGroup {

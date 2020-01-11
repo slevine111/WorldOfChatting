@@ -114,7 +114,7 @@ const Login: React.FC<ILoginProps> = ({
 }
 
 const mapStateToProps = ({ auth: { user } }: ReduxState): IReduxStateProps => ({
-  user
+  user: user.data
 })
 
 const mapDispatchToProps = (dispatch: any): IDispatchProps => {

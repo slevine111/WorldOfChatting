@@ -3,42 +3,35 @@ import {
   ACCESS_TOKEN_REFRESHED,
   ADD_POSTPONNED_ACTION
 } from './types'
-import {
-  LOGOUT_USER_PROCESS,
-  USER_LOGGED_IN,
-  RequestDataConstants
-} from '../shared/types'
+import { LOGOUT_USER_PROCESS, RequestDataConstants } from '../shared/types'
+import { User } from '../../../entities'
 import { SharedActionsTypes } from '../shared/actions'
 import { AuthActionTypes } from './actions'
-import { IAuthReducerUserField } from './types'
 import { IThunkReturnObject } from '../apiMiddleware'
 const {
-  REQUEST_DATA_USER_LOGGED_IN,
   AUTHENTICATING_USER_REQUEST,
   REFRESHING_ACCESS_TOKEN_REQUEST
 } = RequestDataConstants
 
 export interface IAuthReducerState {
-  user: IAuthReducerUserField
+  user: {
+    data: User
+    isLoading: boolean
+  }
   accessTokenFields: {
     isLoading: boolean
     expireTime: number
   }
-
   postponnedActions: IThunkReturnObject[]
-  isLoading: boolean
-  isLoadingUser: boolean
 }
 
 const initialState: IAuthReducerState = {
-  user: {} as IAuthReducerUserField,
+  user: { data: {} as User, isLoading: false },
   accessTokenFields: {
     isLoading: false,
     expireTime: Number.POSITIVE_INFINITY
   },
-  postponnedActions: [],
-  isLoading: false,
-  isLoadingUser: false
+  postponnedActions: []
 }
 
 export default (
@@ -48,31 +41,19 @@ export default (
   switch (action.type) {
     //authenticating user
     case AUTHENTICATING_USER_REQUEST:
-      return { ...initialState, isLoadingUser: action.isLoading }
+      return {
+        ...initialState,
+        user: { data: {} as User, isLoading: action.isLoading }
+      }
     case USER_LOGGING_IN_FOUND:
       let { data } = action
       return {
-        user: { ...data.user, languages: [] },
+        user: { data: data.user, isLoading: action.isLoading },
         accessTokenFields: {
           isLoading: state.accessTokenFields.isLoading,
           expireTime: data.expireTime
         },
-        postponnedActions: [],
-        isLoading: false,
-        isLoadingUser: action.isLoading
-      }
-    //after user has logged in
-    case REQUEST_DATA_USER_LOGGED_IN:
-      return {
-        ...state,
-        user: { ...state.user, languages: [] },
-        isLoading: action.isLoading
-      }
-    case USER_LOGGED_IN:
-      return {
-        ...state,
-        user: action.loggedInUserWithLanguagesArray,
-        isLoading: action.isLoading
+        postponnedActions: []
       }
     //refreshing token
     case REFRESHING_ACCESS_TOKEN_REQUEST:

@@ -142,7 +142,7 @@ const Signup: React.FC<ISignupProps> = ({ user, history }): ReactElement => {
 }
 
 const mapStateToProps = ({ auth: { user } }: ReduxState): IReduxStateProps => ({
-  user
+  user: user.data
 })
 
 export default connect(mapStateToProps)(Signup)

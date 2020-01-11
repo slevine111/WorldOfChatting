@@ -19,7 +19,7 @@ const ProtectedLoggedInPageHOC = (Component: any): any => {
   const mapStateToProps = ({
     auth: { user }
   }: ReduxState): IReduxStateProps => ({
-    user
+    user: user.data
   })
 
   return connect(mapStateToProps)(ProtectedLoggedInPage)

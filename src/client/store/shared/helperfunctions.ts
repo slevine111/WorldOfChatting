@@ -1,38 +1,12 @@
-import { User, UserChatGroup } from '../../../entities'
+import { UserChatGroup } from '../../../entities'
 import {
-  IUserCountByLanguage,
-  ILanguageWithActiveAndTypeFields,
   IUserAndChatGroupGetReturn,
   IReduxStoreUserFields
 } from '../../../shared-types'
-import { IAuthReducerUserField } from '../auth/types'
-
-interface IUserCountByLanguageMap {
-  [key: string]: number | undefined
-}
 
 interface IUsersAndUserChatGroups {
   users: IReduxStoreUserFields[]
   userChatGroups: UserChatGroup[]
-}
-
-export const generateAuthReducerUserField = (
-  user: User,
-  languages: ILanguageWithActiveAndTypeFields[],
-  userCountByLanguage: IUserCountByLanguage[]
-): IAuthReducerUserField => {
-  let userWithLanguagesArray: IAuthReducerUserField = { ...user, languages: [] }
-  let userCountByLanguageMap: IUserCountByLanguageMap = {}
-  for (let i = 0; i < userCountByLanguage.length; ++i) {
-    let { language, usersOnlineCount } = userCountByLanguage[i]
-    userCountByLanguageMap[language] = usersOnlineCount
-  }
-  for (let i = 0; i < languages.length; ++i) {
-    const { language } = languages[i]
-    const usersOnlineCount: number = userCountByLanguageMap[language] || 0
-    userWithLanguagesArray.languages.push({ ...languages[i], usersOnlineCount })
-  }
-  return userWithLanguagesArray
 }
 
 export const separateUserAndChatGroupFields = (

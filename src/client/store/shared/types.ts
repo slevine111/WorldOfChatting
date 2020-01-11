@@ -1,6 +1,9 @@
-import { IChatGroupReducer, IReduxStoreUserFields } from '../../../shared-types'
+import {
+  IChatGroupReducer,
+  IReduxStoreUserFields,
+  IUserLangugeWithOnlineUserCount
+} from '../../../shared-types'
 import { UserLanguage, UserChatGroup } from '../../../entities'
-import { IAuthReducerUserField } from '../auth/types'
 
 export const LOGOUT_USER_PROCESS = <const>'LOGOUT_USER_PROCESS'
 export const USER_LOGGED_IN = <const>'USER_LOGGED_IN'
@@ -29,7 +32,7 @@ export type LanguagePageDataRetrivalArrayDataTypes = [
 ]
 
 export type UserLoggedInDataRetrivalArrayDataTypes = [
-  IAuthReducerUserField,
+  IUserLangugeWithOnlineUserCount[],
   IChatGroupReducer,
   IReduxStoreUserFields[],
   UserChatGroup[]

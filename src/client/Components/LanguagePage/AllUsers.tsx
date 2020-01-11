@@ -142,17 +142,18 @@ const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
 }
 
 const mapStateToProps = (
-  { auth, userLanguages }: ReduxState,
+  { auth: { user }, userLanguages }: ReduxState,
   { language, usersMap, userIdsOfSoloChats }: IOwnProps
 ): IReduxStateProps => {
   return {
     usersOfLanguage:
-      userLanguages.data.length === 1
+      userLanguages.ofLanguagePage.data.length === 1
         ? []
         : getAllUsersOfLanguage(
             language,
-            auth.user,
-            userLanguages.data,
+            user.data.id,
+            userLanguages.ofUser.data,
+            userLanguages.ofLanguagePage.data,
             usersMap,
             userIdsOfSoloChats
           )

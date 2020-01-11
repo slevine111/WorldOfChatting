@@ -8,18 +8,14 @@ import {
   UserLoggedInDataRetrivalArrayDataTypes,
   RequestDataConstants
 } from './types'
-import {
-  generateAuthReducerUserField,
-  separateUserAndChatGroupFields
-} from './helperfunctions'
-import { IAuthReducerUserField } from '../auth/types'
+import { separateUserAndChatGroupFields } from './helperfunctions'
 import { IUserUpdateDTO } from '../../../server/users/users.dto'
 import {
-  IUserCountByLanguage,
-  ILanguageWithActiveAndTypeFields,
+  IUserLangugeWithOnlineUserCount,
   IChatGroupReducer,
   IUserAndChatGroupGetReturn
 } from '../../../shared-types'
+import { User } from '../../../entities'
 import axios, { AxiosResponse } from 'axios'
 import { IThunkReturnObject } from '../apiMiddleware'
 
@@ -40,22 +36,20 @@ export const logoutUserProcessThunk = (
 }
 
 type UserLoggedInDataTransformationInput = [
-  ILanguageWithActiveAndTypeFields[],
   IChatGroupReducer,
-  IUserCountByLanguage[],
+  IUserLangugeWithOnlineUserCount[],
   IUserAndChatGroupGetReturn[]
 ]
 
 export const userLoggedInThunk = (
-  user: IAuthReducerUserField
+  user: User
 ): IThunkReturnObject<UserLoggedInDataRetrivalArrayDataTypes> => {
   return {
     requestDataActionType: RequestDataConstants.REQUEST_DATA_USER_LOGGED_IN,
     apiCall: (): Promise<AxiosResponse[]> => {
       return Promise.all([
-        axios.get(`/api/language/${user.id}`),
         axios.get(`/api/chatgroup/${user.id}`),
-        axios.get(`/api/userlanguage/linked/${user.id}/countbylanguage`),
+        axios.get(`/api/userlanguage/linked/${user.id}`),
         axios.get(`/api/user/linked/${user.id}/withchatgroup`)
       ])
     },
@@ -63,21 +57,15 @@ export const userLoggedInThunk = (
       apiResponseData: UserLoggedInDataTransformationInput
     ): UserLoggedInDataRetrivalArrayDataTypes => {
       const [
-        languages,
         chatGroups,
-        userCountByLanguage,
+        userLangsOfLoggedInUser,
         usersWithChatGroups
       ] = apiResponseData
       const { users, userChatGroups } = separateUserAndChatGroupFields(
         usersWithChatGroups,
         user.id
       )
-      let userWithLanguagesArray: IAuthReducerUserField = generateAuthReducerUserField(
-        user,
-        languages,
-        userCountByLanguage
-      )
-      return [userWithLanguagesArray, chatGroups, users, userChatGroups]
+      return [userLangsOfLoggedInUser, chatGroups, users, userChatGroups]
     },
     dispatchAction: userLoggedIn,
     dispatchProps: {}

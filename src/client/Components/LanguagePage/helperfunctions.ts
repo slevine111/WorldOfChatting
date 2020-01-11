@@ -5,7 +5,8 @@ import { groupUserChatGroups } from '../utilityfunctions'
 import {
   IChatGroupReducer,
   IChatGroupWithFavoriteField,
-  IReduxStoreUserFields
+  IReduxStoreUserFields,
+  IUserLangugeWithOnlineUserCount
 } from '../../../shared-types'
 import { OnlineStatusesEnum } from '../../../shared-types/shared-enums'
 import {
@@ -18,10 +19,6 @@ import {
   IDisplayAndDataNames
 } from './shared-types'
 import { displayAndDataNames } from './constants'
-import {
-  ILanguageExpanded,
-  IAuthReducerUserField
-} from '../../store/auth/types'
 
 export const getUsersOfLanguageInformation = (
   users: IReduxStoreUserFields[],
@@ -61,24 +58,25 @@ export const getUsersOfLanguageInformation = (
 
 export const getAllUsersOfLanguage = (
   language: string,
-  loggedInUser: IAuthReducerUserField,
-  userLanguages: UserLanguage[],
+  loggedInUserId: string,
+  userLoggedInLanguages: IUserLangugeWithOnlineUserCount[],
+  usersNotLoggedInLanguages: UserLanguage[],
   usersMap: IObjectOfOneType<IReduxStoreUserFields>,
   userIdsOfSoloChats: IObjectOfOneType<true>
 ): IUserWithLanguageFields[] => {
-  const loggedInUserLanguages: ILanguageExpanded[] = loggedInUser.languages
   let firstLetterOfAuthUserLanguageType: 'L' | 'T' | '' = ''
-  for (let i = 0; i < loggedInUserLanguages.length; ++i) {
-    if (loggedInUserLanguages[i].language === language) {
-      firstLetterOfAuthUserLanguageType = loggedInUserLanguages[i]
-        .userType[0] as 'L' | 'T'
+  for (let i = 0; i < userLoggedInLanguages.length; ++i) {
+    if (userLoggedInLanguages[i].language === language) {
+      firstLetterOfAuthUserLanguageType = userLoggedInLanguages[i].type[0] as
+        | 'L'
+        | 'T'
       break
     }
   }
   let usersOfLanguage: IUserWithLanguageFields[] = []
-  for (let j = 0; j < userLanguages.length; ++j) {
-    const { userId, type } = userLanguages[j]
-    if (!userIdsOfSoloChats[userId] && userId !== loggedInUser.id) {
+  for (let j = 0; j < usersNotLoggedInLanguages.length; ++j) {
+    const { userId, type } = usersNotLoggedInLanguages[j]
+    if (!userIdsOfSoloChats[userId] && userId !== loggedInUserId) {
       if (usersMap[userId] !== undefined) {
         usersOfLanguage.push({
           ...usersMap[userId],

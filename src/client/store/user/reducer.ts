@@ -32,7 +32,7 @@ export default (
       return { ...state }
     case REQUEST_DATA_USER_LOGGED_IN:
       return {
-        myUsers: { data: [], isLoading: true },
+        myUsers: { data: [], isLoading: action.isLoading },
         currentLanguageUsers: { data: [], isLoading: false }
       }
     case USER_LOGGED_IN:

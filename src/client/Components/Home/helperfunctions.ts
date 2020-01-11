@@ -4,20 +4,23 @@ import { IUsersByChatGroup } from '../intercomponent-types'
 import {
   IChatGroupReducer,
   IChatGroupWithFavoriteField,
-  IReduxStoreUserFields
+  IReduxStoreUserFields,
+  IUserLangugeWithOnlineUserCount
 } from '../../../shared-types'
-import { IAuthReducerUserField } from '../../store/auth/types'
 import { IWordCloudArrayObject } from './shared-types'
 import { groupUserChatGroups } from '../utilityfunctions'
 
 export const generateWordCloudArray = (
-  loggedInUser: IAuthReducerUserField
+  loggedInUserLanguages: IUserLangugeWithOnlineUserCount[]
 ): IWordCloudArrayObject[] => {
-  const { languages } = loggedInUser
   let wordCloudArray: IWordCloudArrayObject[] = []
-  for (let i = 0; i < languages.length; ++i) {
-    const { language, usersOnlineCount, userType } = languages[i]
-    wordCloudArray.push({ text: language, value: usersOnlineCount, userType })
+  for (let i = 0; i < loggedInUserLanguages.length; ++i) {
+    const { language, usersOnlineCount, type } = loggedInUserLanguages[i]
+    wordCloudArray.push({
+      text: language,
+      value: usersOnlineCount,
+      userType: type
+    })
   }
   return wordCloudArray
 }
@@ -74,73 +77,7 @@ export const onMyLanguageClick = (
   history.push(`/language/${selectedLang}`)
 }
 
-/*export const groupUsersByLanguage = (
-  loggedInUser: User,
-  usersMap: myInterfaces.IObjectOfUsers,
-  userLanguagues: UserLanguage[]
-): myInterfaces.ILanguageObjects => {
-  let usersByLanguageMap: myInterfaces.IObjectOfUsersByLanguage = {}
-  let userCountByLanguageMap: myInterfaces.IObjectOfUserCountByLanguage = {}
-  let languagesOfLoggedInUser: UserLanguage[] = []
-  for (let i = 1; i < userLanguagues.length; ++i) {
-    const { userId, language, type, active } = userLanguagues[i]
-    if (userId === loggedInUser.id) {
-      languagesOfLoggedInUser.push(userLanguagues[i])
-    } else if (active) {
-      const user: myInterfaces.IUserWithLanguageType = {
-        ...usersMap[userId],
-        type
-      }
-      if (usersByLanguageMap[language]) {
-        usersByLanguageMap[language].users.push(user)
-      } else {
-        usersByLanguageMap[language] = {
-          language,
-          users: [user]
-        }
-      }
-    }
-    if (userCountByLanguageMap[language] && userId === loggedInUser.id) {
-      userCountByLanguageMap[language].userType = type
-    } else if (
-      userCountByLanguageMap[language] &&
-      userId !== loggedInUser.id &&
-      active
-    ) {
-      ++userCountByLanguageMap[language].value
-    } else if (!userCountByLanguageMap[language]) {
-      userCountByLanguageMap[language] = {
-        text: language,
-        value: Number(userId !== loggedInUser.id && active),
-        userType: userId === loggedInUser.id ? type : null
-      }
-    }
-  }
-
-  return {
-    languagesOfLoggedInUser,
-    usersByLanguageMap,
-    userCountByLanguageMap,
-    userCountByLanguage: Object.values(userCountByLanguageMap)
-  }
-}*/
-
-/*export interface IObjectOfUserCountByLanguage {
-  [key: string]: IUserCountByLanguage
-}
-
-export interface ILanguageOfLoggedInUser extends UserLanguage {
-  language: string
-}
-
-export interface ILanguageObjects {
-  languagesOfLoggedInUser: ILanguageOfLoggedInUser[]
-  usersByLanguageMap: IObjectOfUsersByLanguage
-  userCountByLanguageMap: IObjectOfUserCountByLanguage
-  userCountByLanguage: IUserCountByLanguage[]
-}
-
-    <link
+/* <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap"
     />*/

@@ -2,6 +2,8 @@
 import React, { ReactElement, Fragment, useEffect } from 'react'
 import { HashRouter, Route, Switch } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { ReduxState } from '../store'
+import { IAuthReducerState } from '../store/auth/reducer'
 import { getAllLanguagesThunk } from '../store/language/actions'
 import { checkIfUserLoggedInProcess } from '../store/auth/thunks'
 
@@ -23,7 +25,7 @@ const useStyles: Style = makeStyles((theme: any) => ({
 }))
 
 interface ITest {
-  user: any
+  auth: IAuthReducerState
 }
 
 interface IDispatchProps {
@@ -36,12 +38,19 @@ interface IAppProps extends IDispatchProps, ITest {}
 const App: React.FC<IAppProps> = ({
   getAllLanguages,
   checkIfUserLoggedIn,
-  user
+  auth
 }): ReactElement => {
   useEffect(() => {
     Promise.all([getAllLanguages(), checkIfUserLoggedIn()])
   }, [])
   const classes = useStyles()
+
+  if (auth.error !== null) {
+    if (auth.error.statusCode !== 401) {
+      return <div>site failed to load</div>
+    }
+  }
+
   return (
     <div>
       <HashRouter>
@@ -53,7 +62,7 @@ const App: React.FC<IAppProps> = ({
             <Route path="/about" exact render={() => <h4>the about page</h4>} />
             <Route path="/signup" exact component={Signup} />
             <Route path="/login" exact component={Login} />
-            {user.data.id && <LoggedInUserController />}
+            {auth.user.id && <LoggedInUserController />}
             <Route exact render={() => <h4>url does not exist</h4>} />
           </Switch>
         </Fragment>
@@ -62,7 +71,7 @@ const App: React.FC<IAppProps> = ({
   )
 }
 
-const hmm = ({ auth: { user } }: any) => ({ user })
+const mapStateToProps = ({ auth }: ReduxState) => ({ auth })
 
 const mapDispatchToProps = (dispatch: any): IDispatchProps => {
   return {
@@ -71,4 +80,4 @@ const mapDispatchToProps = (dispatch: any): IDispatchProps => {
   }
 }
 
-export default connect(hmm, mapDispatchToProps)(App)
+export default connect(mapStateToProps, mapDispatchToProps)(App)

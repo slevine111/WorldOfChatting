@@ -1,20 +1,28 @@
 import {
   LOGOUT_USER_PROCESS,
   USER_LOGGED_IN,
-  RequestDataConstants
+  RequestDataConstants,
+  OnApiFailureActionTypes
 } from '../shared/types'
 import { SharedActionsTypes } from '../shared/actions'
+import { IAxiosErrorData } from '../apiMiddleware'
 import { IChatGroupReducer } from '../../../shared-types'
 const { REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
+const {
+  REQUEST_DATA_USER_LOGGED_IN_FAILED,
+  USER_LOGGING_OUT_REQUEST_FAILED
+} = OnApiFailureActionTypes
 
 export interface IChatGroupReducerState {
   data: IChatGroupReducer
   isLoading: boolean
+  error: null | IAxiosErrorData
 }
 
 const initialState: IChatGroupReducerState = {
   data: {},
-  isLoading: false
+  isLoading: false,
+  error: null
 }
 
 export default (
@@ -23,11 +31,18 @@ export default (
 ): IChatGroupReducerState => {
   switch (action.type) {
     case LOGOUT_USER_PROCESS:
-      return { ...state }
+      return { ...initialState }
     case USER_LOGGED_IN:
-      return { data: action.chatGroups, isLoading: action.isLoading }
+      return {
+        data: action.chatGroups,
+        isLoading: action.isLoading,
+        error: action.error
+      }
     case REQUEST_DATA_USER_LOGGED_IN:
-      return { data: {}, isLoading: true }
+      return { ...initialState, isLoading: action.isLoading }
+    case REQUEST_DATA_USER_LOGGED_IN_FAILED:
+      return { ...initialState, error: action.error }
+    case USER_LOGGING_OUT_REQUEST_FAILED:
     default:
       return state
   }

@@ -46,7 +46,7 @@ const mapStateToProps = ({
     users.myUsers.isLoading ||
     userLanguages.ofUser.isLoading ||
     [chatGroups, userChatGroups].some(dataItem => dataItem.isLoading)
-  return { dataLoading, user: user.data }
+  return { dataLoading, user }
 }
 
 const mapDispatchToProps = (dispatch: any): IDispatchProps => {

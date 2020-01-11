@@ -151,7 +151,7 @@ const mapStateToProps = (
         ? []
         : getAllUsersOfLanguage(
             language,
-            user.data.id,
+            user.id,
             userLanguages.ofUser.data,
             userLanguages.ofLanguagePage.data,
             usersMap,

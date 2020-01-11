@@ -14,21 +14,25 @@ type AddPostponnedActionType = ReturnType<typeof addPostponnedAction>
 
 export const userLoggingInFound = (
   data: IUserAndExpireTime,
-  isLoading: boolean
+  isLoading: boolean,
+  error: null
 ) => ({
   type: USER_LOGGING_IN_FOUND,
   data,
-  isLoading
+  isLoading,
+  error
 })
 type UserLoggingInFoundActionReturn = ReturnType<typeof userLoggingInFound>
 
 export const accessTokenRefreshed = (
   accessTokenExpireTime: number,
-  isLoading: boolean
+  isLoading: boolean,
+  error: null
 ) => ({
   type: ACCESS_TOKEN_REFRESHED,
   accessTokenExpireTime,
-  isLoading
+  isLoading,
+  error
 })
 type AccessTokenRefreshedActionReturned = ReturnType<
   typeof accessTokenRefreshed

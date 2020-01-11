@@ -1,9 +1,19 @@
 import { AnyAction } from 'redux'
-import { AxiosResponse } from 'axios'
-import { RequestDataConstants, ActionRequestData } from './shared/types'
+import { AxiosResponse, AxiosError } from 'axios'
+import {
+  RequestDataConstants,
+  ActionRequestData,
+  OnApiFailureActionTypes,
+  ActionOnApiFailure
+} from './shared/types'
 import { MyStoreType } from './index'
 import { addPostponnedAction } from './auth/actions'
 import { refreshToken } from './auth/thunks'
+
+export interface IAxiosErrorData {
+  message: string
+  statusCode: number
+}
 
 export interface IThunkReturnObjectSubset<T = any> {
   requestDataActionType: RequestDataConstants
@@ -11,8 +21,10 @@ export interface IThunkReturnObjectSubset<T = any> {
   dispatchActionOnSuccess: (
     data: T,
     isLoading: boolean,
+    error: null,
     otherInputs: { [key: string]: any }
   ) => AnyAction
+  apiFailureActionType: OnApiFailureActionTypes
   dispatchProps: { [key: string]: any }
 }
 
@@ -46,8 +58,8 @@ export const refreshTokenMiddleware = (store: MyStoreType) => {
 
     if (bypassRefreshTokenMiddleware === true) return next(action)
 
-    const { isLoading, expireTime } = store.getState().auth.accessTokenFields
-    if (!isLoading && expireTime * 1000 > Date.now() + 50 * 1000)
+    const { isLoading, tokenExpireTime } = store.getState().auth
+    if (!isLoading && tokenExpireTime * 1000 > Date.now() + 50 * 1000)
       return next(action)
 
     next(addPostponnedAction(action))
@@ -69,18 +81,38 @@ export const callAPIMiddleware = () => {
     const {
       apiCall,
       dispatchActionOnSuccess,
+      apiFailureActionType,
       dispatchProps,
       dataTransformationCall
     } = action
-
-    const apiResponse = await apiCall()
-    let data: any
-    if (responseIsArray(apiResponse)) {
-      data = apiResponse.map(response => response.data)
-    } else {
-      data = apiResponse.data
+    try {
+      const apiResponse = await apiCall()
+      console.dir(apiResponse)
+      let data: any
+      if (responseIsArray(apiResponse)) {
+        data = apiResponse.map(response => response.data)
+      } else {
+        data = apiResponse.data
+      }
+      if (dataTransformationCall) data = dataTransformationCall(data)
+      next(dispatchActionOnSuccess(data, false, null, dispatchProps))
+    } catch (error) {
+      const errorTyped = error as AxiosError<IAxiosErrorData>
+      let errorData: IAxiosErrorData
+      if (errorTyped.response === undefined) {
+        errorData = {
+          message: 'unknown internal server error',
+          statusCode: 500
+        }
+      } else {
+        errorData = errorTyped.response.data
+      }
+      const dispatchFailureActionObject: ActionOnApiFailure = {
+        type: apiFailureActionType,
+        isLoading: false,
+        error: errorData
+      }
+      next(dispatchFailureActionObject)
     }
-    if (dataTransformationCall) data = dataTransformationCall(data)
-    next(dispatchActionOnSuccess(data, false, dispatchProps))
   }
 }

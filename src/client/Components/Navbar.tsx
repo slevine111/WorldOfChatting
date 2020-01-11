@@ -79,7 +79,7 @@ const Navbar: React.FC<INavbarProps> = ({
 }
 
 const mapStateToProps = ({ auth: { user } }: ReduxState): IReduxStateProps => ({
-  user: user.data
+  user: user
 })
 
 const mapDispatchToProps = (dispatch: any): IDispatchProps => {

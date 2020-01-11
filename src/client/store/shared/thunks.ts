@@ -6,7 +6,8 @@ import {
 import {
   LanguagePageDataRetrivalArrayDataTypes,
   UserLoggedInDataRetrivalArrayDataTypes,
-  RequestDataConstants
+  RequestDataConstants,
+  OnApiFailureActionTypes
 } from './types'
 import { separateUserAndChatGroupFields } from './helperfunctions'
 import { IUserUpdateDTO } from '../../../server/users/users.dto'
@@ -18,6 +19,11 @@ import {
 import { User } from '../../../entities'
 import axios, { AxiosResponse } from 'axios'
 import { IThunkReturnObject } from '../apiMiddleware'
+const {
+  REQUEST_DATA_USER_LOGGED_IN_FAILED,
+  REQUEST_DATA_API_FAILED,
+  USER_LOGGING_OUT_REQUEST_FAILED
+} = OnApiFailureActionTypes
 
 export const logoutUserProcessThunk = (
   userId: string,
@@ -30,6 +36,7 @@ export const logoutUserProcessThunk = (
       return axios.delete('/api/auth')
     },
     dispatchActionOnSuccess: logoutUserProcess,
+    apiFailureActionType: USER_LOGGING_OUT_REQUEST_FAILED,
     dispatchProps: {},
     bypassRefreshTokenMiddleware: true
   }
@@ -68,6 +75,7 @@ export const userLoggedInThunk = (
       return [userLangsOfLoggedInUser, chatGroups, users, userChatGroups]
     },
     dispatchActionOnSuccess: userLoggedIn,
+    apiFailureActionType: REQUEST_DATA_USER_LOGGED_IN_FAILED,
     dispatchProps: {}
   }
 }
@@ -84,6 +92,7 @@ export const languagePageDataRetrivalThunk = (
       ])
     },
     dispatchActionOnSuccess: wentToLanguagePageView,
+    apiFailureActionType: REQUEST_DATA_API_FAILED,
     dispatchProps: {}
   }
 }

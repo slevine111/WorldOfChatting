@@ -3,14 +3,23 @@ import { Language } from '../../../entities'
 import { IThunkReturnObject } from '../apiMiddleware'
 import {
   RequestDataConstants,
+  OnApiFailureActionTypes,
   ENTERED_SITE_BASE_DATA_RECEIVED
 } from '../shared/types'
 const { ENTERED_SITE_LOADING_BASE_DATA_REQUEST } = RequestDataConstants
+const {
+  ENTERED_SITE_LOADING_BASE_DATA_REQUEST_FAILED
+} = OnApiFailureActionTypes
 
-const gotAllLanguages = (languages: Language[], isLoading: boolean) => ({
+const gotAllLanguages = (
+  languages: Language[],
+  isLoading: boolean,
+  error: null
+) => ({
   type: ENTERED_SITE_BASE_DATA_RECEIVED,
   languages,
-  isLoading
+  isLoading,
+  error
 })
 type GotAllLanguagesActionReturn = ReturnType<typeof gotAllLanguages>
 
@@ -23,6 +32,7 @@ export const getAllLanguagesThunk = (): IThunkReturnObject<Language[]> => {
       return axios.get('/api/language')
     },
     dispatchActionOnSuccess: gotAllLanguages,
+    apiFailureActionType: ENTERED_SITE_LOADING_BASE_DATA_REQUEST_FAILED,
     dispatchProps: {}
   }
 }

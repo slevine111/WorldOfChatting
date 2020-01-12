@@ -3,8 +3,15 @@ import { IReduxStoreUserFields } from '../../shared-types'
 import {
   IObjectOfUserArrays,
   IObjectOfOneType,
-  IUsersInformation
+  IUsersInformation,
+  IReduxStoreGenericErrorType
 } from './intercomponent-types'
+
+export enum GeneralErrorTypes {
+  NO_ERROR = 'NO_ERROR',
+  AUTHENTICATION_ERROR = 'AUTHENTICATION_ERROR',
+  NON_AUTHENTICATION_ERROR = 'NON_AUTHENTICATION_ERROR'
+}
 
 interface IObjectWithIdProperty {
   id: string
@@ -39,4 +46,17 @@ export const groupUserChatGroups = (
     }
   }
   return { usersGrouped: objectByChatGroup, usersMap }
+}
+
+export const checkError = (
+  error: IReduxStoreGenericErrorType
+): GeneralErrorTypes => {
+  const {
+    NO_ERROR,
+    AUTHENTICATION_ERROR,
+    NON_AUTHENTICATION_ERROR
+  } = GeneralErrorTypes
+  if (error === null) return NO_ERROR
+  if (error.statusCode === 401) return AUTHENTICATION_ERROR
+  return NON_AUTHENTICATION_ERROR
 }

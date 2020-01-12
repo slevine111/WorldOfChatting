@@ -16,12 +16,14 @@ const {
   USER_LOGGING_OUT_REQUEST_FAILED
 } = OnApiFailureActionTypes
 
+export interface IUserLoggedInLanguagesDataSlice {
+  data: IUserLangugeWithOnlineUserCount[]
+  isLoading: boolean
+  error: null | IAxiosErrorData
+}
+
 export interface IUserLangugeReducerState {
-  ofUser: {
-    data: IUserLangugeWithOnlineUserCount[]
-    isLoading: boolean
-    error: null | IAxiosErrorData
-  }
+  ofUser: IUserLoggedInLanguagesDataSlice
   ofLanguagePage: {
     data: UserLanguage[]
     isLoading: boolean

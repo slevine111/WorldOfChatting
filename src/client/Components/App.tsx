@@ -3,13 +3,10 @@ import React, { ReactElement, Fragment, useEffect } from 'react'
 import { HashRouter, Route, Switch } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { ReduxState } from '../store'
-import { IAuthReducerState } from '../store/auth/reducer'
+import { User } from '../../entities'
 import { getAllLanguagesThunk } from '../store/language/actions'
 import { checkIfUserLoggedInProcess } from '../store/auth/thunks'
-
-//Material-UI style imports
-import { makeStyles } from '@material-ui/core/styles'
-import { Style } from 'jss'
+import { checkError, GeneralErrorTypes } from './utilityfunctions'
 
 //Components imports
 import Signup from './Login_Signup/Signup'
@@ -20,12 +17,9 @@ import Navbar from './Navbar'
 //import ProtectedLoggedInPageHOC from './ProtectedLoggedInPageHOC'
 import LoggedInUserController from './LoggedInUserController'
 
-const useStyles: Style = makeStyles((theme: any) => ({
-  toolbar: theme.mixins.toolbar
-}))
-
-interface ITest {
-  auth: IAuthReducerState
+interface IReduxStateProps {
+  user: User
+  nonAuthenticationError: boolean
 }
 
 interface IDispatchProps {
@@ -33,45 +27,51 @@ interface IDispatchProps {
   checkIfUserLoggedIn: () => void
 }
 
-interface IAppProps extends IDispatchProps, ITest {}
-
-const App: React.FC<IAppProps> = ({
+const App: React.FC<IReduxStateProps & IDispatchProps> = ({
   getAllLanguages,
   checkIfUserLoggedIn,
-  auth
+  user,
+  nonAuthenticationError
 }): ReactElement => {
   useEffect(() => {
     Promise.all([getAllLanguages(), checkIfUserLoggedIn()])
   }, [])
-  const classes = useStyles()
-
-  if (auth.error !== null) {
-    if (auth.error.statusCode !== 401) {
-      return <div>site failed to load</div>
-    }
-  }
+  console.log('in app')
 
   return (
     <div>
       <HashRouter>
         <Fragment>
           <Route component={Navbar} />
-          <div className={classes.toolbar} />
-          <Switch>
-            <Route path="/" exact component={Login} />
-            <Route path="/about" exact render={() => <h4>the about page</h4>} />
-            <Route path="/signup" exact component={Signup} />
-            <Route path="/login" exact component={Login} />
-            {auth.user.id && <LoggedInUserController />}
-            <Route exact render={() => <h4>url does not exist</h4>} />
-          </Switch>
+          {nonAuthenticationError && <div>site failed to load :(</div>}
+          {!nonAuthenticationError && (
+            <Switch>
+              <Route path="/" exact component={Login} />
+              <Route
+                path="/about"
+                exact
+                render={() => <h4>the about page</h4>}
+              />
+              <Route path="/signup" exact component={Signup} />
+              <Route path="/login" exact component={Login} />
+              {user.id && <LoggedInUserController />}
+              <Route exact render={() => <h4>url does not exist</h4>} />
+            </Switch>
+          )}
         </Fragment>
       </HashRouter>
     </div>
   )
 }
 
-const mapStateToProps = ({ auth }: ReduxState) => ({ auth })
+const mapStateToProps = ({ auth, languages }: ReduxState): IReduxStateProps => {
+  return {
+    user: auth.user.data,
+    nonAuthenticationError: [auth.error, languages.error].some(
+      slice => checkError(slice) === GeneralErrorTypes.NON_AUTHENTICATION_ERROR
+    )
+  }
+}
 
 const mapDispatchToProps = (dispatch: any): IDispatchProps => {
   return {

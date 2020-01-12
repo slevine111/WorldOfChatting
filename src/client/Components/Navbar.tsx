@@ -31,14 +31,15 @@ interface INavbarProps extends IReduxStateProps, IDispatchProps {
   history: History
 }
 
-const useStyles: Style = makeStyles({
+const useStyles: Style = makeStyles(theme => ({
   siteNameLink: { textDecoration: 'none', color: 'white', width: '100%' },
   buttonStyle: {
     textTransform: 'none',
     color: 'inherit'
   },
-  aboutButton: { marginLeft: '15px' }
-})
+  aboutButton: { marginLeft: '15px' },
+  toolbar: theme.mixins.toolbar
+}))
 
 const Navbar: React.FC<INavbarProps> = ({
   user,
@@ -47,39 +48,42 @@ const Navbar: React.FC<INavbarProps> = ({
 }): ReactElement => {
   const classes = useStyles()
   return (
-    <AppBar position="fixed">
-      <Toolbar>
-        <Button
-          className={classes.buttonStyle}
-          onClick={() => history.push(user.id ? '/home' : '/')}
-        >
-          <Typography variant="h6">World of Chatting</Typography>
-        </Button>
-        <Button
-          className={`${classes.aboutButton} ${classes.buttonStyle}`}
-          onClick={() => history.push('/about')}
-        >
-          About
-        </Button>
-        {user.id && (
+    <div>
+      <AppBar position="fixed">
+        <Toolbar>
           <Button
             className={classes.buttonStyle}
-            onClick={() =>
-              logoutUser(user.id, { loggedIn: false }).then(() =>
-                history.push('/')
-              )
-            }
+            onClick={() => history.push(user.id ? '/home' : '/')}
           >
-            Logout
+            <Typography variant="h6">World of Chatting</Typography>
           </Button>
-        )}
-      </Toolbar>
-    </AppBar>
+          <Button
+            className={`${classes.aboutButton} ${classes.buttonStyle}`}
+            onClick={() => history.push('/about')}
+          >
+            About
+          </Button>
+          {user.id && (
+            <Button
+              className={classes.buttonStyle}
+              onClick={() =>
+                logoutUser(user.id, { loggedIn: false }).then(() =>
+                  history.push('/')
+                )
+              }
+            >
+              Logout
+            </Button>
+          )}
+        </Toolbar>
+      </AppBar>
+      <div className={classes.toolbar} />
+    </div>
   )
 }
 
 const mapStateToProps = ({ auth: { user } }: ReduxState): IReduxStateProps => ({
-  user: user
+  user: user.data
 })
 
 const mapDispatchToProps = (dispatch: any): IDispatchProps => {

@@ -15,7 +15,7 @@ const {
   USER_LOGGING_OUT_REQUEST_FAILED
 } = OnApiFailureActionTypes
 
-interface IUserReducerDataSlice {
+export interface IUserReducerDataSlice {
   data: IReduxStoreUserFields[]
   isLoading: boolean
   error: null | IAxiosErrorData

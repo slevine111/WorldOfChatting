@@ -58,9 +58,14 @@ export const refreshTokenMiddleware = (store: MyStoreType) => {
 
     if (bypassRefreshTokenMiddleware === true) return next(action)
 
-    const { isLoading, tokenExpireTime } = store.getState().auth
-    if (!isLoading && tokenExpireTime * 1000 > Date.now() + 50 * 1000)
+    console.log('action', action)
+    console.log('store', store.getState())
+
+    const { isLoading, tokenExpireTime } = store.getState().auth.accessToken
+    if (!isLoading && tokenExpireTime * 1000 > Date.now() + 50 * 1000) {
+      console.log('condition met - continue')
       return next(action)
+    }
 
     next(addPostponnedAction(action))
 

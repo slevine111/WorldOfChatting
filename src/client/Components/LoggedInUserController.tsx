@@ -6,11 +6,22 @@ import LanguagePage from './LanguagePage'
 import { userLoggedInThunk } from '../store/shared/thunks'
 import { User } from '../../entities'
 import { ReduxState } from '../store'
+import { IUserReducerDataSlice } from '../store/user/reducer'
+import { IUserLoggedInLanguagesDataSlice } from '../store/userlanguage/reducer'
+import { IChatGroupReducerState } from '../store/chatgroup/reducer'
+import { IUserChatGroupReducerState } from '../store/userchatgroup/reducer'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import WillNameLaterHOC from './WillNameLaterHOC'
 
 interface IReduxStateProps {
   dataLoading: boolean
   user: User
+  reduxStoreDataSlices: [
+    IUserReducerDataSlice,
+    IUserLoggedInLanguagesDataSlice,
+    IChatGroupReducerState,
+    IUserChatGroupReducerState
+  ]
 }
 
 interface IDispatchProps {
@@ -46,7 +57,16 @@ const mapStateToProps = ({
     users.myUsers.isLoading ||
     userLanguages.ofUser.isLoading ||
     [chatGroups, userChatGroups].some(dataItem => dataItem.isLoading)
-  return { dataLoading, user }
+  return {
+    dataLoading,
+    user: user.data,
+    reduxStoreDataSlices: [
+      users.myUsers,
+      userLanguages.ofUser,
+      chatGroups,
+      userChatGroups
+    ]
+  }
 }
 
 const mapDispatchToProps = (dispatch: any): IDispatchProps => {
@@ -59,4 +79,4 @@ const mapDispatchToProps = (dispatch: any): IDispatchProps => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(LoggedInUserController)
+)(WillNameLaterHOC(LoggedInUserController))

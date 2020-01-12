@@ -6,10 +6,15 @@ import { IUserPostDTO } from '../../src/server/users/users.dto'
 describe('User Service', () => {
   let userRepo: Repository<User>
   let userService: UserService
+  let connection: Connection
   beforeAll(async () => {
-    const connection: Connection = await createConnection('test')
+    connection = await createConnection('test')
     userRepo = connection.getRepository(User)
     userService = new UserService(userRepo)
+  })
+
+  afterAll(async () => {
+    await connection.close()
   })
 
   test('addNewUser adds one user to database', async () => {

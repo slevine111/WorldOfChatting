@@ -1,6 +1,7 @@
 import { Connection, createConnection, Repository, In } from 'typeorm'
 import UserLanguageService from '../../src/server/userlanguages/userlanguages.service'
 import { User, Language, UserLanguage } from '../../src/entities'
+import { UserLanguageTypeFieldOptions } from '../../src/entities/UserLanguage'
 import { IUserLanguagePostDTO } from '../../src/server/userlanguages/userlanguages.dto'
 
 describe('UserLanguageService', () => {
@@ -8,8 +9,9 @@ describe('UserLanguageService', () => {
   let languages: Language[]
   let userLanguageRepo: Repository<UserLanguage>
   let userLanguageService: UserLanguageService
+  let connection: Connection
   beforeAll(async () => {
-    const connection: Connection = await createConnection('test')
+    connection = await createConnection('test')
     userLanguageRepo = connection.getRepository(UserLanguage)
     const userRepo: Repository<User> = connection.getRepository(User)
     const languageRepo: Repository<Language> = connection.getRepository(
@@ -26,15 +28,20 @@ describe('UserLanguageService', () => {
     userLanguageService = new UserLanguageService(userLanguageRepo)
   })
 
+  afterAll(async () => {
+    await connection.close()
+  })
+
   test('addNewUserLanguages adds an array of userLanguages to database', async () => {
     const [, numberULs]: [
       UserLanguage[],
       number
     ] = await userLanguageRepo.findAndCount()
 
+    const { LEARNER, TEACHER } = UserLanguageTypeFieldOptions
     const newULs: IUserLanguagePostDTO[] = [
-      { type: 'learner', userId: user.id, languageId: languages[0].id },
-      { type: 'teacher', userId: user.id, languageId: languages[1].id }
+      { type: LEARNER, userId: user.id, language: languages[0].language },
+      { type: TEACHER, userId: user.id, language: languages[1].language }
     ]
     await userLanguageService.addNewUserLanguages(newULs)
     const [, newNumberULs]: [
@@ -45,9 +52,10 @@ describe('UserLanguageService', () => {
   })
 
   test('addNewUserLanguages returns the new userLanguages added to database', () => {
+    const { LEARNER, TEACHER } = UserLanguageTypeFieldOptions
     const newULs: IUserLanguagePostDTO[] = [
-      { type: 'learner', userId: user.id, languageId: languages[2].id },
-      { type: 'teacher', userId: user.id, languageId: languages[3].id }
+      { type: LEARNER, userId: user.id, language: languages[2].language },
+      { type: TEACHER, userId: user.id, language: languages[3].language }
     ]
     return userLanguageService
       .addNewUserLanguages(newULs)
@@ -56,7 +64,7 @@ describe('UserLanguageService', () => {
         expect(userLanguages[0].type).toBeDefined()
         expect(userLanguages[0].active).toBeDefined()
         expect(userLanguages[0].userId).toBeDefined()
-        expect(userLanguages[0].languageId).toBeDefined()
+        expect(userLanguages[0].language).toBeDefined()
       })
   })
 })

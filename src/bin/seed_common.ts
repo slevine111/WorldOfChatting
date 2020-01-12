@@ -1,14 +1,30 @@
-import { Message, UserChatGroup } from '../entities'
+import { Message, UserChatGroup, User, ChatGroup } from '../entities'
 import { Repository, getConnection } from 'typeorm'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
+import { hashSync } from 'bcrypt'
 
-export const NUMBER_OF_USERS_MANUALLY = <const>3
-export const CHAT_GROUP_LANGUAGES = <const>[
-  'Swahili',
-  'French',
-  'Japanese',
-  'Spanish'
-]
+export interface ILanguageAndCountries {
+  language: string
+  countries: string[]
+}
+
+export interface ILanguageSubset {
+  language: string
+  countries: string[]
+  usersApproved?: string[]
+  userSubmitted?: string[]
+}
+
+export interface ICountriesByLanguageObject {
+  [key: string]: ILanguageSubset
+}
+
+export interface ISeedDataManualReturn {
+  users: User[]
+  chatGroups: ChatGroup[]
+  userChatGroups: UserChatGroup[]
+  languagesByUser: IObjectOfSets
+}
 
 export interface IUserSubset {
   firstName: string
@@ -39,6 +55,37 @@ export interface IUserLanguageSubset {
 export interface IObjectOfSets {
   [key: string]: Set<string>
 }
+
+export const MANUAL_USERS_ARRAY: IUserSubset[] = [
+  {
+    firstName: 'Joe',
+    lastName: 'Roberts',
+    email: 'jroberts@gmail.com',
+    password: hashSync('12345', 5),
+    loggedIn: false
+  },
+  {
+    firstName: 'Kim',
+    lastName: 'Levine',
+    email: 'klevine@gmail.com',
+    password: hashSync('1234', 5),
+    loggedIn: false
+  },
+  {
+    firstName: 'Mike',
+    lastName: 'Anderson',
+    email: 'manderson@gmail.com',
+    password: hashSync('123', 5),
+    loggedIn: false
+  }
+]
+
+export const CHAT_GROUP_LANGUAGES_MANUALLY = <const>[
+  'Swahili',
+  'French',
+  'Japanese',
+  'Spanish'
+]
 
 interface IMessageSubset {
   body: string

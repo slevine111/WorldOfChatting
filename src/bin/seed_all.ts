@@ -1,32 +1,22 @@
-import {
-  ChatGroup,
-  User,
-  UserLanguage,
-  Language,
-  UserChatGroup
-} from '../entities'
+import { ChatGroup, User, UserLanguage, UserChatGroup } from '../entities'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
-import scrapeAndProcessLanguageData, {
-  ICountryAndLanguage
-} from './languages_scraper'
+import seedManualData from './seed_manual'
 import {
-  createUsersManually,
-  createChatGroupsManually,
-  createUserChatGroupsManully,
-  createUserLanguagesManually
-} from './seed_nonrandom'
-import {
-  NUMBER_OF_USERS_MANUALLY,
-  CHAT_GROUP_LANGUAGES,
+  CHAT_GROUP_LANGUAGES_MANUALLY,
   IUserSubset,
   IChatGroupSubset,
   IUserChatGroupSubset,
   IUserLanguageSubset,
   IObjectOfSets,
+  ILanguageSubset,
+  ICountriesByLanguageObject,
   returnRepository,
   createMessages
 } from './seed_common'
-import { Connection } from 'typeorm'
+import scrapeAndProcessLanguageData, {
+  ICountryAndLanguage
+} from './languages_scraper'
+import { Connection, createConnection } from 'typeorm'
 import { hash } from 'bcrypt'
 import { name, internet, lorem } from 'faker'
 
@@ -35,23 +25,30 @@ interface IFirstAndLastName {
   lastName: string
 }
 
-interface ILanguageSubset {
-  language: string
-  countries: string[]
-  usersApproved?: string[]
-  userSubmitted?: string[]
-}
-
-interface ICountriesByLanguageObject {
-  [key: string]: ILanguageSubset
-}
-
 interface IObjectOfStrings {
   [key: string]: string
 }
 
+const createLanguages = async (): Promise<ILanguageSubset[]> => {
+  const scrapedData: ICountryAndLanguage[] = await scrapeAndProcessLanguageData()
+  const languagesAsObject: ICountriesByLanguageObject = scrapedData.reduce(
+    (acc: ICountriesByLanguageObject, el: ICountryAndLanguage) => {
+      const languageFound: ILanguageSubset | undefined = acc[el.language]
+      if (typeof languageFound === 'object') {
+        languageFound.countries.push(el.country)
+      } else {
+        acc[el.language] = { language: el.language, countries: [el.country] }
+      }
+      return acc
+    },
+    {}
+  )
+  return Object.values(languagesAsObject)
+}
+createLanguages.isAsync = true
+
 export const createUsers = async (connectionName: string): Promise<User[]> => {
-  let usersArray: IUserSubset[] = await createUsersManually()
+  let usersArray: IUserSubset[] = []
 
   let otherUserNames: IFirstAndLastName[] = []
   for (let i = 0; i < 300; ++i) {
@@ -73,37 +70,15 @@ export const createUsers = async (connectionName: string): Promise<User[]> => {
       loggedIn: Math.random() <= 0.5
     })
   }
-
   return returnRepository((User as unknown) as User, connectionName).save(
     usersArray
   )
 }
 
-const createLanguages = async (connectionName: string): Promise<Language[]> => {
-  const scrapedData: ICountryAndLanguage[] = await scrapeAndProcessLanguageData()
-  const languagesAsObject: ICountriesByLanguageObject = scrapedData.reduce(
-    (acc: ICountriesByLanguageObject, el: ICountryAndLanguage) => {
-      const languageFound: ILanguageSubset | undefined = acc[el.language]
-      if (typeof languageFound === 'object') {
-        languageFound.countries.push(el.country)
-      } else {
-        acc[el.language] = { language: el.language, countries: [el.country] }
-      }
-      return acc
-    },
-    {}
-  )
-  const languages: ILanguageSubset[] = Object.values(languagesAsObject)
-  return returnRepository(
-    (Language as unknown) as Language,
-    connectionName
-  ).save(languages)
-}
-
 export const createChatGroups = (
   connectionName: string
 ): Promise<ChatGroup[]> => {
-  let chatGroupsArray: IChatGroupSubset[] = createChatGroupsManually()
+  let chatGroupsArray: IChatGroupSubset[] = []
   const languages: string[] = [
     'Swahili',
     'French',
@@ -111,7 +86,7 @@ export const createChatGroups = (
     'Spanish',
     'Turkish'
   ]
-  for (let i = CHAT_GROUP_LANGUAGES.length; i < 120; ++i) {
+  for (let i = 0; i < 120 - CHAT_GROUP_LANGUAGES_MANUALLY.length; ++i) {
     let createdChatGroup: IChatGroupSubset = {
       language: languages[Math.floor(5 * Math.random())]
     }
@@ -126,25 +101,23 @@ export const createChatGroups = (
 }
 
 export const createUserChatGroups = (
-  users: User[],
-  chatGroups: ChatGroup[],
+  manualUsers: User[],
+  randomUsers: User[],
+  randomChatGroups: ChatGroup[],
   connectionName: string
 ): Promise<UserChatGroup[]> => {
-  let userChatGroupsArray: IUserChatGroupSubset[] = createUserChatGroupsManully(
-    users.slice(0, NUMBER_OF_USERS_MANUALLY),
-    chatGroups.slice(0, CHAT_GROUP_LANGUAGES.length)
-  )
-  let otherUsersIndex: number = NUMBER_OF_USERS_MANUALLY
-  for (let i = CHAT_GROUP_LANGUAGES.length; i < chatGroups.length; ++i) {
+  let userChatGroupsArray: IUserChatGroupSubset[] = []
+  let otherUsersIndex: number = 0
+  for (let i = 0; i < randomChatGroups.length; ++i) {
     const favorite: boolean = i % 5 === 0
     let currentUsers: User[] = []
-    if (i < 60) {
-      currentUsers = [users[i % 3], users[i]]
+    if (i < 60 - CHAT_GROUP_LANGUAGES_MANUALLY.length) {
+      currentUsers = [manualUsers[i % 3], randomUsers[i]]
     } else {
       let numberUsers: number = 3 + Math.floor(Math.random() * 3)
       currentUsers = [
-        users[i % 3],
-        ...users.slice(otherUsersIndex, otherUsersIndex + numberUsers)
+        manualUsers[i % 3],
+        ...randomUsers.slice(otherUsersIndex, otherUsersIndex + numberUsers)
       ]
       otherUsersIndex = otherUsersIndex + numberUsers
     }
@@ -152,7 +125,7 @@ export const createUserChatGroups = (
       userChatGroupsArray.push({
         favorite,
         userId: currentUsers[j].id,
-        chatGroupId: chatGroups[i].id
+        chatGroupId: randomChatGroups[i].id
       })
     }
   }
@@ -161,8 +134,6 @@ export const createUserChatGroups = (
     connectionName
   ).save(userChatGroupsArray)
 }
-
-/////////////////////////////////////////////////////
 
 const createSingleUserLanguage = (
   index: number,
@@ -186,22 +157,21 @@ const createSingleUserLanguage = (
 }
 
 export const createUserLanguages = (
-  users: User[],
-  userChatGroups: UserChatGroup[],
-  chatGroups: ChatGroup[],
+  manualUsers: User[],
+  allUserChatGroups: UserChatGroup[],
+  allChatGroups: ChatGroup[],
+  languagesByUser: IObjectOfSets,
   connectionName: string
 ): Promise<UserLanguage[]> => {
-  let { userLanguagesArray, languagesByUser } = createUserLanguagesManually(
-    users.slice(0, NUMBER_OF_USERS_MANUALLY)
-  )
+  let userLanguagesArray: IUserLanguageSubset[] = []
 
   let chatGroupLanguageMap: IObjectOfStrings = {}
-  for (let k = 0; k < chatGroups.length; ++k) {
-    chatGroupLanguageMap[chatGroups[k].id] = chatGroups[k].language
+  for (let k = 0; k < allChatGroups.length; ++k) {
+    chatGroupLanguageMap[allChatGroups[k].id] = allChatGroups[k].language
   }
 
-  for (let k = 0; k < userChatGroups.length; ++k) {
-    const { userId, chatGroupId } = userChatGroups[k]
+  for (let k = 0; k < allUserChatGroups.length; ++k) {
+    const { userId, chatGroupId } = allUserChatGroups[k]
     const curLanguage: string = chatGroupLanguageMap[chatGroupId]
     if (!languagesByUser[userId] || !languagesByUser[userId].has(curLanguage)) {
       createSingleUserLanguage(
@@ -223,8 +193,8 @@ export const createUserLanguages = (
     'Mandarin',
     'Turkish'
   ]
-  for (let k = NUMBER_OF_USERS_MANUALLY; k < users.length; ++k) {
-    const { id } = users[k]
+  for (let k = 0; k < manualUsers.length; ++k) {
+    const { id } = manualUsers[k]
     for (let l = 0; l < 2; ++l) {
       const curLanguage: string =
         selectedLanguages[Math.floor(Math.random() * selectedLanguages.length)]
@@ -246,26 +216,42 @@ export const createUserLanguages = (
   ).save(userLanguagesArray)
 }
 
-export default async (connection: Connection): Promise<void> => {
+const refreshDbWithSeedData = async (): Promise<void> => {
   try {
-    await connection.synchronize(true)
-    const { name } = connection
-    const users: User[] = await createUsers(name)
-    await createLanguages(name)
-    const chatGroups: ChatGroup[] = await createChatGroups(name)
-    const userChatGroups: UserChatGroup[] = await createUserChatGroups(
+    const {
       users,
       chatGroups,
+      userChatGroups,
+      languagesByUser
+    } = await seedManualData(createLanguages, 'default')
+    const connection: Connection = await createConnection()
+    await connection.synchronize(false)
+    let { name } = connection
+    const randomUsers: User[] = await createUsers(name)
+    const randomChatGroups: ChatGroup[] = await createChatGroups(name)
+    const randomUserChatGroups: UserChatGroup[] = await createUserChatGroups(
+      users,
+      randomUsers,
+      randomChatGroups,
       name
     )
+    const allUserChatGroups = [...userChatGroups, ...randomUserChatGroups]
     await Promise.all([
-      createUserLanguages(users, userChatGroups, chatGroups, name),
-      createMessages(userChatGroups, name)
+      createUserLanguages(
+        users,
+        allUserChatGroups,
+        [...chatGroups, ...randomChatGroups],
+        languagesByUser,
+        name
+      ),
+      createMessages(allUserChatGroups, name)
     ])
-    console.log('database successfully refreshed with seed data')
-    return connection.close()
+    console.log('database successfully refreshed with all seed data')
+    await connection.close()
   } catch (err) {
     console.log('seeding of data failed')
     console.error(err)
   }
 }
+
+refreshDbWithSeedData()

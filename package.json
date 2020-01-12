@@ -11,7 +11,7 @@
     "compile-and-start": "tsc && webpack && node ./js/server",
     "build": "tsc",
     "tsc:watch": "tsc -w",
-    "seed": "node ./js/bin/runSeed.js",
+    "seed": "node ./js/bin/seed_all.js",
     "tsc:clean-and-build": "rm -rf js && tsc",
     "tsc:build:ifnotbuilt": "[ -d ./js/bin ] || tsc",
     "client:build": "tsc && webpack",
@@ -22,7 +22,8 @@
     "client:dev": "NODE_ENV=development webpack -w",
     "start:local": "npm run tsc:build:ifnotbuilt && (tsc -w & npm run client:dev & npm run server:dev)",
     "start:dev": "NODE_ENV=development webpack -w & NODE_ENV=development nodemon ./js/server --watch ./js/server -e js",
-    "test": "jest --runInBand --detectOpenHandles --forceExit"
+    "test": "jest --runInBand --detectOpenHandles --forceExit",
+    "test:watch": "jest --runInBand --detectOpenHandles --watch"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.26",

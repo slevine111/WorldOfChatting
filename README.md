@@ -8,7 +8,7 @@ Deployed app is at https://worldofchatting.devspace.host/#/
 
 _Tech Stack_
 
-- **backend**: Typescript, Node, NextJS, TypeORM, Redis, PostgreSQL
+- **backend**: Typescript, Node, NestJS, TypeORM, Redis, PostgreSQL
 - **frontend**: Typescript, React, Redux, Redux-Thunk, Material-UI
 - **tooling/deployment**: Docker, Kubernetes, CircleCI, Devspace Cloud, Jest (testing currently limited)
 

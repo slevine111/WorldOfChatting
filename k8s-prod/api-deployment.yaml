@@ -44,6 +44,11 @@ spec:
                 secretKeyRef:
                   name: world-of-chatting-secrets
                   key: POSTGRES_PASSWORD
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: world-of-chatting-secrets
+                  key: REDIS_PASSWORD
             - name: APP_PORT
               value: '3000'
             - name: LOAD_CONFIG_FILE

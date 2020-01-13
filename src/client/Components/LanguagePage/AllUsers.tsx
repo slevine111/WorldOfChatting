@@ -39,7 +39,8 @@ const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
 }) => {
   if (!Array.isArray(usersOfLanguage)) return <div>not ready</div>
   const { allUsersListPadding, allUsersContainerLeftPadding } = styles()
-  const [display, setDisplay] = useState<'icon' | 'table'>('icon')
+  //const [display, setDisplay] = useState<'icon' | 'table'>('icon')
+  const display: string = 'icon'
   const [onlineStatusesChecked, setOnlineStatusesChecked] = useState<
     IOnlineStatusesChecked
   >({ Online: true, Offline: true })

@@ -7,7 +7,7 @@
   "scripts": {
     "tsc": "tsc",
     "webpack": "webpack",
-    "initialize": "mkdir js && yarn run seed",
+    "initialize": "mkdir js && npm run seed",
     "compile-and-start": "tsc && webpack && node ./js/server",
     "build": "tsc",
     "tsc:watch": "tsc -w",
@@ -16,14 +16,13 @@
     "tsc:build:ifnotbuilt": "[ -d ./js/bin ] || tsc",
     "client:build": "tsc && webpack",
     "client:dev:tsc": "NODE_ENV=development [ -d ./js/client ] || tsc && (tsc -w & webpack -w)",
-    "server": "tsc && node ./js/server",
     "server:dev:ts": "NODE_ENV=development [ -d ./js/server ] || tsc && (tsc -w & nodemon ./js/server --watch ./js/server -e js)",
     "server:dev": "LOAD_CONFIG_FILE=true nodemon ./js/server --watch ./js/server -e js",
     "client:dev": "NODE_ENV=development webpack -w",
-    "start:local": "npm run tsc:build:ifnotbuilt && (tsc -w & npm run client:dev & npm run server:dev)",
+    "start:local:dev": "npm run tsc:build:ifnotbuilt && (tsc -w & npm run client:dev & npm run server:dev)",
+    "start:local": "tsc && NODE_ENV=development LOAD_CONFIG_FILE=true node ./js/server",
     "start:dev": "NODE_ENV=development webpack -w & NODE_ENV=development nodemon ./js/server --watch ./js/server -e js",
-    "test": "jest --runInBand --detectOpenHandles --forceExit",
-    "test:watch": "jest --runInBand --detectOpenHandles --watch"
+    "test": "jest --runInBand --detectOpenHandles --forceExit"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.26",

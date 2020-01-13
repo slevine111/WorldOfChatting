@@ -20,11 +20,11 @@ export default class Message {
   @CreateDateColumn()
   createdAt: Date
 
-  @ManyToOne(() => User /*, user => user.messages*/)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'userId' })
   userId: string
 
-  @ManyToOne(() => ChatGroup /*, chatGroup => chatGroup.messages*/)
+  @ManyToOne(() => ChatGroup)
   @JoinColumn({ name: 'chatGroupId' })
   chatGroupId: string
 }

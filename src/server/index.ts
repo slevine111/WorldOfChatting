@@ -1,10 +1,15 @@
 import { NestFactory } from '@nestjs/core'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { join } from 'path'
+import { config } from 'dotenv'
 import volleyball from 'volleyball'
 import cookieParser from 'cookie-parser'
 import ApplicationModule from './app'
 import GlobalHttpExceptionFilter from './GlobalExceptionFilter'
+
+if (process.env.LOAD_CONFIG_FILE === 'true') {
+  config()
+}
 
 const bootstrap = async (): Promise<void> => {
   try {

@@ -22,10 +22,10 @@ describe('AuthService', () => {
   const JOE_PASSWORD: string = <const>'12345'
   let authService: AuthService
   let jwtService: JwtService
+  let connection: Connection
   beforeAll(async () => {
-    userRepo = await createConnection('test').then((connection: Connection) => {
-      return connection.getRepository(User)
-    })
+    connection = await createConnection('test')
+    userRepo = connection.getRepository(User)
     joe = <User>await userRepo.findOne({ where: { firstName: 'Joe' } })
     const userService: UserService = new UserService(userRepo)
     jwtService = new JwtService({ secret: process.env.JWT_SECRET_TESTING })
@@ -40,6 +40,10 @@ describe('AuthService', () => {
         password: process.env.REDIS_PASSWORD
       })
     )
+  })
+
+  afterAll(async () => {
+    await connection.close()
   })
 
   test('createToken creates a verified token', () => {

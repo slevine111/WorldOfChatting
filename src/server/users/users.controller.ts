@@ -4,33 +4,36 @@ import {
   Post,
   Body,
   UseGuards,
-  Query,
   Put,
-  Param,
-  HttpException,
-  HttpStatus
+  Param
 } from '@nestjs/common'
 import UserService from './users.service'
 import AuthGuard from '../auth/auth.guard'
 import { User } from '../../entities'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
+import {
+  IUserAndChatGroupGetReturn,
+  IReduxStoreUserFields
+} from '../../shared-types'
 
 @Controller('/api/user')
 export default class UserController {
   constructor(private userService: UserService) {}
 
-  @Get('/loggedin')
+  @Get('/linked/:userId/withchatgroup')
   @UseGuards(AuthGuard)
-  getLoggedInSpecifiedUsers(
-    @Query('userIds') userIds: string
-  ): Promise<User[]> {
-    if (userIds === '') {
-      throw new HttpException(
-        'userIds value in query string can NOT be empty',
-        HttpStatus.BAD_REQUEST
-      )
-    }
-    return this.userService.getLoggedInSpecifiedUsers(userIds)
+  getUsersAndTheirChatGroups(
+    @Param('userId') userId: string
+  ): Promise<IUserAndChatGroupGetReturn[]> {
+    return this.userService.getUsersAndTheirChatGroups(userId)
+  }
+
+  @Get('/linked/language/:language')
+  @UseGuards(AuthGuard)
+  getUsersLinkedToLanguage(
+    @Param('language') language: string
+  ): Promise<IReduxStoreUserFields[]> {
+    return this.userService.getUsersLinkedToLanguage(language)
   }
 
   @Post()
@@ -39,6 +42,7 @@ export default class UserController {
   }
 
   @Put('/:userId')
+  @UseGuards(AuthGuard)
   updateUser(
     @Param('userId') userId: string,
     @Body() updatedUser: IUserUpdateDTO

@@ -7,10 +7,7 @@ import Button from '@material-ui/core/Button'
 import useStyles from './styles'
 import { connect } from 'react-redux'
 import { loginUserProcess } from '../../store/auth/thunks'
-import { SetUserAndAccessTokenFieldsActionType } from '../../store/auth/actions'
-import { IUserAndExpireTime } from '../../store/auth/types'
 import { IUserSignInDTO } from '../../../server/auth/auth.dto'
-import { ThunkDispatch } from 'redux-thunk'
 import { History } from 'history'
 import Grid from '@material-ui/core/Grid'
 import { ReduxState } from '../../store/index'
@@ -51,7 +48,7 @@ const Login: React.FC<ILoginProps> = ({
   const onSubmit = (event: ChangeEvent<HTMLFormElement>): void => {
     event.preventDefault()
     loginUser(loginInfo)
-      .then(() => history.push('/home'))
+      //.then(() => history.push('/home'))
       .catch(({ response }) => setError(response.data.message))
   }
 
@@ -117,16 +114,10 @@ const Login: React.FC<ILoginProps> = ({
 }
 
 const mapStateToProps = ({ auth: { user } }: ReduxState): IReduxStateProps => ({
-  user
+  user: user.data
 })
 
-const mapDispatchToProps = (
-  dispatch: ThunkDispatch<
-    IUserAndExpireTime,
-    IUserSignInDTO,
-    SetUserAndAccessTokenFieldsActionType
-  >
-): IDispatchProps => {
+const mapDispatchToProps = (dispatch: any): IDispatchProps => {
   return {
     loginUser: (userLoginInfo: IUserSignInDTO) =>
       dispatch(loginUserProcess(userLoginInfo))

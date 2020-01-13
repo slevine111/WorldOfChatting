@@ -1,31 +1,24 @@
-import {
-  createStore,
-  combineReducers,
-  applyMiddleware,
-  Reducer
-  //AnyAction
-} from 'redux'
-import { Language, User, UserLanguage, ChatGroup } from '../../entities'
-import languageReducer from './language/reducer'
-import userReducer from './user/reducer'
-import userLanguageReducer from './userlanguage/reducer'
-import chatGroupReducer from './chatgroup/reducer'
-import authReducer from './auth/reducer'
-import { IAuthReducerState } from './auth/types'
-//import { LanguageActionTypes } from './language/types'
-//import { UserActionTypes } from './user/types'
-//import { UserLanguageActionTypes } from './userlanguage/types'
-//import { LoggedInUserActionTypes } from './loggedinuser/types'
-//import { AccessTokenActionTypes } from './accessToken/types_actions'
+import { createStore, combineReducers, applyMiddleware, Reducer } from 'redux'
+import languageReducer, { ILanguageReducerState } from './language/reducer'
+import userReducer, { IUserReducerState } from './user/reducer'
+import userLanguageReducer, {
+  IUserLangugeReducerState
+} from './userlanguage/reducer'
+import chatGroupReducer, { IChatGroupReducerState } from './chatgroup/reducer'
+import userChatGroupReducer, {
+  IUserChatGroupReducerState
+} from './userchatgroup/reducer'
+import authReducer, { IAuthReducerState } from './auth/reducer'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
-import refreshTokenMiddleware from './auth/middleware'
+import { refreshTokenMiddleware, callAPIMiddleware } from './apiMiddleware'
 
 interface ICombinedReducer {
-  languages: Language[]
-  users: User[]
-  userLanguages: UserLanguage[]
-  chatGroups: ChatGroup[]
+  languages: ILanguageReducerState
+  users: IUserReducerState
+  userLanguages: IUserLangugeReducerState
+  chatGroups: IChatGroupReducerState
+  userChatGroups: IUserChatGroupReducerState
   auth: IAuthReducerState
 }
 
@@ -34,6 +27,7 @@ const rootReducer: Reducer<ICombinedReducer> = combineReducers({
   users: userReducer,
   userLanguages: userLanguageReducer,
   chatGroups: chatGroupReducer,
+  userChatGroups: userChatGroupReducer,
   auth: authReducer
 })
 
@@ -42,6 +36,7 @@ export type ReduxState = ReturnType<typeof rootReducer>
 const getMiddlewareArray = (environmentMode: string | undefined): any[] => {
   return [
     refreshTokenMiddleware,
+    callAPIMiddleware,
     thunk,
     ...(environmentMode === 'development' ? [logger] : [])
   ]

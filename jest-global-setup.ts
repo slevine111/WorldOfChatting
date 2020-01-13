@@ -1,18 +1,6 @@
-import {
-  Connection,
-  createConnection,
-  getConnection,
-  Repository
-} from 'typeorm'
-import {
-  createUsers,
-  createChatGroups,
-  createUserLanguages,
-  createMessages,
-  getSelectedLanguages
-} from './src/bin/seed'
-import { User, Language } from './src/entities'
-import { ISelectedLanguages, IChatGroupSeed } from './src/bin/seed'
+import { Connection, createConnection } from 'typeorm'
+import seedManualData from './src/bin/seed_manual'
+import { createMessages, ILanguageAndCountries } from './src/bin/seed_common'
 
 declare global {
   namespace NodeJS {
@@ -22,42 +10,27 @@ declare global {
   }
 }
 
-interface ILanguageAndCountries {
-  language: string
-  countries: string[]
-}
-
-const createLanguages = async (): Promise<Language[]> => {
-  const languagesArray: ILanguageAndCountries[] = [
+const createLanguages = (): ILanguageAndCountries[] => {
+  return [
     { language: 'Swahili', countries: ['Tanzania'] },
     { language: 'French', countries: ['France'] },
     { language: 'Japanese', countries: ['Japan'] },
     { language: 'Spanish', countries: ['Spain'] },
     { language: 'Turkish', countries: ['Turkey'] },
     { language: 'Mandarin', countries: ['China'] },
-    { language: 'English', countries: ['United States'] }
+    { language: 'English', countries: ['United States'] },
+    { language: 'Czech', countries: ['Czech Republic'] },
+    { language: 'Dutch', countries: ['Metherlands'] },
+    { language: 'Woleaian', countries: ['My country'] }
   ]
-  const repository: Repository<Language> = await getConnection(
-    'test'
-  ).getRepository(Language)
-  return repository.save(languagesArray)
 }
+createLanguages.isAsync = false
 
 export default async () => {
+  const { userChatGroups } = await seedManualData(createLanguages, 'test')
   let connection = await createConnection('test')
-  global.__POSTGRES__ = connection
-  await connection.synchronize(true)
-  const users: User[] = await createUsers('test')
-  const languages: Language[] = await createLanguages()
-  const selectedLanguages: ISelectedLanguages = getSelectedLanguages(languages)
-  const chatGroups: IChatGroupSeed[] = await createChatGroups(
-    users,
-    selectedLanguages,
-    'test'
-  )
-
-  await Promise.all([
-    createUserLanguages(users, selectedLanguages, 'test'),
-    createMessages(chatGroups, 'test')
-  ])
+  await connection.synchronize(false)
+  await createMessages(userChatGroups, connection.name)
+  await connection.close()
+  console.log('test data seeded')
 }

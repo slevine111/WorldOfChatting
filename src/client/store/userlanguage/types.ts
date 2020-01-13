@@ -1,1 +1,0 @@
-export const SET_USER_LANGUAGES = <const>'SET_USER_LANGUAGES'

@@ -2,32 +2,28 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  ManyToMany,
-  //OneToMany,
   ManyToOne,
-  JoinTable,
-  JoinColumn
+  JoinColumn,
+  OneToMany
 } from 'typeorm'
-import User from './User'
-//import Message from './Message'
 import Language from './Language'
+import UserChatGroup from './UserChatGroup'
 
 @Entity()
 export default class ChatGroup {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true, unique: true })
   name: string
 
-  @ManyToOne(() => Language /*, language => language.chatGroups*/)
-  @JoinColumn({ name: 'languageId' })
-  languageId: string
+  @ManyToOne(() => Language)
+  @JoinColumn({ name: 'language' })
+  language: string
 
-  /*@OneToMany(() => Message, message => message.chatGroup)
-  messages: Message[]*/
-
-  @ManyToMany(() => User, user => user.chatGroups)
-  @JoinTable({ name: 'user_chatgroup' })
-  userIds: string[]
+  @OneToMany(
+    () => UserChatGroup,
+    userChatGroup => userChatGroup.chatGroupId
+  )
+  userChatGroups?: UserChatGroup[]
 }

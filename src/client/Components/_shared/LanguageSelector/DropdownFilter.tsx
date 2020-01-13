@@ -53,6 +53,7 @@ const DropdownFilter: React.FC<IDropdownFilterProps> = ({
         style={{ width: '30%' }}
         value={selectedAndLetterFilter}
         onChange={onFilterChange}
+        id="selected-and-letter-filter"
       >
         <MenuItem value="">
           <em>None</em>

@@ -1,49 +1,44 @@
-import { User } from '../../../entities'
-import * as types from './types'
-import { AnyAction } from 'redux'
+import {
+  ADD_POSTPONNED_ACTION,
+  IUserAndExpireTime,
+  USER_LOGGING_IN_FOUND,
+  ACCESS_TOKEN_REFRESHED
+} from './types'
+import { IThunkReturnObject } from '../apiMiddleware'
 
-export const addPostponnedAction = (postponnedAction: AnyAction) => ({
-  type: types.ADD_POSTPONNED_ACTION,
+export const addPostponnedAction = (postponnedAction: IThunkReturnObject) => ({
+  type: ADD_POSTPONNED_ACTION,
   postponnedAction
 })
 type AddPostponnedActionType = ReturnType<typeof addPostponnedAction>
 
-export const setToInitialState = () => ({
-  type: types.SET_TO_INITIAL_STATE
-})
-type SetToInitialStateActionType = ReturnType<typeof setToInitialState>
-
-export const setAccessTokenStatus = (status: types.PossibleStatuses) => ({
-  type: types.SET_STATUS,
-  status
-})
-type SetAccessTokenStatusActionType = ReturnType<typeof setAccessTokenStatus>
-
-export const setAccessTokenFields = (
-  status: types.PossibleStatuses,
-  expireTime: number
+export const userLoggingInFound = (
+  data: IUserAndExpireTime,
+  isLoading: boolean,
+  error: null
 ) => ({
-  type: types.SET_ACCESS_TOKEN_FIELDS,
-  accessTokenFields: { status, expireTime }
+  type: USER_LOGGING_IN_FOUND,
+  data,
+  isLoading,
+  error
 })
-type SetAccessTokenFieldsActionType = ReturnType<typeof setAccessTokenFields>
+type UserLoggingInFoundActionReturn = ReturnType<typeof userLoggingInFound>
 
-export const setUserAndAccessTokenFields = (
-  user: User,
-  status: types.PossibleStatuses,
-  expireTime: number
+export const accessTokenRefreshed = (
+  accessTokenExpireTime: number,
+  isLoading: boolean,
+  error: null
 ) => ({
-  type: types.SET_USER_AND_ACCESS_TOKEN_FIELDS,
-  user,
-  accessTokenFields: { status, expireTime }
+  type: ACCESS_TOKEN_REFRESHED,
+  accessTokenExpireTime,
+  isLoading,
+  error
 })
-export type SetUserAndAccessTokenFieldsActionType = ReturnType<
-  typeof setUserAndAccessTokenFields
+type AccessTokenRefreshedActionReturned = ReturnType<
+  typeof accessTokenRefreshed
 >
 
 export type AuthActionTypes =
-  | SetToInitialStateActionType
   | AddPostponnedActionType
-  | SetAccessTokenStatusActionType
-  | SetAccessTokenFieldsActionType
-  | SetUserAndAccessTokenFieldsActionType
+  | UserLoggingInFoundActionReturn
+  | AccessTokenRefreshedActionReturned

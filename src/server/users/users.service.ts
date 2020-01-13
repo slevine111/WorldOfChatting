@@ -1,7 +1,12 @@
-import { Repository, In } from 'typeorm'
-import { Injectable, HttpException } from '@nestjs/common'
+import { Repository } from 'typeorm'
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'
+import {
+  IUserAndChatGroupGetReturn,
+  IReduxStoreUserFields
+} from '../../shared-types'
+import { OnlineStatusesEnum } from '../../shared-types/shared-enums'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
 import { compare, hash } from 'bcrypt'
 
@@ -30,12 +35,14 @@ export default class UserService {
         where: { email }
       })
       .then(async (user: User | undefined) => {
-        if (user === undefined) throw new HttpException('username invalid', 400)
+        if (user === undefined)
+          throw new HttpException('username invalid', HttpStatus.BAD_REQUEST)
         const passwordCorrect: boolean = await compare(
           inputPassword,
           user.password!
         )
-        if (!passwordCorrect) throw new HttpException('password invalid', 400)
+        if (!passwordCorrect)
+          throw new HttpException('password invalid', HttpStatus.BAD_REQUEST)
         if (returnPassword) return user
         const { password, ...otherUserFields } = user
         return otherUserFields
@@ -58,9 +65,48 @@ export default class UserService {
     return this.userRepository.findOne({ where: { id } })
   }
 
-  getLoggedInSpecifiedUsers(userIds: string): Promise<User[]> {
-    const userIdsArray: string[] = userIds.split(',')
-    return this.userRepository.find({ loggedIn: true, id: In(userIdsArray) })
+  getUsersAndTheirChatGroups(
+    userId: string
+  ): Promise<IUserAndChatGroupGetReturn[]> {
+    return this.userRepository.query(
+      `SELECT u.id as "userTableId",
+              u."firstName",
+              u."lastName",
+              CONCAT(u."firstName",' ',u."lastName") as "fullName",
+              u."loggedIn",
+              CASE WHEN u."loggedIn" = true THEN '${OnlineStatusesEnum.Online}'
+                   ELSE '${OnlineStatusesEnum.Offline}' END AS "loggedInAsString",
+              u.email,
+              ucg.id as "userChatGroupId",
+              ucg."userId",
+              ucg."chatGroupId",
+              ucg.favorite
+      FROM user_chat_group ucg
+      JOIN (SELECT "chatGroupId" FROM user_chat_group WHERE "userId" = $1) filter
+      ON ucg."chatGroupId" = filter."chatGroupId"
+      JOIN "user" u ON ucg."userId" = u.id
+      WHERE ucg."userId" != $2
+    `,
+      [userId, userId]
+    )
+  }
+
+  getUsersLinkedToLanguage(language: string): Promise<IReduxStoreUserFields[]> {
+    return this.userRepository.query(
+      `SELECT A.id,
+              A."firstName",
+              A."lastName",
+              CONCAT(A."firstName",' ',A."lastName") as "fullName",
+              A.email,
+              A."loggedIn",
+              CASE WHEN A."loggedIn" = true THEN '${OnlineStatusesEnum.Online}'
+                   ELSE '${OnlineStatusesEnum.Offline}' END AS "loggedInAsString"
+       FROM "user" A
+       JOIN user_language B ON A.id = B."userId"
+       WHERE language = $1
+      `,
+      [language]
+    )
   }
 
   async addNewUser(user: IUserPostDTO): Promise<User> {
@@ -73,12 +119,11 @@ export default class UserService {
     return { ...otherUserFields, id, loggedIn }
   }
 
-  updateUser(
-    userId: string,
-    updatedUser: IUserUpdateDTO
-  ): Promise<User | undefined> {
-    return this.userRepository.update(userId, updatedUser).then(() => {
-      return this.findSingleUserById(userId)
+  updateUser(userId: string, updatedUser: IUserUpdateDTO): Promise<User> {
+    return this.findSingleUserById(userId).then((user: User | undefined) => {
+      if (user === undefined)
+        throw new HttpException('username invalid', HttpStatus.BAD_REQUEST)
+      return this.userRepository.save({ ...user, ...updatedUser })
     })
   }
 }

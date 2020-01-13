@@ -2,17 +2,10 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { ChatGroup } from '../../entities'
-
-interface IChatGroupQueryReturn {
-  id: string
-  name: string
-  languageId: string
-  userId: string
-}
-
-interface IObjectOfChatGroups {
-  [key: string]: ChatGroup
-}
+import {
+  IChatGroupReducer,
+  IChatGroupWithFavoriteField
+} from '../../shared-types'
 
 @Injectable()
 export default class ChatGroupService {
@@ -21,27 +14,26 @@ export default class ChatGroupService {
     private readonly chatGroupRepository: Repository<ChatGroup>
   ) {}
 
-  getChatGroupsOfSingleUser(userId: string): Promise<ChatGroup[]> {
+  getChatGroupsOfSingleUser(userId: string): Promise<IChatGroupReducer> {
     return this.chatGroupRepository
       .query(
-        `SELECT id, name, "languageId", "userId"
-         FROM chat_group A
-         JOIN user_chatgroup B ON A.id = B."chatGroupId"
-         JOIN (SELECT "chatGroupId" FROM user_chatgroup WHERE "userId" = $1) C
-         ON B."chatGroupId" = C."chatGroupId"`,
+        `SELECT A.*, favorite
+       FROM chat_group A
+       JOIN user_chat_group B ON A.id = B."chatGroupId"
+       WHERE "userId" = $1`,
         [userId]
       )
-      .then((groupAndUserRows: IChatGroupQueryReturn[]) => {
-        let objectOfChatGroups: IObjectOfChatGroups = {}
-        for (let i = 0; i < groupAndUserRows.length; ++i) {
-          const { id, name, languageId, userId } = groupAndUserRows[i]
-          if (objectOfChatGroups[id]) {
-            objectOfChatGroups[id].userIds.push(userId)
+      .then((chatGroups: IChatGroupWithFavoriteField[]) => {
+        let chatGroupsByLanguage: IChatGroupReducer = {}
+        for (let i = 0; i < chatGroups.length; ++i) {
+          const { language } = chatGroups[i]
+          if (chatGroupsByLanguage[language]) {
+            chatGroupsByLanguage[language].push(chatGroups[i])
           } else {
-            objectOfChatGroups[id] = { id, name, languageId, userIds: [userId] }
+            chatGroupsByLanguage[language] = [chatGroups[i]]
           }
         }
-        return Object.values(objectOfChatGroups)
+        return chatGroupsByLanguage
       })
   }
 }

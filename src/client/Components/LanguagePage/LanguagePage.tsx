@@ -5,6 +5,8 @@ import { RouteComponentProps } from 'react-router-dom'
 import { languagePageDataRetrivalThunk } from '../../store/shared/thunks'
 import { getUsersOfLanguageInformation } from './helperfunctions'
 import { IUsersofLanguageInformation } from './shared-types'
+import { IUserReducerDataSlice } from '../../store/user/reducer'
+import { IUserLanguagesOfSingleLanguageDataSlice } from '../../store/userlanguage/reducer'
 import CurrentChats from './CurrentChats'
 import AllUsers from './AllUsers'
 import Typography from '@material-ui/core/Typography'
@@ -12,6 +14,7 @@ import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import styles from './styles'
+import WillNameLaterHOC from '../WillNameLaterHOC'
 
 interface IMatchParams {
   language: string
@@ -19,6 +22,9 @@ interface IMatchParams {
 
 interface IReduxStateProps extends IUsersofLanguageInformation {
   isLoading: boolean
+  reduxStoreDataSlices:
+    | []
+    | [IUserReducerDataSlice, IUserLanguagesOfSingleLanguageDataSlice]
 }
 
 interface IDispatchProps {
@@ -75,20 +81,26 @@ const mapStateToProps = (
     }
   }: RouteComponentProps<IMatchParams>
 ): IReduxStateProps => {
+  const { currentLanguageUsers } = users
+  const { ofLanguagePage } = userLanguages
   const isLoading: boolean =
-    users.currentLanguageUsers.isLoading ||
-    userLanguages.ofLanguagePage.isLoading
+    currentLanguageUsers.isLoading || ofLanguagePage.isLoading
   if (!isLoading) {
     const usersOfLanguageInfo = getUsersOfLanguageInformation(
-      users.currentLanguageUsers.data,
+      currentLanguageUsers.data,
       chatGroups.data,
       userChatGroups.data,
       language
     )
-    return { isLoading, ...usersOfLanguageInfo }
+    return {
+      isLoading,
+      reduxStoreDataSlices: [currentLanguageUsers, ofLanguagePage],
+      ...usersOfLanguageInfo
+    }
   } else {
     return {
       isLoading,
+      reduxStoreDataSlices: [],
       usersByChatGroup: [],
       usersMap: {},
       userIdsOfSoloChats: {}
@@ -104,4 +116,7 @@ const mapDispatchToProps = (dispatch: any): IDispatchProps => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LanguagePage)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WillNameLaterHOC(LanguagePage))

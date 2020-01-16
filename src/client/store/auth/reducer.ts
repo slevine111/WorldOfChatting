@@ -14,6 +14,7 @@ import { AuthActionTypes } from './actions'
 import { IThunkReturnObject, IAxiosErrorData } from '../apiMiddleware'
 const {
   AUTHENTICATING_USER_REQUEST,
+  CHECKING_IF_USER_LOGGED_IN_REQUEST,
   REFRESHING_ACCESS_TOKEN_REQUEST,
   USER_LOGGING_OUT_REQUEST
 } = RequestDataConstants
@@ -26,17 +27,15 @@ const {
 export interface IAuthReducerState {
   user: { data: User; isLoading: boolean }
   accessToken: { tokenExpireTime: number; isLoading: boolean }
-  error: null | IAxiosErrorData
+  error: null | (IAxiosErrorData & { actionType: OnApiFailureActionTypes })
   postponnedActions: IThunkReturnObject[]
-  isLoggingOut: boolean
 }
 
 const initialState: IAuthReducerState = {
   user: { data: {} as User, isLoading: false },
   accessToken: { tokenExpireTime: Number.POSITIVE_INFINITY, isLoading: false },
   error: null,
-  postponnedActions: [],
-  isLoggingOut: false
+  postponnedActions: []
 }
 
 export default (
@@ -45,6 +44,7 @@ export default (
 ): IAuthReducerState => {
   switch (action.type) {
     //authenticating user
+    case CHECKING_IF_USER_LOGGED_IN_REQUEST:
     case AUTHENTICATING_USER_REQUEST:
       return {
         ...initialState,
@@ -52,14 +52,13 @@ export default (
       }
     case USER_LOGGING_IN_FOUND:
       return {
-        user: { data: action.data.user, isLoading: action.isLoading },
+        user: { data: action.user, isLoading: action.isLoading },
         accessToken: {
-          tokenExpireTime: action.data.expireTime,
+          tokenExpireTime: action.tokenExpireTime,
           isLoading: initialState.accessToken.isLoading
         },
         error: action.error,
-        postponnedActions: initialState.postponnedActions,
-        isLoggingOut: initialState.isLoggingOut
+        postponnedActions: initialState.postponnedActions
       }
     //refreshing token
     case REFRESHING_ACCESS_TOKEN_REQUEST:
@@ -84,21 +83,21 @@ export default (
     case NO_USER_FOUND:
       return {
         ...initialState,
-        error: action.error
+        error: { ...action.error, actionType: action.type }
       }
     //logging user out
     case USER_LOGGING_OUT_REQUEST:
       return {
         ...state,
-        isLoggingOut: action.isLoading
+        user: { data: state.user.data, isLoading: action.isLoading }
       }
     case LOGOUT_USER_PROCESS:
       return { ...initialState }
     case USER_LOGGING_OUT_REQUEST_FAILED:
       return {
         ...state,
-        isLoggingOut: action.isLoading,
-        error: action.error
+        user: { data: state.user.data, isLoading: action.isLoading },
+        error: { ...action.error, actionType: action.type }
       }
     //adding postponned action (when api call is made and token being refreshed)
     case ADD_POSTPONNED_ACTION:

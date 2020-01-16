@@ -12,7 +12,6 @@ const WillNameLaterHOC = (Component: any): any => {
     }[]
     [key: string]: any
   }> = props => {
-    console.log('props', props)
     const { reduxStoreDataSlices, ...otherProps } = props
     const {
       NO_ERROR,
@@ -20,9 +19,8 @@ const WillNameLaterHOC = (Component: any): any => {
       AUTHENTICATION_ERROR
     } = GeneralErrorTypes
 
-    let authErrorType: GeneralErrorTypes = checkError(
-      store.getState().auth.error
-    )
+    const { auth } = store.getState()
+    let authErrorType: GeneralErrorTypes = checkError(auth.error)
     let apiError: GeneralErrorTypes =
       authErrorType === AUTHENTICATION_ERROR ? authErrorType : NO_ERROR
     if (apiError !== AUTHENTICATION_ERROR) {
@@ -40,7 +38,15 @@ const WillNameLaterHOC = (Component: any): any => {
       }
     }
 
-    if (apiError === AUTHENTICATION_ERROR) return <Redirect to="/Login" />
+    if (apiError === AUTHENTICATION_ERROR)
+      return (
+        <Redirect
+          to={{
+            pathname: '/login',
+            state: { redirectFromError: true }
+          }}
+        />
+      )
 
     if (apiError === NON_AUTHENTICATION_ERROR) {
       return (

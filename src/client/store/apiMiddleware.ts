@@ -9,6 +9,11 @@ import {
 import { MyStoreType } from './index'
 import { addPostponnedAction } from './auth/actions'
 import { refreshToken } from './auth/thunks'
+const {
+  REFRESHING_ACCESS_TOKEN_REQUEST,
+  AUTHENTICATING_USER_REQUEST,
+  CHECKING_IF_USER_LOGGED_IN_REQUEST
+} = RequestDataConstants
 
 export interface IAxiosErrorData {
   message: string
@@ -58,12 +63,8 @@ export const refreshTokenMiddleware = (store: MyStoreType) => {
 
     if (bypassRefreshTokenMiddleware === true) return next(action)
 
-    console.log('action', action)
-    console.log('store', store.getState())
-
     const { isLoading, tokenExpireTime } = store.getState().auth.accessToken
     if (!isLoading && tokenExpireTime * 1000 > Date.now() + 50 * 1000) {
-      console.log('condition met - continue')
       return next(action)
     }
 
@@ -80,19 +81,27 @@ export const refreshTokenMiddleware = (store: MyStoreType) => {
 }
 
 export const callAPIMiddleware = () => {
-  return (next: any) => async (action: unknown) => {
+  return (next: any) => async (action: unknown): Promise<void> => {
     if (!isThunkOject(action)) return next(action)
 
     const {
+      requestDataActionType,
       apiCall,
       dispatchActionOnSuccess,
       apiFailureActionType,
       dispatchProps,
       dataTransformationCall
     } = action
+
+    if (requestDataActionType === REFRESHING_ACCESS_TOKEN_REQUEST) {
+      next({
+        type: requestDataActionType,
+        isLoading: true
+      })
+    }
+
     try {
       const apiResponse = await apiCall()
-      console.dir(apiResponse)
       let data: any
       if (responseIsArray(apiResponse)) {
         data = apiResponse.map(response => response.data)
@@ -118,6 +127,13 @@ export const callAPIMiddleware = () => {
         error: errorData
       }
       next(dispatchFailureActionObject)
+      if (
+        [
+          CHECKING_IF_USER_LOGGED_IN_REQUEST,
+          AUTHENTICATING_USER_REQUEST
+        ].includes(requestDataActionType)
+      )
+        throw error
     }
   }
 }

@@ -6,6 +6,7 @@ import { IUserSignInDTO } from '../../../server/auth/auth.dto'
 import axios, { AxiosResponse } from 'axios'
 const {
   AUTHENTICATING_USER_REQUEST,
+  CHECKING_IF_USER_LOGGED_IN_REQUEST,
   REFRESHING_ACCESS_TOKEN_REQUEST
 } = RequestDataConstants
 const {
@@ -37,6 +38,7 @@ export const loginUserProcess = (
 ): IThunkReturnObject<IUserAndExpireTime> => {
   return {
     ...authenticateUserThunkReturnObject,
+    requestDataActionType: AUTHENTICATING_USER_REQUEST,
     apiCall: (): Promise<AxiosResponse<IUserAndExpireTime>> => {
       return axios.post('/api/auth/login', userEmailAndPassword)
     }
@@ -46,6 +48,7 @@ export const loginUserProcess = (
 export const checkIfUserLoggedInProcess = (): IThunkReturnObject<IUserAndExpireTime> => {
   return {
     ...authenticateUserThunkReturnObject,
+    requestDataActionType: CHECKING_IF_USER_LOGGED_IN_REQUEST,
     apiCall: (): Promise<AxiosResponse<IUserAndExpireTime>> => {
       return axios.get('/api/auth')
     }

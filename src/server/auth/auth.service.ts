@@ -80,7 +80,9 @@ export default class AuthService {
             this.createAndThrow401Error()
           }
         }
-        let user: User | undefined = await this.userService.findSingleUserById(
+        let user:
+          | User
+          | undefined = await this.userService.findLoggedInSingleUserById(
           accessTokenClaims.sub
         )
         if (user === undefined) {

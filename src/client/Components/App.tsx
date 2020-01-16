@@ -1,60 +1,66 @@
 //React related imports
 import React, { ReactElement, Fragment, useEffect } from 'react'
-import { HashRouter, Route, Switch } from 'react-router-dom'
+import { HashRouter, Route, Switch, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { ReduxState } from '../store'
-import { User } from '../../entities'
 import { getAllLanguagesThunk } from '../store/language/actions'
 import { checkIfUserLoggedInProcess } from '../store/auth/thunks'
-import { checkError, GeneralErrorTypes } from './utilityfunctions'
+import { User } from '../../entities'
 
 //Components imports
 import Signup from './Login_Signup/Signup'
 import Login from './Login_Signup/Login'
 import Navbar from './Navbar'
-//import Home from './Home/'
-//import LanguagePage from './LanguagePage'
-//import ProtectedLoggedInPageHOC from './ProtectedLoggedInPageHOC'
 import LoggedInUserController from './LoggedInUserController'
 
 interface IReduxStateProps {
   user: User
-  nonAuthenticationError: boolean
 }
 
 interface IDispatchProps {
-  getAllLanguages: () => void
-  checkIfUserLoggedIn: () => void
+  getAllLanguages: () => Promise<void>
+  checkIfUserLoggedIn: () => Promise<void>
 }
 
-const App: React.FC<IReduxStateProps & IDispatchProps> = ({
+interface IOwnProps {
+  redirectAfterLogin: string
+}
+
+const App: React.FC<IOwnProps & IReduxStateProps & IDispatchProps> = ({
+  user,
   getAllLanguages,
   checkIfUserLoggedIn,
-  user,
-  nonAuthenticationError
+  redirectAfterLogin
 }): ReactElement => {
+  let websiteLoadError: boolean = false
   useEffect(() => {
     Promise.all([getAllLanguages(), checkIfUserLoggedIn()])
+      .then(() => {
+        window.location.hash = redirectAfterLogin
+      })
+      .catch(err => {
+        websiteLoadError = err.response.status !== 401
+      })
   }, [])
-  console.log('in app')
 
   return (
     <div>
       <HashRouter>
         <Fragment>
           <Route component={Navbar} />
-          {nonAuthenticationError && <div>site failed to load :(</div>}
-          {!nonAuthenticationError && (
+          {websiteLoadError && <div>site failed to load :(</div>}
+          {!websiteLoadError && (
             <Switch>
-              <Route path="/" exact component={Login} />
               <Route
                 path="/about"
                 exact
                 render={() => <h4>the about page</h4>}
               />
-              <Route path="/signup" exact component={Signup} />
-              <Route path="/login" exact component={Login} />
-              {user.id && <LoggedInUserController />}
+              {!user.id && <Route path="/" exact component={Login} />}
+              {!user.id && <Route path="/login" exact component={Login} />}
+              {!user.id && <Route path="/signup" exact component={Signup} />}
+              {!user.id && <Redirect to="/login" />}
+              {user.id && <Route component={LoggedInUserController} />}
               <Route exact render={() => <h4>url does not exist</h4>} />
             </Switch>
           )}
@@ -64,14 +70,9 @@ const App: React.FC<IReduxStateProps & IDispatchProps> = ({
   )
 }
 
-const mapStateToProps = ({ auth, languages }: ReduxState): IReduxStateProps => {
-  return {
-    user: auth.user.data,
-    nonAuthenticationError: [auth.error, languages.error].some(
-      slice => checkError(slice) === GeneralErrorTypes.NON_AUTHENTICATION_ERROR
-    )
-  }
-}
+const mapStateToProps = ({ auth }: ReduxState): IReduxStateProps => ({
+  user: auth.user.data
+})
 
 const mapDispatchToProps = (dispatch: any): IDispatchProps => {
   return {

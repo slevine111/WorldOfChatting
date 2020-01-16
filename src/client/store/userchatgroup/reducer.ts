@@ -10,7 +10,8 @@ import { UserChatGroup } from '../../../entities'
 const { REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
 const {
   REQUEST_DATA_USER_LOGGED_IN_FAILED,
-  USER_LOGGING_OUT_REQUEST_FAILED
+  USER_LOGGING_OUT_REQUEST_FAILED,
+  REFRESHING_ACCESS_TOKEN_REQUEST_FAILED
 } = OnApiFailureActionTypes
 
 export interface IUserChatGroupReducerState {
@@ -30,8 +31,6 @@ export default (
   action: SharedActionsTypes
 ): IUserChatGroupReducerState => {
   switch (action.type) {
-    case LOGOUT_USER_PROCESS:
-      return { ...initialState }
     case USER_LOGGED_IN:
       return {
         data: action.userChatGroups,
@@ -42,6 +41,9 @@ export default (
       return { ...initialState, isLoading: action.isLoading }
     case REQUEST_DATA_USER_LOGGED_IN_FAILED:
       return { ...initialState, error: action.error }
+    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILED:
+    case LOGOUT_USER_PROCESS:
+      return { ...initialState }
     case USER_LOGGING_OUT_REQUEST_FAILED:
     default:
       return state

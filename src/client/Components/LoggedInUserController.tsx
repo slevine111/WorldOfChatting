@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { Route } from 'react-router'
+import { Route, Switch, Redirect } from 'react-router'
 import Home from './Home/'
 import LanguagePage from './LanguagePage'
 import { userLoggedInThunk } from '../store/shared/thunks'
@@ -10,18 +10,26 @@ import { IUserReducerDataSlice } from '../store/user/reducer'
 import { IUserLoggedInLanguagesDataSlice } from '../store/userlanguage/reducer'
 import { IChatGroupReducerState } from '../store/chatgroup/reducer'
 import { IUserChatGroupReducerState } from '../store/userchatgroup/reducer'
+import { IAuthReducerState } from '../store/auth/reducer'
+import { OnApiFailureActionTypes } from '../store/shared/types'
 import CircularProgress from '@material-ui/core/CircularProgress'
+//import Backdrop from '@material-ui/core/Backdrop'
+import Typography from '@material-ui/core/Typography'
 import WillNameLaterHOC from './WillNameLaterHOC'
+const { USER_LOGGING_OUT_REQUEST_FAILED } = OnApiFailureActionTypes
 
 interface IReduxStateProps {
   dataLoading: boolean
   user: User
-  reduxStoreDataSlices: [
-    IUserReducerDataSlice,
-    IUserLoggedInLanguagesDataSlice,
-    IChatGroupReducerState,
-    IUserChatGroupReducerState
-  ]
+  auth: IAuthReducerState
+  reduxStoreDataSlices:
+    | []
+    | [
+        IUserReducerDataSlice,
+        IUserLoggedInLanguagesDataSlice,
+        IChatGroupReducerState,
+        IUserChatGroupReducerState
+      ]
 }
 
 interface IDispatchProps {
@@ -30,6 +38,7 @@ interface IDispatchProps {
 
 const LoggedInUserController: React.FC<IReduxStateProps & IDispatchProps> = ({
   user,
+  auth,
   dataLoading,
   loggedInUserDataRetrival
 }) => {
@@ -39,8 +48,20 @@ const LoggedInUserController: React.FC<IReduxStateProps & IDispatchProps> = ({
   if (dataLoading) return <CircularProgress disableShrink />
   return (
     <div>
-      <Route path="/home" exact component={Home} />
-      <Route path="/language/:language" exact component={LanguagePage} />
+      {auth.error !== null &&
+        auth.error.actionType === USER_LOGGING_OUT_REQUEST_FAILED && (
+          <Typography variant="body1">
+            Error occured in logout :(. Stay on the site :).
+          </Typography>
+        )}
+      {/*<Backdrop open={userLoggingOut} className={backdrop}>
+        <CircularProgress disableShrink />
+      </Backdrop>*/}
+      <Switch>
+        <Route path="/home" exact component={Home} />
+        <Route path="/language/:language" exact component={LanguagePage} />
+        <Redirect to="/home" />
+      </Switch>
     </div>
   )
 }
@@ -60,12 +81,10 @@ const mapStateToProps = ({
   return {
     dataLoading,
     user: user.data,
-    reduxStoreDataSlices: [
-      users.myUsers,
-      userLanguages.ofUser,
-      chatGroups,
-      userChatGroups
-    ]
+    auth,
+    reduxStoreDataSlices: dataLoading
+      ? []
+      : [users.myUsers, userLanguages.ofUser, chatGroups, userChatGroups]
   }
 }
 

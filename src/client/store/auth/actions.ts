@@ -18,7 +18,8 @@ export const userLoggingInFound = (
   error: null
 ) => ({
   type: USER_LOGGING_IN_FOUND,
-  data,
+  user: data.user,
+  tokenExpireTime: data.expireTime,
   isLoading,
   error
 })

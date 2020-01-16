@@ -13,7 +13,8 @@ const { REQUEST_DATA_API, REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
 const {
   REQUEST_DATA_API_FAILED,
   REQUEST_DATA_USER_LOGGED_IN_FAILED,
-  USER_LOGGING_OUT_REQUEST_FAILED
+  USER_LOGGING_OUT_REQUEST_FAILED,
+  REFRESHING_ACCESS_TOKEN_REQUEST_FAILED
 } = OnApiFailureActionTypes
 
 export interface IUserLoggedInLanguagesDataSlice {
@@ -22,13 +23,15 @@ export interface IUserLoggedInLanguagesDataSlice {
   error: null | IAxiosErrorData
 }
 
+export interface IUserLanguagesOfSingleLanguageDataSlice {
+  data: UserLanguage[]
+  isLoading: boolean
+  error: null | IAxiosErrorData
+}
+
 export interface IUserLangugeReducerState {
   ofUser: IUserLoggedInLanguagesDataSlice
-  ofLanguagePage: {
-    data: UserLanguage[]
-    isLoading: boolean
-    error: null | IAxiosErrorData
-  }
+  ofLanguagePage: IUserLanguagesOfSingleLanguageDataSlice
 }
 
 const initialState: IUserLangugeReducerState = {
@@ -88,6 +91,7 @@ export default (
         }
       }
     //logging out
+    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILED:
     case LOGOUT_USER_PROCESS:
       return { ...initialState }
     case USER_LOGGING_OUT_REQUEST_FAILED:

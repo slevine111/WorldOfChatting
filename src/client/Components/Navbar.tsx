@@ -66,11 +66,7 @@ const Navbar: React.FC<INavbarProps> = ({
           {user.id && (
             <Button
               className={classes.buttonStyle}
-              onClick={() =>
-                logoutUser(user.id, { loggedIn: false }).then(() =>
-                  history.push('/')
-                )
-              }
+              onClick={() => logoutUser(user.id, { loggedIn: false })}
             >
               Logout
             </Button>

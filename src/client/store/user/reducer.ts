@@ -12,7 +12,8 @@ const { REQUEST_DATA_API, REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
 const {
   REQUEST_DATA_USER_LOGGED_IN_FAILED,
   REQUEST_DATA_API_FAILED,
-  USER_LOGGING_OUT_REQUEST_FAILED
+  USER_LOGGING_OUT_REQUEST_FAILED,
+  REFRESHING_ACCESS_TOKEN_REQUEST_FAILED
 } = OnApiFailureActionTypes
 
 export interface IUserReducerDataSlice {
@@ -42,8 +43,6 @@ export default (
   action: SharedActionsTypes
 ): IUserReducerState => {
   switch (action.type) {
-    case LOGOUT_USER_PROCESS:
-      return { ...state }
     case REQUEST_DATA_USER_LOGGED_IN:
       return {
         myUsers: { ...initialState.myUsers, isLoading: action.isLoading },
@@ -89,6 +88,9 @@ export default (
           error: action.error
         }
       }
+    case LOGOUT_USER_PROCESS:
+    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILED:
+      return { ...initialState }
     case USER_LOGGING_OUT_REQUEST_FAILED:
     default:
       return state

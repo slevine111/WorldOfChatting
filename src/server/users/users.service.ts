@@ -36,13 +36,13 @@ export default class UserService {
       })
       .then(async (user: User | undefined) => {
         if (user === undefined)
-          throw new HttpException('username invalid', HttpStatus.BAD_REQUEST)
+          throw new HttpException('username invalid', HttpStatus.UNAUTHORIZED)
         const passwordCorrect: boolean = await compare(
           inputPassword,
           user.password!
         )
         if (!passwordCorrect)
-          throw new HttpException('password invalid', HttpStatus.BAD_REQUEST)
+          throw new HttpException('password invalid', HttpStatus.UNAUTHORIZED)
         if (returnPassword) return user
         const { password, ...otherUserFields } = user
         return otherUserFields
@@ -63,6 +63,10 @@ export default class UserService {
 
   findSingleUserById(id: string): Promise<User | undefined> {
     return this.userRepository.findOne({ where: { id } })
+  }
+
+  findLoggedInSingleUserById(id: string): Promise<User | undefined> {
+    return this.userRepository.findOne({ where: { id, loggedIn: true } })
   }
 
   getUsersAndTheirChatGroups(

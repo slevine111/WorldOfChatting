@@ -1,21 +1,26 @@
 import {
-  LOGOUT_USER_PROCESS,
-  WENT_TO_LANGUAGE_PAGE_VIEW,
-  USER_LOGGED_IN,
   RequestDataConstants,
-  OnApiFailureActionTypes
+  RequestDataSuccessConstants,
+  RequestDataFailureConstants
 } from '../APIRequestsHandling/types'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { UserLanguage } from '../../../entities'
 import { IUserLangugeWithOnlineUserCount } from '../../../shared-types'
 import { IBaseReducer } from '../reducer.base'
-const { REQUEST_DATA_API, REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
 const {
-  REQUEST_DATA_API_FAILED,
-  REQUEST_DATA_USER_LOGGED_IN_FAILED,
-  USER_LOGGING_OUT_REQUEST_FAILED,
-  REFRESHING_ACCESS_TOKEN_REQUEST_FAILED
-} = OnApiFailureActionTypes
+  WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST,
+  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST
+} = RequestDataConstants
+const {
+  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
+  WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS,
+  USER_LOGGING_OUT_REQUEST_SUCCESS
+} = RequestDataSuccessConstants
+const {
+  WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_FAILURE,
+  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE,
+  REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE
+} = RequestDataFailureConstants
 
 export type IUserLoggedInLanguagesDataSlice = IBaseReducer<
   IUserLangugeWithOnlineUserCount[]
@@ -41,12 +46,12 @@ export default (
 ): IUserLangugeReducerState => {
   switch (action.type) {
     //user logging in
-    case REQUEST_DATA_USER_LOGGED_IN:
+    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST:
       return {
         ofUser: { ...initialState.ofUser, isLoading: action.isLoading },
         ofLanguagePage: { ...initialState.ofLanguagePage }
       }
-    case USER_LOGGED_IN:
+    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
       return {
         ofUser: {
           data: action.userLangsOfLoggedInUser,
@@ -55,13 +60,13 @@ export default (
         },
         ofLanguagePage: { ...initialState.ofLanguagePage }
       }
-    case REQUEST_DATA_USER_LOGGED_IN_FAILED:
+    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE:
       return {
         ofUser: { ...initialState.ofUser, error: action.error },
         ofLanguagePage: { ...initialState.ofLanguagePage }
       }
     //after user clicks on language page
-    case REQUEST_DATA_API:
+    case WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST:
       return {
         ofUser: { ...state.ofUser },
         ofLanguagePage: {
@@ -69,7 +74,7 @@ export default (
           isLoading: action.isLoading
         }
       }
-    case WENT_TO_LANGUAGE_PAGE_VIEW:
+    case WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS:
       return {
         ofUser: { ...state.ofUser },
         ofLanguagePage: {
@@ -78,7 +83,7 @@ export default (
           error: action.error
         }
       }
-    case REQUEST_DATA_API_FAILED:
+    case WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_FAILURE:
       return {
         ofUser: { ...state.ofUser },
         ofLanguagePage: {
@@ -87,10 +92,9 @@ export default (
         }
       }
     //logging out
-    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILED:
-    case LOGOUT_USER_PROCESS:
+    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE:
+    case USER_LOGGING_OUT_REQUEST_SUCCESS:
       return { ...initialState }
-    case USER_LOGGING_OUT_REQUEST_FAILED:
     default:
       return state
   }

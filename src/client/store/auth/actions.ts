@@ -1,45 +1,63 @@
-import {
-  ADD_POSTPONNED_ACTION,
-  IUserAndExpireTime,
-  USER_LOGGING_IN_FOUND,
-  ACCESS_TOKEN_REFRESHED
-} from './types'
+import { ADD_POSTPONNED_ACTION, IUserAndExpireTime } from './types'
+import { RequestDataSuccessConstants } from '../APIRequestsHandling/types'
 import { IThunkReturnObject } from '../APIRequestsHandling/types'
 
 export const addPostponnedAction = (postponnedAction: IThunkReturnObject) => ({
   type: ADD_POSTPONNED_ACTION,
   postponnedAction
 })
-type AddPostponnedActionType = ReturnType<typeof addPostponnedAction>
+type AddPostponnedActionReturn = ReturnType<typeof addPostponnedAction>
 
-export const userLoggingInFound = (
+export const loggedInUserFoundEnteringSite = (
   data: IUserAndExpireTime,
   isLoading: boolean,
   error: null
 ) => ({
-  type: USER_LOGGING_IN_FOUND,
+  type: <const>(
+    RequestDataSuccessConstants.CHECKING_IF_USER_LOGGED_IN_REQUEST_SUCCESS
+  ),
   user: data.user,
   tokenExpireTime: data.expireTime,
   isLoading,
   error
 })
-type UserLoggingInFoundActionReturn = ReturnType<typeof userLoggingInFound>
+type LoggedInUserFoundEnteringSiteActionReturn = ReturnType<
+  typeof loggedInUserFoundEnteringSite
+>
+
+export const userLoginAttemptSucceeded = (
+  data: IUserAndExpireTime,
+  isLoading: boolean,
+  error: null
+) => ({
+  type: <const>(
+    RequestDataSuccessConstants.AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_SUCCESS
+  ),
+  user: data.user,
+  tokenExpireTime: data.expireTime,
+  isLoading,
+  error
+})
+type UserLoginAttemptSucceededActionReturn = ReturnType<
+  typeof userLoginAttemptSucceeded
+>
 
 export const accessTokenRefreshed = (
   accessTokenExpireTime: number,
   isLoading: boolean,
   error: null
 ) => ({
-  type: ACCESS_TOKEN_REFRESHED,
+  type: <const>(
+    RequestDataSuccessConstants.REFRESHING_ACCESS_TOKEN_REQUEST_SUCCESS
+  ),
   accessTokenExpireTime,
   isLoading,
   error
 })
-type AccessTokenRefreshedActionReturned = ReturnType<
-  typeof accessTokenRefreshed
->
+type AccessTokenRefreshedActionReturn = ReturnType<typeof accessTokenRefreshed>
 
 export type AuthActionTypes =
-  | AddPostponnedActionType
-  | UserLoggingInFoundActionReturn
-  | AccessTokenRefreshedActionReturned
+  | LoggedInUserFoundEnteringSiteActionReturn
+  | AddPostponnedActionReturn
+  | UserLoginAttemptSucceededActionReturn
+  | AccessTokenRefreshedActionReturn

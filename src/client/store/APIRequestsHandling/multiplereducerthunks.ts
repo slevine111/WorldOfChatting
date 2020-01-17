@@ -1,5 +1,5 @@
 import {
-  logoutUserProcess,
+  userLoggedOut,
   userLoggedIn,
   wentToLanguagePageView
 } from './multiplereduceractions'
@@ -7,7 +7,7 @@ import {
   LanguagePageDataRetrivalArrayDataTypes,
   UserLoggedInDataRetrivalArrayDataTypes,
   RequestDataConstants,
-  OnApiFailureActionTypes
+  RequestDataFailureConstants
 } from './types'
 import { separateUserAndChatGroupFields } from './helperfunctions'
 import { IUserUpdateDTO } from '../../../server/users/users.dto'
@@ -20,10 +20,10 @@ import { User } from '../../../entities'
 import axios, { AxiosResponse } from 'axios'
 import { IThunkReturnObject } from './types'
 const {
-  REQUEST_DATA_USER_LOGGED_IN_FAILED,
-  REQUEST_DATA_API_FAILED,
-  USER_LOGGING_OUT_REQUEST_FAILED
-} = OnApiFailureActionTypes
+  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE,
+  WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_FAILURE,
+  USER_LOGGING_OUT_REQUEST_FAILURE
+} = RequestDataFailureConstants
 
 export const logoutUserProcessThunk = (
   userId: string,
@@ -35,8 +35,8 @@ export const logoutUserProcessThunk = (
       await axios.put(`/api/user/${userId}`, partialUpdatedUser)
       return axios.delete('/api/auth')
     },
-    dispatchActionOnSuccess: logoutUserProcess,
-    apiFailureActionType: USER_LOGGING_OUT_REQUEST_FAILED,
+    dispatchActionOnSuccess: userLoggedOut,
+    apiFailureActionType: USER_LOGGING_OUT_REQUEST_FAILURE,
     dispatchProps: {},
     bypassRefreshTokenMiddleware: true
   }
@@ -48,11 +48,12 @@ type UserLoggedInDataTransformationInput = [
   IUserAndChatGroupGetReturn[]
 ]
 
-export const userLoggedInThunk = (
+export const userLoggedInDataRetrivalThunk = (
   user: User
 ): IThunkReturnObject<UserLoggedInDataRetrivalArrayDataTypes> => {
   return {
-    requestDataActionType: RequestDataConstants.REQUEST_DATA_USER_LOGGED_IN,
+    requestDataActionType:
+      RequestDataConstants.HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST,
     apiCall: (): Promise<AxiosResponse[]> => {
       return Promise.all([
         axios.get(`/api/chatgroup/${user.id}`),
@@ -75,7 +76,7 @@ export const userLoggedInThunk = (
       return [userLangsOfLoggedInUser, chatGroups, users, userChatGroups]
     },
     dispatchActionOnSuccess: userLoggedIn,
-    apiFailureActionType: REQUEST_DATA_USER_LOGGED_IN_FAILED,
+    apiFailureActionType: HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE,
     dispatchProps: {}
   }
 }
@@ -84,7 +85,8 @@ export const languagePageDataRetrivalThunk = (
   language: string
 ): IThunkReturnObject<LanguagePageDataRetrivalArrayDataTypes> => {
   return {
-    requestDataActionType: RequestDataConstants.REQUEST_DATA_API,
+    requestDataActionType:
+      RequestDataConstants.WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST,
     apiCall: (): Promise<AxiosResponse[]> => {
       return Promise.all([
         axios.get(`/api/userlanguage/language/${language}`),
@@ -92,7 +94,7 @@ export const languagePageDataRetrivalThunk = (
       ])
     },
     dispatchActionOnSuccess: wentToLanguagePageView,
-    apiFailureActionType: REQUEST_DATA_API_FAILED,
+    apiFailureActionType: WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_FAILURE,
     dispatchProps: {}
   }
 }

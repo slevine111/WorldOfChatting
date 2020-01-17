@@ -1,20 +1,25 @@
 import {
-  LOGOUT_USER_PROCESS,
-  USER_LOGGED_IN,
-  WENT_TO_LANGUAGE_PAGE_VIEW,
   RequestDataConstants,
-  OnApiFailureActionTypes
+  RequestDataSuccessConstants,
+  RequestDataFailureConstants
 } from '../APIRequestsHandling/types'
 import { IBaseReducer } from '../reducer.base'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { IReduxStoreUserFields } from '../../../shared-types'
-const { REQUEST_DATA_API, REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
 const {
-  REQUEST_DATA_USER_LOGGED_IN_FAILED,
-  REQUEST_DATA_API_FAILED,
-  USER_LOGGING_OUT_REQUEST_FAILED,
-  REFRESHING_ACCESS_TOKEN_REQUEST_FAILED
-} = OnApiFailureActionTypes
+  WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST,
+  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST
+} = RequestDataConstants
+const {
+  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
+  WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS,
+  USER_LOGGING_OUT_REQUEST_SUCCESS
+} = RequestDataSuccessConstants
+const {
+  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE,
+  WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_FAILURE,
+  REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE
+} = RequestDataFailureConstants
 
 export type IUserReducerDataSlice = IBaseReducer<IReduxStoreUserFields[]>
 
@@ -39,12 +44,12 @@ export default (
   action: SharedActionsTypes
 ): IUserReducerState => {
   switch (action.type) {
-    case REQUEST_DATA_USER_LOGGED_IN:
+    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST:
       return {
         myUsers: { ...initialState.myUsers, isLoading: action.isLoading },
         currentLanguageUsers: { ...initialState.currentLanguageUsers }
       }
-    case USER_LOGGED_IN:
+    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
       return {
         myUsers: {
           data: action.users,
@@ -53,12 +58,12 @@ export default (
         },
         currentLanguageUsers: { ...initialState.currentLanguageUsers }
       }
-    case REQUEST_DATA_USER_LOGGED_IN_FAILED:
+    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE:
       return {
         myUsers: { ...initialState.myUsers, error: action.error },
         currentLanguageUsers: { ...initialState.currentLanguageUsers }
       }
-    case REQUEST_DATA_API:
+    case WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST:
       return {
         myUsers: { ...state.myUsers },
         currentLanguageUsers: {
@@ -66,7 +71,7 @@ export default (
           isLoading: action.isLoading
         }
       }
-    case WENT_TO_LANGUAGE_PAGE_VIEW:
+    case WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS:
       const { myUsers } = state
       return {
         myUsers,
@@ -76,7 +81,7 @@ export default (
           error: action.error
         }
       }
-    case REQUEST_DATA_API_FAILED:
+    case WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_FAILURE:
       return {
         myUsers: { ...state.myUsers },
         currentLanguageUsers: {
@@ -84,10 +89,9 @@ export default (
           error: action.error
         }
       }
-    case LOGOUT_USER_PROCESS:
-    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILED:
+    case USER_LOGGING_OUT_REQUEST_SUCCESS:
+    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE:
       return { ...initialState }
-    case USER_LOGGING_OUT_REQUEST_FAILED:
     default:
       return state
   }

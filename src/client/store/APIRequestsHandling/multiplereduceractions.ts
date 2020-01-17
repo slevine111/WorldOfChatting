@@ -1,24 +1,24 @@
 import {
-  LOGOUT_USER_PROCESS,
-  USER_LOGGED_IN,
-  WENT_TO_LANGUAGE_PAGE_VIEW,
-  ActionRequestData,
-  ActionOnApiFailure,
+  RequestDataSuccessConstants,
+  ActionOnRequestData,
+  ActionOnRequestDataFailure,
   LanguagePageDataRetrivalArrayDataTypes,
   UserLoggedInDataRetrivalArrayDataTypes
 } from './types'
 
-export const logoutUserProcess = () => ({
-  type: LOGOUT_USER_PROCESS
+export const userLoggedOut = () => ({
+  type: <const>RequestDataSuccessConstants.USER_LOGGING_OUT_REQUEST_SUCCESS
 })
-type LogoutUserProcessType = ReturnType<typeof logoutUserProcess>
+type UserLoggedOutActionReturn = ReturnType<typeof userLoggedOut>
 
 export const userLoggedIn = (
   data: UserLoggedInDataRetrivalArrayDataTypes,
   isLoading: boolean,
   error: null
 ) => ({
-  type: USER_LOGGED_IN,
+  type: <const>(
+    RequestDataSuccessConstants.HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS
+  ),
   userLangsOfLoggedInUser: data[0],
   chatGroups: data[1],
   users: data[2],
@@ -33,7 +33,9 @@ export const wentToLanguagePageView = (
   isLoading: boolean,
   error: null
 ) => ({
-  type: WENT_TO_LANGUAGE_PAGE_VIEW,
+  type: <const>(
+    RequestDataSuccessConstants.WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS
+  ),
   userLanguages: data[0],
   users: data[1],
   isLoading,
@@ -42,8 +44,8 @@ export const wentToLanguagePageView = (
 type WentToLanguagePageViewType = ReturnType<typeof wentToLanguagePageView>
 
 export type SharedActionsTypes =
-  | LogoutUserProcessType
+  | UserLoggedOutActionReturn
   | UserLoggedInType
   | WentToLanguagePageViewType
-  | ActionRequestData
-  | ActionOnApiFailure
+  | ActionOnRequestData
+  | ActionOnRequestDataFailure

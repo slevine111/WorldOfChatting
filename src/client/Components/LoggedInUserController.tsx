@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { Route, Switch, Redirect } from 'react-router'
 import Home from './Home/'
 import LanguagePage from './LanguagePage'
-import { userLoggedInThunk } from '../store/APIRequestsHandling/multiplereducerthunks'
+import { userLoggedInDataRetrivalThunk } from '../store/APIRequestsHandling/multiplereducerthunks'
 import { User } from '../../entities'
 import { ReduxState } from '../store'
 import { IUserReducerDataSlice } from '../store/user/reducer'
@@ -11,12 +11,12 @@ import { IUserLoggedInLanguagesDataSlice } from '../store/userlanguage/reducer'
 import { IChatGroupReducerState } from '../store/chatgroup/reducer'
 import { IUserChatGroupReducerState } from '../store/userchatgroup/reducer'
 import { IAuthReducerState } from '../store/auth/reducer'
-import { OnApiFailureActionTypes } from '../store/APIRequestsHandling/types'
+import { RequestDataFailureConstants } from '../store/APIRequestsHandling/types'
 import CircularProgress from '@material-ui/core/CircularProgress'
 //import Backdrop from '@material-ui/core/Backdrop'
 import Typography from '@material-ui/core/Typography'
 import WillNameLaterHOC from './WillNameLaterHOC'
-const { USER_LOGGING_OUT_REQUEST_FAILED } = OnApiFailureActionTypes
+const { USER_LOGGING_OUT_REQUEST_FAILURE } = RequestDataFailureConstants
 
 interface IReduxStateProps {
   dataLoading: boolean
@@ -49,7 +49,7 @@ const LoggedInUserController: React.FC<IReduxStateProps & IDispatchProps> = ({
   return (
     <div>
       {auth.error !== null &&
-        auth.error.actionType === USER_LOGGING_OUT_REQUEST_FAILED && (
+        auth.error.actionType === USER_LOGGING_OUT_REQUEST_FAILURE && (
           <Typography variant="body1">
             Error occured in logout :(. Stay on the site :).
           </Typography>
@@ -91,7 +91,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: any): IDispatchProps => {
   return {
     loggedInUserDataRetrival: (user: User): void =>
-      dispatch(userLoggedInThunk(user))
+      dispatch(userLoggedInDataRetrivalThunk(user))
   }
 }
 

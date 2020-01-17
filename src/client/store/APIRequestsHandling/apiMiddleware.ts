@@ -1,17 +1,17 @@
 import { AxiosResponse, AxiosError } from 'axios'
 import {
   RequestDataConstants,
-  ActionRequestData,
+  ActionOnRequestData,
   IThunkReturnObject,
   IAxiosErrorData,
-  ActionOnApiFailure
+  ActionOnRequestDataFailure
 } from './types'
 import { MyStoreType } from '../index'
 import { addPostponnedAction } from '../auth/actions'
 import { refreshToken } from '../auth/thunks'
 const {
   REFRESHING_ACCESS_TOKEN_REQUEST,
-  AUTHENTICATING_USER_REQUEST,
+  AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST,
   CHECKING_IF_USER_LOGGED_IN_REQUEST
 } = RequestDataConstants
 
@@ -31,7 +31,7 @@ export const refreshTokenMiddleware = (store: MyStoreType) => {
 
     const { bypassRefreshTokenMiddleware, requestDataActionType } = action
 
-    const requestDataAction: ActionRequestData = {
+    const requestDataAction: ActionOnRequestData = {
       type: requestDataActionType,
       isLoading: true
     }
@@ -97,7 +97,7 @@ export const callAPIMiddleware = () => {
       } else {
         errorData = errorTyped.response.data
       }
-      const dispatchFailureActionObject: ActionOnApiFailure = {
+      const dispatchFailureActionObject: ActionOnRequestDataFailure = {
         type: apiFailureActionType,
         isLoading: false,
         error: errorData
@@ -106,7 +106,7 @@ export const callAPIMiddleware = () => {
       if (
         [
           CHECKING_IF_USER_LOGGED_IN_REQUEST,
-          AUTHENTICATING_USER_REQUEST
+          AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST
         ].includes(requestDataActionType)
       )
         throw error

@@ -1,18 +1,20 @@
 import {
-  LOGOUT_USER_PROCESS,
-  USER_LOGGED_IN,
   RequestDataConstants,
-  OnApiFailureActionTypes
+  RequestDataSuccessConstants,
+  RequestDataFailureConstants
 } from '../APIRequestsHandling/types'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { IBaseReducer } from '../reducer.base'
 import { IChatGroupReducer } from '../../../shared-types'
-const { REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
 const {
-  REQUEST_DATA_USER_LOGGED_IN_FAILED,
-  USER_LOGGING_OUT_REQUEST_FAILED,
-  REFRESHING_ACCESS_TOKEN_REQUEST_FAILED
-} = OnApiFailureActionTypes
+  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
+  USER_LOGGING_OUT_REQUEST_SUCCESS
+} = RequestDataSuccessConstants
+const { HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST } = RequestDataConstants
+const {
+  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE,
+  REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE
+} = RequestDataFailureConstants
 
 export type IChatGroupReducerState = IBaseReducer<IChatGroupReducer>
 
@@ -27,20 +29,19 @@ export default (
   action: SharedActionsTypes
 ): IChatGroupReducerState => {
   switch (action.type) {
-    case USER_LOGGED_IN:
+    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
       return {
         data: action.chatGroups,
         isLoading: action.isLoading,
         error: action.error
       }
-    case REQUEST_DATA_USER_LOGGED_IN:
+    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST:
       return { ...initialState, isLoading: action.isLoading }
-    case REQUEST_DATA_USER_LOGGED_IN_FAILED:
+    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE:
       return { ...initialState, error: action.error }
-    case LOGOUT_USER_PROCESS:
-    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILED:
+    case USER_LOGGING_OUT_REQUEST_SUCCESS:
+    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE:
       return { ...initialState }
-    case USER_LOGGING_OUT_REQUEST_FAILED:
     default:
       return state
   }

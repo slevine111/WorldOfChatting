@@ -9,11 +9,11 @@ import useStyles from './styles'
 import { connect } from 'react-redux'
 import { loginUserProcess } from '../../store/auth/thunks'
 import { IUserSignInDTO } from '../../../server/auth/auth.dto'
-import { OnApiFailureActionTypes } from '../../store/APIRequestsHandling/types'
+import { RequestDataFailureConstants } from '../../store/APIRequestsHandling/types'
 import { ReduxState } from '../../store'
 import { IAuthReducerState } from '../../store/auth/reducer'
 import Grid from '@material-ui/core/Grid'
-const { REFRESHING_ACCESS_TOKEN_REQUEST_FAILED } = OnApiFailureActionTypes
+const { REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE } = RequestDataFailureConstants
 
 interface IReduxStateProps {
   auth: IAuthReducerState
@@ -69,7 +69,7 @@ const Login: React.FC<IReduxStateProps &
   return (
     <Grid container className={formContainer}>
       {error !== null &&
-        error.actionType == REFRESHING_ACCESS_TOKEN_REQUEST_FAILED && (
+        error.actionType == REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE && (
           <div>
             You accidentally got logged out. Please log back in. Fixing it ASAP.
           </div>

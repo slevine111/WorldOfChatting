@@ -1,12 +1,8 @@
+import { ADD_POSTPONNED_ACTION } from './types'
 import {
-  USER_LOGGING_IN_FOUND,
-  ACCESS_TOKEN_REFRESHED,
-  ADD_POSTPONNED_ACTION
-} from './types'
-import {
-  LOGOUT_USER_PROCESS,
   RequestDataConstants,
-  OnApiFailureActionTypes
+  RequestDataSuccessConstants,
+  RequestDataFailureConstants
 } from '../APIRequestsHandling/types'
 import { User } from '../../../entities'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
@@ -14,21 +10,30 @@ import { AuthActionTypes } from './actions'
 import { IThunkReturnObject } from '../APIRequestsHandling/types'
 import { ReducerErrorProperty } from '../reducer.base'
 const {
-  AUTHENTICATING_USER_REQUEST,
   CHECKING_IF_USER_LOGGED_IN_REQUEST,
+  AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST,
   REFRESHING_ACCESS_TOKEN_REQUEST,
   USER_LOGGING_OUT_REQUEST
 } = RequestDataConstants
 const {
-  NO_USER_FOUND,
-  REFRESHING_ACCESS_TOKEN_REQUEST_FAILED,
-  USER_LOGGING_OUT_REQUEST_FAILED
-} = OnApiFailureActionTypes
+  CHECKING_IF_USER_LOGGED_IN_REQUEST_SUCCESS,
+  AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_SUCCESS,
+  REFRESHING_ACCESS_TOKEN_REQUEST_SUCCESS,
+  USER_LOGGING_OUT_REQUEST_SUCCESS
+} = RequestDataSuccessConstants
+const {
+  CHECKING_IF_USER_LOGGED_IN_REQUEST_FAILURE,
+  AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_FAILURE,
+  REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE,
+  USER_LOGGING_OUT_REQUEST_FAILURE
+} = RequestDataFailureConstants
 
 export interface IAuthReducerState {
   user: { data: User; isLoading: boolean }
   accessToken: { tokenExpireTime: number; isLoading: boolean }
-  error: null | (ReducerErrorProperty & { actionType: OnApiFailureActionTypes })
+  error:
+    | null
+    | (ReducerErrorProperty & { actionType: RequestDataFailureConstants })
   postponnedActions: IThunkReturnObject[]
 }
 
@@ -46,12 +51,13 @@ export default (
   switch (action.type) {
     //authenticating user
     case CHECKING_IF_USER_LOGGED_IN_REQUEST:
-    case AUTHENTICATING_USER_REQUEST:
+    case AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST:
       return {
         ...initialState,
         user: { data: initialState.user.data, isLoading: action.isLoading }
       }
-    case USER_LOGGING_IN_FOUND:
+    case CHECKING_IF_USER_LOGGED_IN_REQUEST_SUCCESS:
+    case AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_SUCCESS:
       return {
         user: { data: action.user, isLoading: action.isLoading },
         accessToken: {
@@ -70,7 +76,7 @@ export default (
           isLoading: action.isLoading
         }
       }
-    case ACCESS_TOKEN_REFRESHED:
+    case REFRESHING_ACCESS_TOKEN_REQUEST_SUCCESS:
       return {
         ...state,
         accessToken: {
@@ -80,8 +86,9 @@ export default (
         error: action.error
       }
     //no user found when authenticating or refreshing token failed
-    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILED:
-    case NO_USER_FOUND:
+    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE:
+    case CHECKING_IF_USER_LOGGED_IN_REQUEST_FAILURE:
+    case AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_FAILURE:
       return {
         ...initialState,
         error: { ...action.error, actionType: action.type }
@@ -92,9 +99,9 @@ export default (
         ...state,
         user: { data: state.user.data, isLoading: action.isLoading }
       }
-    case LOGOUT_USER_PROCESS:
+    case USER_LOGGING_OUT_REQUEST_SUCCESS:
       return { ...initialState }
-    case USER_LOGGING_OUT_REQUEST_FAILED:
+    case USER_LOGGING_OUT_REQUEST_FAILURE:
       return {
         ...state,
         user: { data: state.user.data, isLoading: action.isLoading },

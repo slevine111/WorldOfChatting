@@ -5,8 +5,8 @@ import { User } from '../../entities'
 import {
   IUserAndChatGroupGetReturn,
   IReduxStoreUserFields
-} from '../../shared-types'
-import { OnlineStatusesEnum } from '../../shared-types/shared-enums'
+} from '../../types-for-both-server-and-client'
+import { OnlineStatusesEnum } from '../../entities/User'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
 import { compare, hash } from 'bcrypt'
 

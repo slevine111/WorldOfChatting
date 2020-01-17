@@ -1,5 +1,5 @@
 import { UserChatGroup } from '../../entities'
-import { IReduxStoreUserFields } from '../../shared-types'
+import { IReduxStoreUserFields } from '../../types-for-both-server-and-client'
 import {
   IObjectOfUserArrays,
   IObjectOfOneType,

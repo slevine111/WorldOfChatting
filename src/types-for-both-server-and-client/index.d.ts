@@ -1,6 +1,6 @@
 import { ChatGroup, User, UserLanguage } from '../entities'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
-import { OnlineStatusesEnum } from './shared-enums'
+import { OnlineStatusesEnum } from '../entities/User'
 
 export interface IUserLangugeWithOnlineUserCount extends UserLanguage {
   usersOnlineCount: number

@@ -5,7 +5,7 @@ import { ChatGroup } from '../../entities'
 import {
   IChatGroupReducer,
   IChatGroupWithFavoriteField
-} from '../../shared-types'
+} from '../../types-for-both-server-and-client'
 
 @Injectable()
 export default class ChatGroupService {

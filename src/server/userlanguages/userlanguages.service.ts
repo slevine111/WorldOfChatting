@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { UserLanguage } from '../../entities'
 import { IUserLanguagePostDTO } from './userlanguages.dto'
-import { IUserLangugeWithOnlineUserCount } from '../../shared-types'
+import { IUserLangugeWithOnlineUserCount } from '../../types-for-both-server-and-client'
 
 @Injectable()
 export default class UserLanguageService {

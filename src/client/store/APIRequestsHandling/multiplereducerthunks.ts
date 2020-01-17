@@ -15,7 +15,7 @@ import {
   IUserLangugeWithOnlineUserCount,
   IChatGroupReducer,
   IUserAndChatGroupGetReturn
-} from '../../../shared-types'
+} from '../../../types-for-both-server-and-client'
 import { User } from '../../../entities'
 import axios, { AxiosResponse } from 'axios'
 import { IThunkReturnObject } from './types'

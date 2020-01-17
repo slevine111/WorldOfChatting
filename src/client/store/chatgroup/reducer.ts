@@ -5,7 +5,7 @@ import {
 } from '../APIRequestsHandling/types'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { IBaseReducer } from '../reducer.base'
-import { IChatGroupReducer } from '../../../shared-types'
+import { IChatGroupReducer } from '../../../types-for-both-server-and-client'
 const {
   HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
   USER_LOGGING_OUT_REQUEST_SUCCESS

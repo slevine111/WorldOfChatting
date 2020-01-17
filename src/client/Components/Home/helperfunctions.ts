@@ -6,7 +6,7 @@ import {
   IChatGroupWithFavoriteField,
   IReduxStoreUserFields,
   IUserLangugeWithOnlineUserCount
-} from '../../../shared-types'
+} from '../../../types-for-both-server-and-client'
 import { IWordCloudArrayObject } from './shared-types'
 import { groupUserChatGroups } from '../utilityfunctions'
 

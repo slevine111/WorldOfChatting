@@ -3,7 +3,7 @@ import UserLanguageService from './userlanguages.service'
 import AuthGuard from '../auth/auth.guard'
 import { UserLanguage } from '../../entities'
 import { IUserLanguagePostDTO } from './userlanguages.dto'
-import { IUserLangugeWithOnlineUserCount } from '../../shared-types'
+import { IUserLangugeWithOnlineUserCount } from '../../types-for-both-server-and-client'
 
 @Controller('/api/userlanguage')
 export default class UserLanguageController {

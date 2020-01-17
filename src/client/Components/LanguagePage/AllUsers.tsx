@@ -13,7 +13,7 @@ import {
   getUsersToDisplayFromFilteredUsers
 } from './helperfunctions'
 import { IObjectOfOneType } from '../intercomponent-types'
-import { IReduxStoreUserFields } from '../../../shared-types'
+import { IReduxStoreUserFields } from '../../../types-for-both-server-and-client'
 import PersonIconList from './PersonIconList'
 import TableList from './TableList'
 import InviteToChatDialog from './InviteToChatDialog'

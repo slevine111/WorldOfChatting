@@ -5,7 +5,7 @@ import {
 } from '../APIRequestsHandling/types'
 import { IBaseReducer } from '../reducer.base'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
-import { IReduxStoreUserFields } from '../../../shared-types'
+import { IReduxStoreUserFields } from '../../../types-for-both-server-and-client'
 const {
   WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST,
   HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST

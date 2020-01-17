@@ -2,7 +2,7 @@ import {
   IChatGroupReducer,
   IReduxStoreUserFields,
   IUserLangugeWithOnlineUserCount
-} from '../../../shared-types'
+} from '../../../types-for-both-server-and-client'
 import { UserLanguage, UserChatGroup } from '../../../entities'
 import { AnyAction } from 'redux'
 import { AxiosResponse } from 'axios'

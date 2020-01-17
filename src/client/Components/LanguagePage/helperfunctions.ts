@@ -7,8 +7,8 @@ import {
   IChatGroupWithFavoriteField,
   IReduxStoreUserFields,
   IUserLangugeWithOnlineUserCount
-} from '../../../shared-types'
-import { OnlineStatusesEnum } from '../../../shared-types/shared-enums'
+} from '../../../types-for-both-server-and-client'
+import { OnlineStatusesEnum } from '../../../entities/User'
 import {
   IUserWithLanguageFields,
   LanguageTypesCombos,

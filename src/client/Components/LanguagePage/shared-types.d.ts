@@ -1,6 +1,6 @@
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
-import { IReduxStoreUserFields } from '../../../shared-types'
-import { OnlineStatusesEnum } from '../../../shared-types/shared-enums'
+import { IReduxStoreUserFields } from '../../../types-for-both-server-and-client'
+import { OnlineStatusesEnum } from '../../../entities/User'
 import { IUsersByChatGroup, IObjectOfOneType } from '../intercomponent-types'
 
 export type LanguageTypesCombos = 'LL' | 'LT' | 'TL' | 'TT'

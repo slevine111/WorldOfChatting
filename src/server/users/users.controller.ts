@@ -14,7 +14,7 @@ import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
 import {
   IUserAndChatGroupGetReturn,
   IReduxStoreUserFields
-} from '../../shared-types'
+} from '../../types-for-both-server-and-client'
 
 @Controller('/api/user')
 export default class UserController {

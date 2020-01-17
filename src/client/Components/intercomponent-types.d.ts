@@ -1,5 +1,5 @@
 import { User } from '../../entities'
-import { IReduxStoreUserFields } from '../../shared-types'
+import { IReduxStoreUserFields } from '../../types-for-both-server-and-client'
 
 export interface IUsersByChatGroup {
   name: string

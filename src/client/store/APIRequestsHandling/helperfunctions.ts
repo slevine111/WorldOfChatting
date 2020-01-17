@@ -2,7 +2,7 @@ import { UserChatGroup } from '../../../entities'
 import {
   IUserAndChatGroupGetReturn,
   IReduxStoreUserFields
-} from '../../../shared-types'
+} from '../../../types-for-both-server-and-client'
 
 interface IUsersAndUserChatGroups {
   users: IReduxStoreUserFields[]

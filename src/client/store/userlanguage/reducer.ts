@@ -5,7 +5,7 @@ import {
 } from '../APIRequestsHandling/types'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { UserLanguage } from '../../../entities'
-import { IUserLangugeWithOnlineUserCount } from '../../../shared-types'
+import { IUserLangugeWithOnlineUserCount } from '../../../types-for-both-server-and-client'
 import { IBaseReducer } from '../reducer.base'
 const {
   WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST,

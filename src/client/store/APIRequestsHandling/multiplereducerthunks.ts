@@ -2,7 +2,7 @@ import {
   logoutUserProcess,
   userLoggedIn,
   wentToLanguagePageView
-} from './actions'
+} from './multiplereduceractions'
 import {
   LanguagePageDataRetrivalArrayDataTypes,
   UserLoggedInDataRetrivalArrayDataTypes,
@@ -18,7 +18,7 @@ import {
 } from '../../../shared-types'
 import { User } from '../../../entities'
 import axios, { AxiosResponse } from 'axios'
-import { IThunkReturnObject } from '../apiMiddleware'
+import { IThunkReturnObject } from './types'
 const {
   REQUEST_DATA_USER_LOGGED_IN_FAILED,
   REQUEST_DATA_API_FAILED,

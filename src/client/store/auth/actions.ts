@@ -4,7 +4,7 @@ import {
   USER_LOGGING_IN_FOUND,
   ACCESS_TOKEN_REFRESHED
 } from './types'
-import { IThunkReturnObject } from '../apiMiddleware'
+import { IThunkReturnObject } from '../APIRequestsHandling/types'
 
 export const addPostponnedAction = (postponnedAction: IThunkReturnObject) => ({
   type: ADD_POSTPONNED_ACTION,

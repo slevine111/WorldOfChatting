@@ -4,7 +4,8 @@ import {
   IUserLangugeWithOnlineUserCount
 } from '../../../shared-types'
 import { UserLanguage, UserChatGroup } from '../../../entities'
-import { IAxiosErrorData } from '../apiMiddleware'
+import { AnyAction } from 'redux'
+import { AxiosResponse } from 'axios'
 
 export const LOGOUT_USER_PROCESS = <const>'LOGOUT_USER_PROCESS'
 export const USER_LOGGED_IN = <const>'USER_LOGGED_IN'
@@ -54,3 +55,27 @@ export type UserLoggedInDataRetrivalArrayDataTypes = [
   IReduxStoreUserFields[],
   UserChatGroup[]
 ]
+
+export interface IAxiosErrorData {
+  message: string
+  statusCode: number
+}
+
+export interface IThunkReturnObjectSubset<T = any> {
+  requestDataActionType: RequestDataConstants
+  dataTransformationCall?: (apiResponseData: any) => T
+  dispatchActionOnSuccess: (
+    data: T,
+    isLoading: boolean,
+    error: null,
+    otherInputs: { [key: string]: any }
+  ) => AnyAction
+  apiFailureActionType: OnApiFailureActionTypes
+  dispatchProps: { [key: string]: any }
+}
+
+export interface IThunkReturnObject<T = any>
+  extends IThunkReturnObjectSubset<T> {
+  apiCall: () => Promise<AxiosResponse[] | AxiosResponse>
+  bypassRefreshTokenMiddleware?: boolean
+}

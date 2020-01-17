@@ -5,7 +5,7 @@ import {
   OnApiFailureActionTypes
 } from '../APIRequestsHandling/types'
 import { IBaseReducer } from '../reducer.base'
-import { SharedActionsTypes } from '../APIRequestsHandling/actions'
+import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { UserChatGroup } from '../../../entities'
 const { REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
 const {

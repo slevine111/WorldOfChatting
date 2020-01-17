@@ -11,7 +11,10 @@ import userChatGroupReducer, {
 import authReducer, { IAuthReducerState } from './auth/reducer'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
-import { refreshTokenMiddleware, callAPIMiddleware } from './apiMiddleware'
+import {
+  refreshTokenMiddleware,
+  callAPIMiddleware
+} from './APIRequestsHandling/apiMiddleware'
 
 interface ICombinedReducer {
   languages: ILanguageReducerState

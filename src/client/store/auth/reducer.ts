@@ -9,9 +9,9 @@ import {
   OnApiFailureActionTypes
 } from '../APIRequestsHandling/types'
 import { User } from '../../../entities'
-import { SharedActionsTypes } from '../APIRequestsHandling/actions'
+import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { AuthActionTypes } from './actions'
-import { IThunkReturnObject } from '../apiMiddleware'
+import { IThunkReturnObject } from '../APIRequestsHandling/types'
 import { ReducerErrorProperty } from '../reducer.base'
 const {
   AUTHENTICATING_USER_REQUEST,

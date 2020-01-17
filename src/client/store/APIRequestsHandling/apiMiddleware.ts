@@ -1,43 +1,19 @@
-import { AnyAction } from 'redux'
 import { AxiosResponse, AxiosError } from 'axios'
 import {
   RequestDataConstants,
   ActionRequestData,
-  OnApiFailureActionTypes,
+  IThunkReturnObject,
+  IAxiosErrorData,
   ActionOnApiFailure
-} from './APIRequestsHandling/types'
-import { MyStoreType } from './index'
-import { addPostponnedAction } from './auth/actions'
-import { refreshToken } from './auth/thunks'
+} from './types'
+import { MyStoreType } from '../index'
+import { addPostponnedAction } from '../auth/actions'
+import { refreshToken } from '../auth/thunks'
 const {
   REFRESHING_ACCESS_TOKEN_REQUEST,
   AUTHENTICATING_USER_REQUEST,
   CHECKING_IF_USER_LOGGED_IN_REQUEST
 } = RequestDataConstants
-
-export interface IAxiosErrorData {
-  message: string
-  statusCode: number
-}
-
-export interface IThunkReturnObjectSubset<T = any> {
-  requestDataActionType: RequestDataConstants
-  dataTransformationCall?: (apiResponseData: any) => T
-  dispatchActionOnSuccess: (
-    data: T,
-    isLoading: boolean,
-    error: null,
-    otherInputs: { [key: string]: any }
-  ) => AnyAction
-  apiFailureActionType: OnApiFailureActionTypes
-  dispatchProps: { [key: string]: any }
-}
-
-export interface IThunkReturnObject<T = any>
-  extends IThunkReturnObjectSubset<T> {
-  apiCall: () => Promise<AxiosResponse[] | AxiosResponse>
-  bypassRefreshTokenMiddleware?: boolean
-}
 
 const isThunkOject = (action: unknown): action is IThunkReturnObject<any> => {
   return (action as IThunkReturnObject<any>).requestDataActionType !== undefined

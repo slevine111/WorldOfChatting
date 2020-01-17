@@ -6,7 +6,7 @@ import {
   ENTERED_SITE_BASE_DATA_RECEIVED
 } from '../APIRequestsHandling/types'
 import { IBaseReducer } from '../reducer.base'
-import { SharedActionsTypes } from '../APIRequestsHandling/actions'
+import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 const { ENTERED_SITE_LOADING_BASE_DATA_REQUEST } = RequestDataConstants
 const {
   ENTERED_SITE_LOADING_BASE_DATA_REQUEST_FAILED,

@@ -3,9 +3,9 @@ import { IReduxStoreUserFields } from '../../shared-types'
 import {
   IObjectOfUserArrays,
   IObjectOfOneType,
-  IUsersInformation,
-  IReduxStoreGenericErrorType
+  IUsersInformation
 } from './intercomponent-types'
+import { ReducerErrorProperty } from '../store/reducer.base'
 
 export enum GeneralErrorTypes {
   NO_ERROR = 'NO_ERROR',
@@ -48,9 +48,7 @@ export const groupUserChatGroups = (
   return { usersGrouped: objectByChatGroup, usersMap }
 }
 
-export const checkError = (
-  error: IReduxStoreGenericErrorType
-): GeneralErrorTypes => {
+export const checkError = (error: ReducerErrorProperty): GeneralErrorTypes => {
   const {
     NO_ERROR,
     AUTHENTICATION_ERROR,

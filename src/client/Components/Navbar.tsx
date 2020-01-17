@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react'
 import { connect } from 'react-redux'
 import { ReduxState } from '../store/index'
 import { User } from '../../entities'
-import { logoutUserProcessThunk } from '../store/APIRequestsHandling/thunks'
+import { logoutUserProcessThunk } from '../store/APIRequestsHandling/multiplereducerthunks'
 import { IUserUpdateDTO } from '../../server/users/users.dto'
 import { History } from 'history'
 

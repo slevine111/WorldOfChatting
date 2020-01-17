@@ -1,4 +1,4 @@
-import { IAxiosErrorData } from './apiMiddleware'
+import { IAxiosErrorData } from './APIRequestsHandling/types'
 
 export type ReducerErrorProperty = null | IAxiosErrorData
 

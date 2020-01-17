@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 import { Language } from '../../../entities'
-import { IThunkReturnObject } from '../apiMiddleware'
+import { IThunkReturnObject } from '../APIRequestsHandling/types'
 import {
   RequestDataConstants,
   OnApiFailureActionTypes,

@@ -4,7 +4,10 @@ import {
   RequestDataConstants,
   OnApiFailureActionTypes
 } from '../APIRequestsHandling/types'
-import { IThunkReturnObject, IThunkReturnObjectSubset } from '../apiMiddleware'
+import {
+  IThunkReturnObject,
+  IThunkReturnObjectSubset
+} from '../APIRequestsHandling/types'
 import { IUserSignInDTO } from '../../../server/auth/auth.dto'
 import axios, { AxiosResponse } from 'axios'
 const {

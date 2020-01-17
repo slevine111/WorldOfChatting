@@ -1,6 +1,5 @@
 import { User } from '../../entities'
 import { IReduxStoreUserFields } from '../../shared-types'
-import { IAxiosErrorData } from '../store/apiMiddleware'
 
 export interface IUsersByChatGroup {
   name: string
@@ -18,5 +17,3 @@ export interface IUsersInformation {
   usersGrouped: IObjectOfUserArrays
   usersMap: IObjectOfOneType<IReduxStoreUserFields>
 }
-
-export type IReduxStoreGenericErrorType = null | IAxiosErrorData

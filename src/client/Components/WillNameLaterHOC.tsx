@@ -2,12 +2,12 @@ import React from 'react'
 import { Redirect, Link } from 'react-router-dom'
 import store from '../store'
 import { checkError, GeneralErrorTypes } from './utilityfunctions'
-import { IReduxStoreGenericErrorType } from './intercomponent-types'
+import { ReducerErrorProperty } from '../store/reducer.base'
 
 const WillNameLaterHOC = (Component: any): any => {
   const WillNameLater: React.FC<{
     reduxStoreDataSlices: {
-      error: IReduxStoreGenericErrorType
+      error: ReducerErrorProperty
       [key: string]: any
     }[]
     [key: string]: any

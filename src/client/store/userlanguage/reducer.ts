@@ -5,7 +5,7 @@ import {
   RequestDataConstants,
   OnApiFailureActionTypes
 } from '../APIRequestsHandling/types'
-import { SharedActionsTypes } from '../APIRequestsHandling/actions'
+import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { UserLanguage } from '../../../entities'
 import { IUserLangugeWithOnlineUserCount } from '../../../shared-types'
 import { IBaseReducer } from '../reducer.base'

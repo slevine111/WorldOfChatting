@@ -6,7 +6,7 @@ import {
   OnApiFailureActionTypes
 } from '../APIRequestsHandling/types'
 import { IBaseReducer } from '../reducer.base'
-import { SharedActionsTypes } from '../APIRequestsHandling/actions'
+import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { IReduxStoreUserFields } from '../../../shared-types'
 const { REQUEST_DATA_API, REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
 const {

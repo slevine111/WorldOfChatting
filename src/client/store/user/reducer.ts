@@ -5,9 +5,9 @@ import {
   RequestDataConstants,
   OnApiFailureActionTypes
 } from '../shared/types'
+import { IBaseReducer } from '../reducer.base'
 import { SharedActionsTypes } from '../shared/actions'
 import { IReduxStoreUserFields } from '../../../shared-types'
-import { IAxiosErrorData } from '../apiMiddleware'
 const { REQUEST_DATA_API, REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
 const {
   REQUEST_DATA_USER_LOGGED_IN_FAILED,
@@ -16,11 +16,7 @@ const {
   REFRESHING_ACCESS_TOKEN_REQUEST_FAILED
 } = OnApiFailureActionTypes
 
-export interface IUserReducerDataSlice {
-  data: IReduxStoreUserFields[]
-  isLoading: boolean
-  error: null | IAxiosErrorData
-}
+export type IUserReducerDataSlice = IBaseReducer<IReduxStoreUserFields[]>
 
 export interface IUserReducerState {
   myUsers: IUserReducerDataSlice

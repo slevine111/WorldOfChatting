@@ -5,7 +5,7 @@ import {
   OnApiFailureActionTypes
 } from '../shared/types'
 import { SharedActionsTypes } from '../shared/actions'
-import { IAxiosErrorData } from '../apiMiddleware'
+import { IBaseReducer } from '../reducer.base'
 import { IChatGroupReducer } from '../../../shared-types'
 const { REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
 const {
@@ -14,11 +14,7 @@ const {
   REFRESHING_ACCESS_TOKEN_REQUEST_FAILED
 } = OnApiFailureActionTypes
 
-export interface IChatGroupReducerState {
-  data: IChatGroupReducer
-  isLoading: boolean
-  error: null | IAxiosErrorData
-}
+export type IChatGroupReducerState = IBaseReducer<IChatGroupReducer>
 
 const initialState: IChatGroupReducerState = {
   data: {},

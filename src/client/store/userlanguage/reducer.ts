@@ -8,7 +8,7 @@ import {
 import { SharedActionsTypes } from '../shared/actions'
 import { UserLanguage } from '../../../entities'
 import { IUserLangugeWithOnlineUserCount } from '../../../shared-types'
-import { IAxiosErrorData } from '../apiMiddleware'
+import { IBaseReducer } from '../reducer.base'
 const { REQUEST_DATA_API, REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
 const {
   REQUEST_DATA_API_FAILED,
@@ -17,17 +17,13 @@ const {
   REFRESHING_ACCESS_TOKEN_REQUEST_FAILED
 } = OnApiFailureActionTypes
 
-export interface IUserLoggedInLanguagesDataSlice {
-  data: IUserLangugeWithOnlineUserCount[]
-  isLoading: boolean
-  error: null | IAxiosErrorData
-}
+export type IUserLoggedInLanguagesDataSlice = IBaseReducer<
+  IUserLangugeWithOnlineUserCount[]
+>
 
-export interface IUserLanguagesOfSingleLanguageDataSlice {
-  data: UserLanguage[]
-  isLoading: boolean
-  error: null | IAxiosErrorData
-}
+export type IUserLanguagesOfSingleLanguageDataSlice = IBaseReducer<
+  UserLanguage[]
+>
 
 export interface IUserLangugeReducerState {
   ofUser: IUserLoggedInLanguagesDataSlice

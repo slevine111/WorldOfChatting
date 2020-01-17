@@ -4,7 +4,7 @@ import {
   RequestDataConstants,
   OnApiFailureActionTypes
 } from '../shared/types'
-import { IAxiosErrorData } from '../apiMiddleware'
+import { IBaseReducer } from '../reducer.base'
 import { SharedActionsTypes } from '../shared/actions'
 import { UserChatGroup } from '../../../entities'
 const { REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
@@ -14,11 +14,7 @@ const {
   REFRESHING_ACCESS_TOKEN_REQUEST_FAILED
 } = OnApiFailureActionTypes
 
-export interface IUserChatGroupReducerState {
-  data: UserChatGroup[]
-  isLoading: boolean
-  error: null | IAxiosErrorData
-}
+export type IUserChatGroupReducerState = IBaseReducer<UserChatGroup[]>
 
 const initialState: IUserChatGroupReducerState = {
   data: [],

@@ -11,7 +11,8 @@ import {
 import { User } from '../../../entities'
 import { SharedActionsTypes } from '../shared/actions'
 import { AuthActionTypes } from './actions'
-import { IThunkReturnObject, IAxiosErrorData } from '../apiMiddleware'
+import { IThunkReturnObject } from '../apiMiddleware'
+import { ReducerErrorProperty } from '../reducer.base'
 const {
   AUTHENTICATING_USER_REQUEST,
   CHECKING_IF_USER_LOGGED_IN_REQUEST,
@@ -27,7 +28,7 @@ const {
 export interface IAuthReducerState {
   user: { data: User; isLoading: boolean }
   accessToken: { tokenExpireTime: number; isLoading: boolean }
-  error: null | (IAxiosErrorData & { actionType: OnApiFailureActionTypes })
+  error: null | (ReducerErrorProperty & { actionType: OnApiFailureActionTypes })
   postponnedActions: IThunkReturnObject[]
 }
 

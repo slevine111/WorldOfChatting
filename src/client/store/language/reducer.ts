@@ -5,19 +5,15 @@ import {
   OnApiFailureActionTypes,
   ENTERED_SITE_BASE_DATA_RECEIVED
 } from '../shared/types'
+import { IBaseReducer } from '../reducer.base'
 import { SharedActionsTypes } from '../shared/actions'
-import { IAxiosErrorData } from '../apiMiddleware'
 const { ENTERED_SITE_LOADING_BASE_DATA_REQUEST } = RequestDataConstants
 const {
   ENTERED_SITE_LOADING_BASE_DATA_REQUEST_FAILED,
   USER_LOGGING_OUT_REQUEST_FAILED
 } = OnApiFailureActionTypes
 
-export interface ILanguageReducerState {
-  data: Language[]
-  isLoading: boolean
-  error: null | IAxiosErrorData
-}
+export type ILanguageReducerState = IBaseReducer<Language[]>
 
 const initialState: ILanguageReducerState = {
   data: [],

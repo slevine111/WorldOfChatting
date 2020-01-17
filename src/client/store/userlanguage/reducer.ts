@@ -4,8 +4,8 @@ import {
   USER_LOGGED_IN,
   RequestDataConstants,
   OnApiFailureActionTypes
-} from '../shared/types'
-import { SharedActionsTypes } from '../shared/actions'
+} from '../APIRequestsHandling/types'
+import { SharedActionsTypes } from '../APIRequestsHandling/actions'
 import { UserLanguage } from '../../../entities'
 import { IUserLangugeWithOnlineUserCount } from '../../../shared-types'
 import { IBaseReducer } from '../reducer.base'

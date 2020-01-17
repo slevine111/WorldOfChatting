@@ -4,9 +4,9 @@ import {
   RequestDataConstants,
   OnApiFailureActionTypes,
   ENTERED_SITE_BASE_DATA_RECEIVED
-} from '../shared/types'
+} from '../APIRequestsHandling/types'
 import { IBaseReducer } from '../reducer.base'
-import { SharedActionsTypes } from '../shared/actions'
+import { SharedActionsTypes } from '../APIRequestsHandling/actions'
 const { ENTERED_SITE_LOADING_BASE_DATA_REQUEST } = RequestDataConstants
 const {
   ENTERED_SITE_LOADING_BASE_DATA_REQUEST_FAILED,

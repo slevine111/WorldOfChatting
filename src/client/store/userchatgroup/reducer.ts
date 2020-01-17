@@ -3,9 +3,9 @@ import {
   USER_LOGGED_IN,
   RequestDataConstants,
   OnApiFailureActionTypes
-} from '../shared/types'
+} from '../APIRequestsHandling/types'
 import { IBaseReducer } from '../reducer.base'
-import { SharedActionsTypes } from '../shared/actions'
+import { SharedActionsTypes } from '../APIRequestsHandling/actions'
 import { UserChatGroup } from '../../../entities'
 const { REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
 const {

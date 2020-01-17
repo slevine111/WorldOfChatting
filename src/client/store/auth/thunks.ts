@@ -1,6 +1,9 @@
 import { accessTokenRefreshed, userLoggingInFound } from './actions'
 import { IUserAndExpireTime } from './types'
-import { RequestDataConstants, OnApiFailureActionTypes } from '../shared/types'
+import {
+  RequestDataConstants,
+  OnApiFailureActionTypes
+} from '../APIRequestsHandling/types'
 import { IThunkReturnObject, IThunkReturnObjectSubset } from '../apiMiddleware'
 import { IUserSignInDTO } from '../../../server/auth/auth.dto'
 import axios, { AxiosResponse } from 'axios'

@@ -7,9 +7,9 @@ import {
   LOGOUT_USER_PROCESS,
   RequestDataConstants,
   OnApiFailureActionTypes
-} from '../shared/types'
+} from '../APIRequestsHandling/types'
 import { User } from '../../../entities'
-import { SharedActionsTypes } from '../shared/actions'
+import { SharedActionsTypes } from '../APIRequestsHandling/actions'
 import { AuthActionTypes } from './actions'
 import { IThunkReturnObject } from '../apiMiddleware'
 import { ReducerErrorProperty } from '../reducer.base'

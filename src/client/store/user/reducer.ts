@@ -4,9 +4,9 @@ import {
   WENT_TO_LANGUAGE_PAGE_VIEW,
   RequestDataConstants,
   OnApiFailureActionTypes
-} from '../shared/types'
+} from '../APIRequestsHandling/types'
 import { IBaseReducer } from '../reducer.base'
-import { SharedActionsTypes } from '../shared/actions'
+import { SharedActionsTypes } from '../APIRequestsHandling/actions'
 import { IReduxStoreUserFields } from '../../../shared-types'
 const { REQUEST_DATA_API, REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
 const {

@@ -5,7 +5,7 @@ import {
   ActionRequestData,
   OnApiFailureActionTypes,
   ActionOnApiFailure
-} from './shared/types'
+} from './APIRequestsHandling/types'
 import { MyStoreType } from './index'
 import { addPostponnedAction } from './auth/actions'
 import { refreshToken } from './auth/thunks'

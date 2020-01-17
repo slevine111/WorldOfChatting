@@ -3,8 +3,8 @@ import {
   USER_LOGGED_IN,
   RequestDataConstants,
   OnApiFailureActionTypes
-} from '../shared/types'
-import { SharedActionsTypes } from '../shared/actions'
+} from '../APIRequestsHandling/types'
+import { SharedActionsTypes } from '../APIRequestsHandling/actions'
 import { IBaseReducer } from '../reducer.base'
 import { IChatGroupReducer } from '../../../shared-types'
 const { REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants

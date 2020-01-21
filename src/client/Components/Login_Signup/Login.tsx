@@ -13,7 +13,10 @@ import { RequestDataFailureConstants } from '../../store/APIRequestsHandling/typ
 import { ReduxState } from '../../store'
 import { IAuthReducerState } from '../../store/auth/reducer'
 import Grid from '@material-ui/core/Grid'
-const { REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE } = RequestDataFailureConstants
+const {
+  REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE,
+  AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_FAILURE
+} = RequestDataFailureConstants
 
 interface IReduxStateProps {
   auth: IAuthReducerState
@@ -44,7 +47,6 @@ const Login: React.FC<IReduxStateProps &
     email,
     password
   })
-  const [loginError, setLoginError] = useState('')
 
   const handleChange = ({ target }: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = target
@@ -53,9 +55,7 @@ const Login: React.FC<IReduxStateProps &
 
   const onSubmit = (event: ChangeEvent<HTMLFormElement>): void => {
     event.preventDefault()
-    loginUser(loginInfo).catch(error => {
-      setLoginError(error.response.data.message)
-    })
+    loginUser(loginInfo)
   }
 
   const {
@@ -99,11 +99,13 @@ const Login: React.FC<IReduxStateProps &
             fullWidth
             variant="outlined"
           />
-          {loginError !== '' && (
-            <Typography variant="caption" style={{ color: 'red' }}>
-              {loginError}
-            </Typography>
-          )}
+          {error !== null &&
+            error.actionType ===
+              AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_FAILURE && (
+              <Typography variant="caption" style={{ color: 'red' }}>
+                {error.message}
+              </Typography>
+            )}
           <div className={topMarginButton}>
             <Button
               type="submit"

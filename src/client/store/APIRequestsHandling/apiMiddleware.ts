@@ -11,8 +11,7 @@ import { addPostponnedAction } from '../auth/actions'
 import { refreshToken } from '../auth/thunks'
 const {
   REFRESHING_ACCESS_TOKEN_REQUEST,
-  AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST,
-  CHECKING_IF_USER_LOGGED_IN_REQUEST
+  AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST
 } = RequestDataConstants
 
 const isThunkOject = (action: unknown): action is IThunkReturnObject<any> => {
@@ -103,13 +102,9 @@ export const callAPIMiddleware = () => {
         error: errorData
       }
       next(dispatchFailureActionObject)
-      if (
-        [
-          CHECKING_IF_USER_LOGGED_IN_REQUEST,
-          AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST
-        ].includes(requestDataActionType)
-      )
+      if (requestDataActionType === AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST) {
         throw error
+      }
     }
   }
 }

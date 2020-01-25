@@ -1,6 +1,7 @@
 import { AxiosResponse, AxiosError } from 'axios'
 import {
   RequestDataConstants,
+  RequestDataFailureConstants,
   ActionOnRequestData,
   IThunkReturnObject,
   IAxiosErrorData,
@@ -9,10 +10,10 @@ import {
 import { MyStoreType } from '../index'
 import { addPostponnedAction } from '../auth/actions'
 import { refreshToken } from '../auth/thunks'
+const { REFRESHING_ACCESS_TOKEN_REQUEST } = RequestDataConstants
 const {
-  REFRESHING_ACCESS_TOKEN_REQUEST,
-  AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST
-} = RequestDataConstants
+  CHECKING_IF_USER_LOGGED_IN_REQUEST_FAILURE
+} = RequestDataFailureConstants
 
 const isThunkOject = (action: unknown): action is IThunkReturnObject<any> => {
   return (action as IThunkReturnObject<any>).requestDataActionType !== undefined
@@ -102,7 +103,7 @@ export const callAPIMiddleware = () => {
         error: errorData
       }
       next(dispatchFailureActionObject)
-      if (requestDataActionType === AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST) {
+      if (apiFailureActionType === CHECKING_IF_USER_LOGGED_IN_REQUEST_FAILURE) {
         throw error
       }
     }

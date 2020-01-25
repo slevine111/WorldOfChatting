@@ -8,6 +8,7 @@ import { connect } from 'react-redux'
 import PersonalInfoForm from './PersonalInfoForm'
 import LanguageSelector from '../_shared/LanguageSelector/LanguageSelector'
 import SignupStepButtons from './SignupStepButtons'
+import ErrorMessageCaption from '../_shared/utility/ErrorMessageCaption'
 
 //My modules
 import { ISignupInfo } from './index'
@@ -40,15 +41,26 @@ const Signup: React.FC<ISignupProps> = ({ user, history }): ReactElement => {
     lastName: '',
     email: '',
     password: '',
+    passwordConfirmed: '',
     languagesToLearn: [],
     languagesToTeach: []
   })
+  let [
+    haveClickedOnConfirmPasswordInput,
+    sethaveClickedOnConfirmPasswordInput
+  ] = useState(false)
 
   let [currentStep, setCurrentStep] = useState<string>('personal info')
 
   const handleChange = ({ target }: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = target
     setSignupFields({ ...signupInfo, [name]: value })
+  }
+
+  const switchHaveClickedOnConfirmPasswordInputToTrue = (): void => {
+    if (!haveClickedOnConfirmPasswordInput) {
+      sethaveClickedOnConfirmPasswordInput(true)
+    }
   }
 
   const handleLanguageChange = (
@@ -91,7 +103,12 @@ const Signup: React.FC<ISignupProps> = ({ user, history }): ReactElement => {
     })
   }
 
-  const { languagesToLearn, languagesToTeach } = signupInfo
+  const {
+    languagesToLearn,
+    languagesToTeach,
+    password,
+    passwordConfirmed
+  } = signupInfo
   const {
     paperPadding,
     formContainer,
@@ -107,13 +124,24 @@ const Signup: React.FC<ISignupProps> = ({ user, history }): ReactElement => {
         </Typography>
         <form onSubmit={onSubmit} className={topMargin}>
           {currentStep === 'personal info' ? (
-            <PersonalInfoForm {...{ signupInfo, handleChange }} />
+            <PersonalInfoForm
+              {...{
+                signupInfo,
+                handleChange,
+                switchHaveClickedOnConfirmPasswordInputToTrue
+              }}
+            />
           ) : (
             <LanguageSelector
               handleChange={handleLanguageChange}
               {...{ languagesToLearn, languagesToTeach }}
             />
           )}
+
+          {password !== passwordConfirmed &&
+            haveClickedOnConfirmPasswordInput && (
+              <ErrorMessageCaption errorMessage="passwords do not match" />
+            )}
 
           {currentStep === 'personal info' ? (
             <div className={topMarginButton}>

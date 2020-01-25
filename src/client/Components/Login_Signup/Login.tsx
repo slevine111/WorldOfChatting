@@ -13,6 +13,7 @@ import { RequestDataFailureConstants } from '../../store/APIRequestsHandling/typ
 import { ReduxState } from '../../store'
 import { IAuthReducerState } from '../../store/auth/reducer'
 import Grid from '@material-ui/core/Grid'
+import ErrorMessageCaption from '../_shared/utility/ErrorMessageCaption'
 const {
   REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE,
   AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_FAILURE
@@ -36,26 +37,21 @@ const Login: React.FC<IReduxStateProps &
       | undefined
     >
   }> = ({ auth, loginUser, location }): ReactElement => {
-  let email: string = ''
-  let password: string = ''
+  let initialEmail: string = ''
+  let initialPassword: string = ''
   if (typeof location.state === 'object' && location.state !== null) {
     const { state } = location
-    email = state.email
-    password = state.password
+    initialEmail = state.email
+    initialPassword = state.password
   }
   const [loginInfo, setLoginInfo] = useState<IUserSignInDTO>({
-    email,
-    password
+    email: initialEmail,
+    password: initialPassword
   })
 
   const handleChange = ({ target }: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = target
     setLoginInfo({ ...loginInfo, [name]: value })
-  }
-
-  const onSubmit = (event: ChangeEvent<HTMLFormElement>): void => {
-    event.preventDefault()
-    loginUser(loginInfo)
   }
 
   const {
@@ -78,46 +74,48 @@ const Login: React.FC<IReduxStateProps &
         <Typography className={centerText} variant="body1">
           <i>Ready to keep chatting with the world?!</i>
         </Typography>
-        <form onSubmit={onSubmit}>
-          <TextField
-            id="email"
-            name="email"
-            label="Email"
-            value={loginInfo.email}
-            onChange={handleChange}
-            margin="normal"
+
+        <TextField
+          id="email"
+          name="email"
+          label="Email"
+          value={loginInfo.email}
+          onChange={handleChange}
+          margin="normal"
+          fullWidth
+          variant="outlined"
+        />
+        <TextField
+          id="password"
+          name="password"
+          label="Password"
+          value={loginInfo.password}
+          onChange={handleChange}
+          onKeyDown={event => {
+            if (event.which === 13) loginUser(loginInfo)
+          }}
+          margin="normal"
+          fullWidth
+          variant="outlined"
+          type="password"
+        />
+        {error !== null &&
+          error.actionType ===
+            AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_FAILURE && (
+            <ErrorMessageCaption errorMessage={error.message} />
+          )}
+        <div className={topMarginButton}>
+          <Button
+            size="small"
             fullWidth
-            variant="outlined"
-          />
-          <TextField
-            id="password"
-            name="password"
-            label="Password"
-            value={loginInfo.password}
-            onChange={handleChange}
-            margin="normal"
-            fullWidth
-            variant="outlined"
-          />
-          {error !== null &&
-            error.actionType ===
-              AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_FAILURE && (
-              <Typography variant="caption" style={{ color: 'red' }}>
-                {error.message}
-              </Typography>
-            )}
-          <div className={topMarginButton}>
-            <Button
-              type="submit"
-              size="small"
-              fullWidth
-              variant="contained"
-              color="primary"
-            >
-              Log in
-            </Button>
-          </div>
-        </form>
+            variant="contained"
+            color="primary"
+            disabled={loginInfo.email === '' || loginInfo.password === ''}
+            onClick={() => loginUser(loginInfo)}
+          >
+            Log in
+          </Button>
+        </div>
         <div className={topMargin}>
           <Typography className={centerText}>
             Don't have an account? <Link to="/signup">Sign up here</Link>

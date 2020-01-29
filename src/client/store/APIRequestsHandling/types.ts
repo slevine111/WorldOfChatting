@@ -4,6 +4,8 @@ import {
   IUserLangugeWithOnlineUserCount
 } from '../../../types-for-both-server-and-client'
 import { UserLanguage, UserChatGroup } from '../../../entities'
+import { INotificationsNormalizedShape } from '../notification/reducer'
+import { IUserNormalizedShape } from '../user/reducer'
 import { AnyAction } from 'redux'
 import { AxiosResponse } from 'axios'
 
@@ -50,14 +52,16 @@ export type ActionOnRequestDataFailure = {
 
 export type LanguagePageDataRetrivalArrayDataTypes = [
   UserLanguage[],
-  IReduxStoreUserFields[]
+  IReduxStoreUserFields[],
+  string
 ]
 
 export type UserLoggedInDataRetrivalArrayDataTypes = [
   IUserLangugeWithOnlineUserCount[],
   IChatGroupReducer,
-  IReduxStoreUserFields[],
-  UserChatGroup[]
+  IUserNormalizedShape,
+  UserChatGroup[],
+  INotificationsNormalizedShape
 ]
 
 export interface IAxiosErrorData {

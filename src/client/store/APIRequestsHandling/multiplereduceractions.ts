@@ -23,6 +23,7 @@ export const userLoggedIn = (
   chatGroups: data[1],
   users: data[2],
   userChatGroups: data[3],
+  notifications: data[4],
   isLoading,
   error
 })
@@ -38,6 +39,7 @@ export const wentToLanguagePageView = (
   ),
   userLanguages: data[0],
   users: data[1],
+  language: data[2],
   isLoading,
   error
 })

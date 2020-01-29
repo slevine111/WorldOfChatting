@@ -5,17 +5,13 @@ import {
   IObjectOfOneType,
   IUsersInformation
 } from './intercomponent-types'
+import { IObjectWithIdProperty } from '../shared-client-types'
 import { ReducerErrorProperty } from '../store/reducer.base'
 
 export enum GeneralErrorTypes {
   NO_ERROR = 'NO_ERROR',
   AUTHENTICATION_ERROR = 'AUTHENTICATION_ERROR',
   NON_AUTHENTICATION_ERROR = 'NON_AUTHENTICATION_ERROR'
-}
-
-interface IObjectWithIdProperty {
-  id: string
-  [key: string]: any
 }
 
 export const mapValuesById = <T extends IObjectWithIdProperty>(
@@ -29,10 +25,9 @@ export const mapValuesById = <T extends IObjectWithIdProperty>(
 }
 
 export const groupUserChatGroups = (
-  users: IReduxStoreUserFields[],
+  usersMap: IObjectOfOneType<IReduxStoreUserFields>,
   userChatGroups: UserChatGroup[]
 ): IUsersInformation => {
-  const usersMap: IObjectOfOneType<IReduxStoreUserFields> = mapValuesById(users)
   let objectByChatGroup: IObjectOfUserArrays = {}
   for (let i = 0; i < userChatGroups.length; ++i) {
     const { userId, chatGroupId } = userChatGroups[i]

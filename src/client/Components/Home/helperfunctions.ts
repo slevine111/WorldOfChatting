@@ -9,6 +9,7 @@ import {
 } from '../../../types-for-both-server-and-client'
 import { IWordCloudArrayObject } from './shared-types'
 import { groupUserChatGroups } from '../utilityfunctions'
+import { IObjectOfOneType } from '../../shared-client-types'
 
 export const generateWordCloudArray = (
   loggedInUserLanguages: IUserLangugeWithOnlineUserCount[]
@@ -26,7 +27,7 @@ export const generateWordCloudArray = (
 }
 
 export const getFavoriteChatGroupsOfUser = (
-  users: IReduxStoreUserFields[],
+  users: IObjectOfOneType<IReduxStoreUserFields>,
   chatGroups: IChatGroupReducer,
   userChatGroups: UserChatGroup[]
 ): IUsersByChatGroup[] => {

@@ -1,23 +1,29 @@
 import { UserChatGroup } from '../../../entities'
+import { INormalizedReducerShape } from '../reducer.base'
 import {
   IUserAndChatGroupGetReturn,
   IReduxStoreUserFields
 } from '../../../types-for-both-server-and-client'
 
 interface IUsersAndUserChatGroups {
-  users: IReduxStoreUserFields[]
+  usersNormalizedAll: INormalizedReducerShape<IReduxStoreUserFields>
   userChatGroups: UserChatGroup[]
 }
 
 export const separateUserAndChatGroupFields = (
+  usersNormalized: INormalizedReducerShape<IReduxStoreUserFields>,
   usersWithChatGroups: IUserAndChatGroupGetReturn[],
   userIdToFilterOn: string
 ): IUsersAndUserChatGroups => {
-  let uniqueUserIds: Set<string> = new Set()
-  let users: IReduxStoreUserFields[] = []
+  let usersNormalizedAll: INormalizedReducerShape<IReduxStoreUserFields> = {
+    ...usersNormalized
+  }
+  usersNormalizedAll.subGroupings.userIdsChattingWith = []
   let userChatGroups: UserChatGroup[] = []
+  let count: number = 0
   for (let i = 0; i < usersWithChatGroups.length; ++i) {
     if (usersWithChatGroups[i].userId !== userIdToFilterOn) {
+      ++count
       const {
         userTableId,
         firstName,
@@ -34,8 +40,8 @@ export const separateUserAndChatGroupFields = (
         ...otherUserTableFields
       })
 
-      if (!uniqueUserIds.has(userTableId)) {
-        users.push({
+      if (usersNormalizedAll.byId[userTableId] === undefined) {
+        usersNormalizedAll.byId[userTableId] = {
           id: userTableId,
           firstName,
           lastName,
@@ -43,10 +49,12 @@ export const separateUserAndChatGroupFields = (
           email,
           loggedIn,
           loggedInAsString
-        })
-        uniqueUserIds.add(userTableId)
+        }
+        usersNormalizedAll.allIds.push(userTableId)
       }
+      usersNormalizedAll.subGroupings.userIdsChattingWith.push(userTableId)
     }
   }
-  return { users, userChatGroups }
+  console.log(count, usersWithChatGroups.length)
+  return { usersNormalizedAll, userChatGroups }
 }

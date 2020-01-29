@@ -1,6 +1,7 @@
 import { ChatGroup, User, UserLanguage } from './entities'
 import { UserLanguageTypeFieldOptions } from './entities/UserLanguage'
 import { OnlineStatusesEnum } from './entities/User'
+import { NotificationTypeOptions } from './entities/NotificationType'
 
 export interface IUserLangugeWithOnlineUserCount extends UserLanguage {
   usersOnlineCount: number
@@ -27,9 +28,19 @@ export interface IUserAndChatGroupGetReturn {
   userId: string
   chatGroupId: string
   favorite: boolean
+  lastMessageSeenId: string
 }
 
 export interface IReduxStoreUserFields extends User {
   fullName: string
   loggedInAsString: keyof typeof OnlineStatusesEnum
+}
+
+export interface INotificationReducerFields {
+  id: string
+  createdAt: string
+  body: string
+  read: boolean
+  senderId: string
+  notificationType: NotificationTypeOptions
 }

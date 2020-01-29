@@ -7,3 +7,15 @@ export interface IBaseReducer<T> {
   isLoading: boolean
   error: ReducerErrorProperty
 }
+
+export interface IBaseReducerTwo<T extends INormalizedReducerShape<any>> {
+  data: T
+  isLoading: boolean
+  error: ReducerErrorProperty
+}
+
+export interface INormalizedReducerShape<T> {
+  byId: { [key: string]: T }
+  allIds: string[]
+  subGroupings: { [key: string]: string[] }
+}

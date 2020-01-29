@@ -7,7 +7,7 @@ import {
   Put,
   Param
 } from '@nestjs/common'
-import UserService from './users.service'
+import UserService, { EntityGetUsersLinkedTo } from './users.service'
 import AuthGuard from '../auth/auth.guard'
 import { User } from '../../entities'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
@@ -20,7 +20,7 @@ import {
 export default class UserController {
   constructor(private userService: UserService) {}
 
-  @Get('/linked/:userId/withchatgroup')
+  @Get('/:userId/userslinked/withchatgroup')
   @UseGuards(AuthGuard)
   getUsersAndTheirChatGroups(
     @Param('userId') userId: string
@@ -28,12 +28,26 @@ export default class UserController {
     return this.userService.getUsersAndTheirChatGroups(userId)
   }
 
+  @Get('/:userId/notifications/received')
+  @UseGuards(AuthGuard)
+  getUsersLinkedToNotification(
+    @Param('userId') userId: string
+  ): Promise<IReduxStoreUserFields[]> {
+    return this.userService.getUsersLinked(
+      userId,
+      EntityGetUsersLinkedTo.NOTIFICATION
+    )
+  }
+
   @Get('/linked/language/:language')
   @UseGuards(AuthGuard)
   getUsersLinkedToLanguage(
     @Param('language') language: string
   ): Promise<IReduxStoreUserFields[]> {
-    return this.userService.getUsersLinkedToLanguage(language)
+    return this.userService.getUsersLinked(
+      language,
+      EntityGetUsersLinkedTo.USER_LANGUAGE
+    )
   }
 
   @Post()

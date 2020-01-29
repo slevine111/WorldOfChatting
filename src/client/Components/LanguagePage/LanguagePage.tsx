@@ -5,8 +5,8 @@ import { RouteComponentProps } from 'react-router-dom'
 import { languagePageDataRetrivalThunk } from '../../store/APIRequestsHandling/multiplereducerthunks'
 import { getUsersOfLanguageInformation } from './helperfunctions'
 import { IUsersofLanguageInformation } from './shared-types'
-import { IUserReducerDataSlice } from '../../store/user/reducer'
 import { IUserLanguagesOfSingleLanguageDataSlice } from '../../store/userlanguage/reducer'
+import { IUserReducerState } from '../../store/user/reducer'
 import CurrentChats from './CurrentChats'
 import AllUsers from './AllUsers'
 import Typography from '@material-ui/core/Typography'
@@ -24,7 +24,7 @@ interface IReduxStateProps extends IUsersofLanguageInformation {
   isLoading: boolean
   reduxStoreDataSlices:
     | []
-    | [IUserReducerDataSlice, IUserLanguagesOfSingleLanguageDataSlice]
+    | [IUserReducerState, IUserLanguagesOfSingleLanguageDataSlice]
 }
 
 interface IDispatchProps {
@@ -81,20 +81,18 @@ const mapStateToProps = (
     }
   }: RouteComponentProps<IMatchParams>
 ): IReduxStateProps => {
-  const { currentLanguageUsers } = users
   const { ofLanguagePage } = userLanguages
-  const isLoading: boolean =
-    currentLanguageUsers.isLoading || ofLanguagePage.isLoading
+  const isLoading: boolean = users.isLoading || ofLanguagePage.isLoading
   if (!isLoading) {
     const usersOfLanguageInfo = getUsersOfLanguageInformation(
-      currentLanguageUsers.data,
+      users.data.byId,
       chatGroups.data,
       userChatGroups.data,
       language
     )
     return {
       isLoading,
-      reduxStoreDataSlices: [currentLanguageUsers, ofLanguagePage],
+      reduxStoreDataSlices: [users, ofLanguagePage],
       ...usersOfLanguageInfo
     }
   } else {

@@ -1,6 +1,7 @@
 import { UserChatGroup, UserLanguage } from '../../../entities'
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
-import { IUsersByChatGroup, IObjectOfOneType } from '../intercomponent-types'
+import { IUsersByChatGroup } from '../intercomponent-types'
+import { IObjectOfOneType } from '../../shared-client-types'
 import { groupUserChatGroups } from '../utilityfunctions'
 import {
   IChatGroupReducer,
@@ -21,7 +22,7 @@ import {
 import { displayAndDataNames } from './constants'
 
 export const getUsersOfLanguageInformation = (
-  users: IReduxStoreUserFields[],
+  users: IObjectOfOneType<IReduxStoreUserFields>,
   chatGroups: IChatGroupReducer,
   userChatGroups: UserChatGroup[],
   language: string

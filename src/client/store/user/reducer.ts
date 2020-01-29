@@ -3,7 +3,8 @@ import {
   RequestDataSuccessConstants,
   RequestDataFailureConstants
 } from '../APIRequestsHandling/types'
-import { IBaseReducer } from '../reducer.base'
+import { IBaseReducerTwo, INormalizedReducerShape } from '../reducer.base'
+import { normalizeData } from '../utilityfunctions'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { IReduxStoreUserFields } from '../../../types-for-both-server-and-client'
 const {
@@ -21,22 +22,16 @@ const {
   REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE
 } = RequestDataFailureConstants
 
-export type IUserReducerDataSlice = IBaseReducer<IReduxStoreUserFields[]>
+export type IUserNormalizedShape = INormalizedReducerShape<
+  IReduxStoreUserFields
+>
 
-export interface IUserReducerState {
-  myUsers: IUserReducerDataSlice
-  currentLanguageUsers: IUserReducerDataSlice
-}
-
-const initialStateDataSlice: IUserReducerDataSlice = {
-  data: [],
-  isLoading: false,
-  error: null
-}
+export type IUserReducerState = IBaseReducerTwo<IUserNormalizedShape>
 
 const initialState: IUserReducerState = {
-  myUsers: initialStateDataSlice,
-  currentLanguageUsers: initialStateDataSlice
+  data: { byId: {}, allIds: [], subGroupings: {} },
+  isLoading: false,
+  error: null
 }
 
 export default (
@@ -45,50 +40,26 @@ export default (
 ): IUserReducerState => {
   switch (action.type) {
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST:
-      return {
-        myUsers: { ...initialState.myUsers, isLoading: action.isLoading },
-        currentLanguageUsers: { ...initialState.currentLanguageUsers }
-      }
+      return { ...initialState, isLoading: action.isLoading }
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
       return {
-        myUsers: {
-          data: action.users,
-          isLoading: action.isLoading,
-          error: action.error
-        },
-        currentLanguageUsers: { ...initialState.currentLanguageUsers }
+        data: action.users,
+        isLoading: action.isLoading,
+        error: action.error
       }
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE:
-      return {
-        myUsers: { ...initialState.myUsers, error: action.error },
-        currentLanguageUsers: { ...initialState.currentLanguageUsers }
-      }
+      return { ...initialState, error: action.error }
     case WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST:
-      return {
-        myUsers: { ...state.myUsers },
-        currentLanguageUsers: {
-          ...initialState.currentLanguageUsers,
-          isLoading: action.isLoading
-        }
-      }
+      return { ...state, isLoading: action.isLoading }
     case WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS:
-      const { myUsers } = state
+      const { language, users, isLoading, error } = action
       return {
-        myUsers,
-        currentLanguageUsers: {
-          data: action.users,
-          isLoading: action.isLoading,
-          error: action.error
-        }
+        data: normalizeData(users, language, state.data),
+        isLoading,
+        error
       }
     case WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_FAILURE:
-      return {
-        myUsers: { ...state.myUsers },
-        currentLanguageUsers: {
-          ...initialState.currentLanguageUsers,
-          error: action.error
-        }
-      }
+      return { ...state, error: action.error }
     case USER_LOGGING_OUT_REQUEST_SUCCESS:
     case REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE:
       return { ...initialState }

@@ -10,6 +10,11 @@ import { OnlineStatusesEnum } from '../../entities/User'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
 import { compare, hash } from 'bcrypt'
 
+export enum EntityGetUsersLinkedTo {
+  NOTIFICATION = 'notification',
+  USER_LANGUAGE = 'user_language'
+}
+
 @Injectable()
 export default class UserService {
   constructor(
@@ -85,17 +90,30 @@ export default class UserService {
               ucg."userId",
               ucg."chatGroupId",
               ucg.favorite
+              ucg."lastMessageSeenId"
       FROM user_chat_group ucg
       JOIN (SELECT "chatGroupId" FROM user_chat_group WHERE "userId" = $1) filter
       ON ucg."chatGroupId" = filter."chatGroupId"
       JOIN "user" u ON ucg."userId" = u.id
       WHERE ucg."userId" != $2
     `,
-      [userId, userId]
+      [userId, userId, userId]
     )
   }
 
-  getUsersLinkedToLanguage(language: string): Promise<IReduxStoreUserFields[]> {
+  getUsersLinked(
+    entityValue: string,
+    entity: EntityGetUsersLinkedTo
+  ): Promise<IReduxStoreUserFields[]> {
+    let endQuery: string = ''
+    if (entity === EntityGetUsersLinkedTo.NOTIFICATION) {
+      endQuery = `JOIN notification B ON A.id = B."senderId"
+                  WHERE "targetUserId" = $1`
+    } else {
+      endQuery = `JOIN user_language B ON A.id = B."userId"
+                 WHERE language = $1`
+    }
+
     return this.userRepository.query(
       `SELECT A.id,
               A."firstName",
@@ -106,10 +124,9 @@ export default class UserService {
               CASE WHEN A."loggedIn" = true THEN '${OnlineStatusesEnum.Online}'
                    ELSE '${OnlineStatusesEnum.Offline}' END AS "loggedInAsString"
        FROM "user" A
-       JOIN user_language B ON A.id = B."userId"
-       WHERE language = $1
+       ${endQuery}
       `,
-      [language]
+      [entityValue]
     )
   }
 

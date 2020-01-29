@@ -6,10 +6,6 @@ import LanguagePage from './LanguagePage'
 import { userLoggedInDataRetrivalThunk } from '../store/APIRequestsHandling/multiplereducerthunks'
 import { User } from '../../entities'
 import { ReduxState } from '../store'
-import { IUserReducerDataSlice } from '../store/user/reducer'
-import { IUserLoggedInLanguagesDataSlice } from '../store/userlanguage/reducer'
-import { IChatGroupReducerState } from '../store/chatgroup/reducer'
-import { IUserChatGroupReducerState } from '../store/userchatgroup/reducer'
 import { IAuthReducerState } from '../store/auth/reducer'
 import { RequestDataFailureConstants } from '../store/APIRequestsHandling/types'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -22,14 +18,6 @@ interface IReduxStateProps {
   dataLoading: boolean
   user: User
   auth: IAuthReducerState
-  reduxStoreDataSlices:
-    | []
-    | [
-        IUserReducerDataSlice,
-        IUserLoggedInLanguagesDataSlice,
-        IChatGroupReducerState,
-        IUserChatGroupReducerState
-      ]
 }
 
 interface IDispatchProps {
@@ -54,9 +42,6 @@ const LoggedInUserController: React.FC<IReduxStateProps & IDispatchProps> = ({
             Error occured in logout :(. Stay on the site :).
           </Typography>
         )}
-      {/*<Backdrop open={userLoggingOut} className={backdrop}>
-        <CircularProgress disableShrink />
-      </Backdrop>*/}
       <Switch>
         <Route path="/home" exact component={Home} />
         <Route path="/language/:language" exact component={LanguagePage} />
@@ -75,16 +60,12 @@ const mapStateToProps = ({
 }: ReduxState): IReduxStateProps => {
   const { user } = auth
   const dataLoading: boolean =
-    users.myUsers.isLoading ||
     userLanguages.ofUser.isLoading ||
-    [chatGroups, userChatGroups].some(dataItem => dataItem.isLoading)
+    [users, chatGroups, userChatGroups].some(dataItem => dataItem.isLoading)
   return {
     dataLoading,
     user: user.data,
-    auth,
-    reduxStoreDataSlices: dataLoading
-      ? []
-      : [users.myUsers, userLanguages.ofUser, chatGroups, userChatGroups]
+    auth
   }
 }
 

@@ -42,7 +42,7 @@ const mapStateToProps = ({
   userChatGroups
 }: ReduxState): IReduxStateProps => {
   const favoriteChatGroups: IUsersByChatGroup[] = getFavoriteChatGroupsOfUser(
-    users.myUsers.data,
+    users.data.byId,
     chatGroups.data,
     userChatGroups.data
   )

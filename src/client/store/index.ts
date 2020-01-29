@@ -9,6 +9,9 @@ import userChatGroupReducer, {
   IUserChatGroupReducerState
 } from './userchatgroup/reducer'
 import authReducer, { IAuthReducerState } from './auth/reducer'
+import notificationReducer, {
+  INotificationReducerState
+} from './notification/reducer'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 import {
@@ -23,6 +26,7 @@ interface ICombinedReducer {
   chatGroups: IChatGroupReducerState
   userChatGroups: IUserChatGroupReducerState
   auth: IAuthReducerState
+  notifications: INotificationReducerState
 }
 
 const rootReducer: Reducer<ICombinedReducer> = combineReducers({
@@ -31,7 +35,8 @@ const rootReducer: Reducer<ICombinedReducer> = combineReducers({
   userLanguages: userLanguageReducer,
   chatGroups: chatGroupReducer,
   userChatGroups: userChatGroupReducer,
-  auth: authReducer
+  auth: authReducer,
+  notifications: notificationReducer
 })
 
 export type ReduxState = ReturnType<typeof rootReducer>

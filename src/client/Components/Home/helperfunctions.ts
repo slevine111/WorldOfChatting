@@ -3,7 +3,7 @@ import { UserChatGroup } from '../../../entities'
 import { IUsersByChatGroup } from '../intercomponent-types'
 import {
   IChatGroupReducer,
-  IChatGroupWithFavoriteField,
+  IChatGroupAPIReturn,
   IReduxStoreUserFields,
   IUserLangugeWithOnlineUserCount
 } from '../../../types-for-both-server-and-client'
@@ -36,8 +36,7 @@ export const getFavoriteChatGroupsOfUser = (
   const languages: string[] = Object.keys(chatGroups)
   for (let j = 0; j < languages.length; ++j) {
     const language: string = languages[j]
-    const chatGroupsOfLanguage: IChatGroupWithFavoriteField[] =
-      chatGroups[language]
+    const chatGroupsOfLanguage: IChatGroupAPIReturn[] = chatGroups[language]
     for (let k = 0; k < chatGroupsOfLanguage.length; ++k) {
       const { id, name, favorite } = chatGroupsOfLanguage[k]
       if (favorite) {

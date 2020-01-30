@@ -5,8 +5,8 @@ import {
 } from '../APIRequestsHandling/types'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { UserLanguage } from '../../../entities'
-import { IUserLangugeWithOnlineUserCount } from '../../../types-for-both-server-and-client'
-import { IBaseReducer } from '../reducer.base'
+import { IBaseReducerTwo, INormalizedReducerShape } from '../reducer.base'
+import { normalizeData } from '../utilityfunctions'
 const {
   WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST,
   HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST
@@ -22,75 +22,49 @@ const {
   REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE
 } = RequestDataFailureConstants
 
-export type IUserLoggedInLanguagesDataSlice = IBaseReducer<
-  IUserLangugeWithOnlineUserCount[]
+export type IUserLanguageNormalizedShape = INormalizedReducerShape<UserLanguage>
+
+export type IUserLanguageReducerState = IBaseReducerTwo<
+  IUserLanguageNormalizedShape
 >
 
-export type IUserLanguagesOfSingleLanguageDataSlice = IBaseReducer<
-  UserLanguage[]
->
-
-export interface IUserLangugeReducerState {
-  ofUser: IUserLoggedInLanguagesDataSlice
-  ofLanguagePage: IUserLanguagesOfSingleLanguageDataSlice
-}
-
-const initialState: IUserLangugeReducerState = {
-  ofUser: { data: [], isLoading: false, error: null },
-  ofLanguagePage: { data: [], isLoading: false, error: null }
+const initialState: IUserLanguageReducerState = {
+  data: { byId: {}, allIds: [], subGroupings: {} },
+  isLoading: false,
+  error: null
 }
 
 export default (
-  state: IUserLangugeReducerState = { ...initialState },
+  state: IUserLanguageReducerState = { ...initialState },
   action: SharedActionsTypes
-): IUserLangugeReducerState => {
+): IUserLanguageReducerState => {
   switch (action.type) {
     //user logging in
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST:
-      return {
-        ofUser: { ...initialState.ofUser, isLoading: action.isLoading },
-        ofLanguagePage: { ...initialState.ofLanguagePage }
-      }
+      return { ...initialState, isLoading: action.isLoading }
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
       return {
-        ofUser: {
-          data: action.userLangsOfLoggedInUser,
-          isLoading: action.isLoading,
-          error: action.error
-        },
-        ofLanguagePage: { ...initialState.ofLanguagePage }
+        data: normalizeData(action.userLangsOfLoggedInUser),
+        isLoading: action.isLoading,
+        error: action.error
       }
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE:
-      return {
-        ofUser: { ...initialState.ofUser, error: action.error },
-        ofLanguagePage: { ...initialState.ofLanguagePage }
-      }
+      return { ...initialState, error: action.error }
     //after user clicks on language page
     case WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST:
-      return {
-        ofUser: { ...state.ofUser },
-        ofLanguagePage: {
-          ...initialState.ofLanguagePage,
-          isLoading: action.isLoading
-        }
-      }
+      return { ...state, isLoading: action.isLoading }
     case WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS:
+      const { language, isLoading, error, userLanguages } = action
       return {
-        ofUser: { ...state.ofUser },
-        ofLanguagePage: {
-          data: action.userLanguages,
-          isLoading: action.isLoading,
-          error: action.error
-        }
+        data: normalizeData(userLanguages, {
+          subGroupingKey: language,
+          currentNormalizedData: state.data
+        }),
+        isLoading,
+        error
       }
     case WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_FAILURE:
-      return {
-        ofUser: { ...state.ofUser },
-        ofLanguagePage: {
-          ...initialState.ofLanguagePage,
-          error: action.error
-        }
-      }
+      return { ...state, error: action.error }
     //logging out
     case REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE:
     case USER_LOGGING_OUT_REQUEST_SUCCESS:

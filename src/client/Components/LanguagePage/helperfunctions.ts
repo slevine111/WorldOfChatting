@@ -5,7 +5,7 @@ import { IObjectOfOneType } from '../../shared-client-types'
 import { groupUserChatGroups } from '../utilityfunctions'
 import {
   IChatGroupReducer,
-  IChatGroupWithFavoriteField,
+  IChatGroupAPIReturn,
   IReduxStoreUserFields,
   IUserLangugeWithOnlineUserCount
 } from '../../../types-for-both-server-and-client'
@@ -29,8 +29,7 @@ export const getUsersOfLanguageInformation = (
 ): IUsersofLanguageInformation => {
   const { usersGrouped, usersMap } = groupUserChatGroups(users, userChatGroups)
   let usersByChatGroup: IUsersByChatGroup[] = []
-  const chatGroupsOfLanguage: IChatGroupWithFavoriteField[] =
-    chatGroups[language]
+  const chatGroupsOfLanguage: IChatGroupAPIReturn[] = chatGroups[language]
   let userIdsOfSoloChats: IObjectOfOneType<true> = {}
   if (!Array.isArray(chatGroupsOfLanguage)) {
     return { usersByChatGroup, usersMap, userIdsOfSoloChats }

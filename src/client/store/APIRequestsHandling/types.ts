@@ -1,11 +1,11 @@
 import {
-  IChatGroupReducer,
   IReduxStoreUserFields,
-  IUserLangugeWithOnlineUserCount
+  IChatGroupAPIReturn,
+  INotificationReducerFields
 } from '../../../types-for-both-server-and-client'
-import { UserLanguage, UserChatGroup } from '../../../entities'
-import { INotificationsNormalizedShape } from '../notification/reducer'
+import { UserLanguage } from '../../../entities'
 import { IUserNormalizedShape } from '../user/reducer'
+import { IUserChatGroupNormalizedShape } from '../userchatgroup/reducer'
 import { AnyAction } from 'redux'
 import { AxiosResponse } from 'axios'
 
@@ -57,11 +57,11 @@ export type LanguagePageDataRetrivalArrayDataTypes = [
 ]
 
 export type UserLoggedInDataRetrivalArrayDataTypes = [
-  IUserLangugeWithOnlineUserCount[],
-  IChatGroupReducer,
+  UserLanguage[],
+  IChatGroupAPIReturn[],
   IUserNormalizedShape,
-  UserChatGroup[],
-  INotificationsNormalizedShape
+  IUserChatGroupNormalizedShape,
+  INotificationReducerFields[]
 ]
 
 export interface IAxiosErrorData {

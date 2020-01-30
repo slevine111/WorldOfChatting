@@ -3,7 +3,7 @@ import {
   RequestDataSuccessConstants,
   RequestDataFailureConstants
 } from '../APIRequestsHandling/types'
-import { IBaseReducer } from '../reducer.base'
+import { IBaseReducerTwo, INormalizedReducerShape } from '../reducer.base'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { UserChatGroup } from '../../../entities'
 const { HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST } = RequestDataConstants
@@ -16,10 +16,16 @@ const {
   REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE
 } = RequestDataFailureConstants
 
-export type IUserChatGroupReducerState = IBaseReducer<UserChatGroup[]>
+export type IUserChatGroupNormalizedShape = INormalizedReducerShape<
+  UserChatGroup
+>
+
+export type IUserChatGroupReducerState = IBaseReducerTwo<
+  IUserChatGroupNormalizedShape
+>
 
 const initialState: IUserChatGroupReducerState = {
-  data: [],
+  data: { byId: {}, allIds: [], subGroupings: {} },
   isLoading: false,
   error: null
 }

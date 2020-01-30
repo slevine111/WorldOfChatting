@@ -54,7 +54,10 @@ export default (
     case WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS:
       const { language, users, isLoading, error } = action
       return {
-        data: normalizeData(users, language, state.data),
+        data: normalizeData(users, {
+          subGroupingKey: language,
+          currentNormalizedData: state.data
+        }),
         isLoading,
         error
       }

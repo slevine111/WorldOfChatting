@@ -4,8 +4,9 @@ import {
   RequestDataFailureConstants
 } from '../APIRequestsHandling/types'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
-import { IBaseReducer } from '../reducer.base'
-import { IChatGroupReducer } from '../../../types-for-both-server-and-client'
+import { IBaseReducerTwo, INormalizedReducerShape } from '../reducer.base'
+import { IChatGroupAPIReturn } from '../../../types-for-both-server-and-client'
+import { normalizeInitialChatGroupData } from './helperfunctions'
 const {
   HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
   USER_LOGGING_OUT_REQUEST_SUCCESS
@@ -16,10 +17,14 @@ const {
   REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE
 } = RequestDataFailureConstants
 
-export type IChatGroupReducerState = IBaseReducer<IChatGroupReducer>
+export type IChatGroupNormalizedShape = INormalizedReducerShape<
+  IChatGroupAPIReturn
+> & { subGroupings: { favorites: string[] } }
+
+export type IChatGroupReducerState = IBaseReducerTwo<IChatGroupNormalizedShape>
 
 const initialState: IChatGroupReducerState = {
-  data: {},
+  data: { byId: {}, allIds: [], subGroupings: { favorites: [] } },
   isLoading: false,
   error: null
 }
@@ -31,7 +36,7 @@ export default (
   switch (action.type) {
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
       return {
-        data: action.chatGroups,
+        data: normalizeInitialChatGroupData(action.chatGroups),
         isLoading: action.isLoading,
         error: action.error
       }

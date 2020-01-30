@@ -7,12 +7,13 @@ export interface IUserLangugeWithOnlineUserCount extends UserLanguage {
   usersOnlineCount: number
 }
 
-export interface IChatGroupWithFavoriteField extends ChatGroup {
+export interface IChatGroupAPIReturn extends ChatGroup {
   favorite: boolean
+  lastMessageSeenId: string
 }
 
 export interface IChatGroupReducer {
-  [key: string]: IChatGroupWithFavoriteField[]
+  [key: string]: IChatGroupAPIReturn[]
 }
 
 export interface IUserAndChatGroupGetReturn {

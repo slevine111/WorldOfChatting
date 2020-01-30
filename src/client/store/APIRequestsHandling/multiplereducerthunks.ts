@@ -13,8 +13,7 @@ import { separateUserAndChatGroupFields } from './helperfunctions'
 import { normalizeData } from '../utilityfunctions'
 import { IUserUpdateDTO } from '../../../server/users/users.dto'
 import {
-  IUserLangugeWithOnlineUserCount,
-  IChatGroupReducer,
+  IChatGroupAPIReturn,
   IUserAndChatGroupGetReturn,
   IReduxStoreUserFields,
   INotificationReducerFields
@@ -47,8 +46,8 @@ export const logoutUserProcessThunk = (
 }
 
 type UserLoggedInDataTransformationInput = [
-  IChatGroupReducer,
-  IUserLangugeWithOnlineUserCount[],
+  IChatGroupAPIReturn[],
+  UserLanguage[],
   IUserAndChatGroupGetReturn[],
   IReduxStoreUserFields[],
   INotificationReducerFields[]
@@ -84,7 +83,7 @@ export const userLoggedInDataRetrivalThunk = (
       )
       const {
         usersNormalizedAll,
-        userChatGroups
+        userChatGroupNormalized
       } = separateUserAndChatGroupFields(
         usersNormalized,
         usersWithChatGroups,
@@ -94,8 +93,8 @@ export const userLoggedInDataRetrivalThunk = (
         userLangsOfLoggedInUser,
         chatGroups,
         usersNormalizedAll,
-        userChatGroups,
-        normalizeData(notifications)
+        userChatGroupNormalized,
+        notifications
       ]
     },
     dispatchActionOnSuccess: userLoggedIn,

@@ -6,6 +6,7 @@ import {
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { IBaseReducerTwo, INormalizedReducerShape } from '../reducer.base'
 import { INotificationReducerFields } from '../../../types-for-both-server-and-client'
+import { normalizeData } from '../utilityfunctions'
 const {
   HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
   USER_LOGGING_OUT_REQUEST_SUCCESS
@@ -37,7 +38,7 @@ export default (
   switch (action.type) {
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
       return {
-        data: action.notifications,
+        data: normalizeData(action.notifications),
         isLoading: action.isLoading,
         error: action.error
       }

@@ -5,8 +5,9 @@ import {
   RequestDataSuccessConstants,
   RequestDataFailureConstants
 } from '../APIRequestsHandling/types'
-import { IBaseReducer } from '../reducer.base'
+import { IBaseReducerTwo, INormalizedReducerShape } from '../reducer.base'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
+import { normalizeData } from '../utilityfunctions'
 const { ENTERED_SITE_LOADING_BASE_DATA_REQUEST } = RequestDataConstants
 const {
   ENTERED_SITE_LOADING_BASE_DATA_REQUEST_SUCCESS
@@ -16,10 +17,12 @@ const {
   USER_LOGGING_OUT_REQUEST_FAILURE
 } = RequestDataFailureConstants
 
-export type ILanguageReducerState = IBaseReducer<Language[]>
+export type ILanguageNormalizedShape = INormalizedReducerShape<Language>
+
+export type ILanguageReducerState = IBaseReducerTwo<ILanguageNormalizedShape>
 
 const initialState: ILanguageReducerState = {
-  data: [],
+  data: { byId: {}, allIds: [], subGroupings: {} },
   isLoading: false,
   error: null
 }
@@ -33,7 +36,7 @@ export default (
       return { ...initialState, isLoading: action.isLoading }
     case ENTERED_SITE_LOADING_BASE_DATA_REQUEST_SUCCESS:
       return {
-        data: action.languages,
+        data: normalizeData(action.languages, { dataItemKey: 'language' }),
         isLoading: action.isLoading,
         error: action.error
       }

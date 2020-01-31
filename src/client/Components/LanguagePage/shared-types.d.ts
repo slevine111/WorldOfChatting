@@ -1,7 +1,6 @@
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
 import { IReduxStoreUserFields } from '../../../types-for-both-server-and-client'
 import { OnlineStatusesEnum } from '../../../entities/User'
-import { IUsersByChatGroup, IObjectOfOneType } from '../intercomponent-types'
 
 export type LanguageTypesCombos = 'LL' | 'LT' | 'TL' | 'TT'
 
@@ -9,13 +8,8 @@ export interface IUserWithLanguageFields extends IReduxStoreUserFields {
   userType: UserLanguageTypeFieldOptions
   userAndAuthUserLanguageTypes: LanguageTypesCombos
   language: string
+  inSoloChat: boolean
   [key: string]: string | boolean | undefined
-}
-
-export interface IUsersofLanguageInformation {
-  usersByChatGroup: IUsersByChatGroup[]
-  usersMap: IObjectOfOneType<IReduxStoreUserFields>
-  userIdsOfSoloChats: IObjectOfOneType<true>
 }
 
 export type IOnlineStatusesChecked = {

@@ -2,7 +2,7 @@ import { createStore, combineReducers, applyMiddleware, Reducer } from 'redux'
 import languageReducer, { ILanguageReducerState } from './language/reducer'
 import userReducer, { IUserReducerState } from './user/reducer'
 import userLanguageReducer, {
-  IUserLangugeReducerState
+  IUserLanguageReducerState
 } from './userlanguage/reducer'
 import chatGroupReducer, { IChatGroupReducerState } from './chatgroup/reducer'
 import userChatGroupReducer, {
@@ -22,7 +22,7 @@ import {
 interface ICombinedReducer {
   languages: ILanguageReducerState
   users: IUserReducerState
-  userLanguages: IUserLangugeReducerState
+  userLanguages: IUserLanguageReducerState
   chatGroups: IChatGroupReducerState
   userChatGroups: IUserChatGroupReducerState
   auth: IAuthReducerState

@@ -22,6 +22,8 @@ const {
   REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE
 } = RequestDataFailureConstants
 
+export const LOGGED_IN_USER_SUBGROUPING_KEY = <const>'loggedInUser'
+
 export type IUserLanguageNormalizedShape = INormalizedReducerShape<UserLanguage>
 
 export type IUserLanguageReducerState = IBaseReducerTwo<
@@ -29,7 +31,11 @@ export type IUserLanguageReducerState = IBaseReducerTwo<
 >
 
 const initialState: IUserLanguageReducerState = {
-  data: { byId: {}, allIds: [], subGroupings: {} },
+  data: {
+    byId: {},
+    allIds: [],
+    subGroupings: { [LOGGED_IN_USER_SUBGROUPING_KEY]: [] }
+  },
   isLoading: false,
   error: null
 }
@@ -44,7 +50,9 @@ export default (
       return { ...initialState, isLoading: action.isLoading }
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
       return {
-        data: normalizeData(action.userLangsOfLoggedInUser),
+        data: normalizeData(action.userLangsOfLoggedInUser, {
+          subGroupingKey: LOGGED_IN_USER_SUBGROUPING_KEY
+        }),
         isLoading: action.isLoading,
         error: action.error
       }

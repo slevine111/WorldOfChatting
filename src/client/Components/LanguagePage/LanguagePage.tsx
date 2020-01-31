@@ -3,10 +3,8 @@ import { connect } from 'react-redux'
 import { ReduxState } from '../../store'
 import { RouteComponentProps } from 'react-router-dom'
 import { languagePageDataRetrivalThunk } from '../../store/APIRequestsHandling/multiplereducerthunks'
-import { getUsersOfLanguageInformation } from './helperfunctions'
-import { IUsersofLanguageInformation } from './shared-types'
-import { IUserLanguagesOfSingleLanguageDataSlice } from '../../store/userlanguage/reducer'
 import { IUserReducerState } from '../../store/user/reducer'
+import { IUserLanguageReducerState } from '../../store/userlanguage/reducer'
 import CurrentChats from './CurrentChats'
 import AllUsers from './AllUsers'
 import Typography from '@material-ui/core/Typography'
@@ -20,11 +18,9 @@ interface IMatchParams {
   language: string
 }
 
-interface IReduxStateProps extends IUsersofLanguageInformation {
+interface IReduxStateProps {
   isLoading: boolean
-  reduxStoreDataSlices:
-    | []
-    | [IUserReducerState, IUserLanguagesOfSingleLanguageDataSlice]
+  reduxStoreDataSlices: [IUserReducerState, IUserLanguageReducerState]
 }
 
 interface IDispatchProps {
@@ -38,10 +34,7 @@ const LanguagePage: React.FC<RouteComponentProps<IMatchParams> &
     params: { language }
   },
   languagePageDataRetrival,
-  isLoading,
-  usersByChatGroup,
-  userIdsOfSoloChats,
-  usersMap
+  isLoading
 }) => {
   const { paperPageSection } = styles()
   useEffect(() => {
@@ -56,12 +49,10 @@ const LanguagePage: React.FC<RouteComponentProps<IMatchParams> &
         <Grid container>
           <Grid item xs={12} sm={9}>
             <Paper className={paperPageSection}>
-              <CurrentChats {...{ ...{ language, usersByChatGroup } }} />
+              <CurrentChats language={language} />
             </Paper>
             <Paper className={paperPageSection}>
-              <AllUsers
-                {...{ ...{ language, userIdsOfSoloChats, usersMap } }}
-              />
+              <AllUsers language={language} />
             </Paper>
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -73,36 +64,14 @@ const LanguagePage: React.FC<RouteComponentProps<IMatchParams> &
   )
 }
 
-const mapStateToProps = (
-  { userChatGroups, userLanguages, users, chatGroups }: ReduxState,
-  {
-    match: {
-      params: { language }
-    }
-  }: RouteComponentProps<IMatchParams>
-): IReduxStateProps => {
-  const { ofLanguagePage } = userLanguages
-  const isLoading: boolean = users.isLoading || ofLanguagePage.isLoading
-  if (!isLoading) {
-    const usersOfLanguageInfo = getUsersOfLanguageInformation(
-      users.data.byId,
-      chatGroups.data,
-      userChatGroups.data,
-      language
-    )
-    return {
-      isLoading,
-      reduxStoreDataSlices: [users, ofLanguagePage],
-      ...usersOfLanguageInfo
-    }
-  } else {
-    return {
-      isLoading,
-      reduxStoreDataSlices: [],
-      usersByChatGroup: [],
-      usersMap: {},
-      userIdsOfSoloChats: {}
-    }
+const mapStateToProps = ({
+  userLanguages,
+  users
+}: ReduxState): IReduxStateProps => {
+  const isLoading: boolean = users.isLoading || userLanguages.isLoading
+  return {
+    isLoading,
+    reduxStoreDataSlices: [users, userLanguages]
   }
 }
 

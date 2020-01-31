@@ -59,9 +59,12 @@ const mapStateToProps = ({
   userChatGroups
 }: ReduxState): IReduxStateProps => {
   const { user } = auth
-  const dataLoading: boolean =
-    userLanguages.ofUser.isLoading ||
-    [users, chatGroups, userChatGroups].some(dataItem => dataItem.isLoading)
+  const dataLoading: boolean = [
+    users,
+    chatGroups,
+    userChatGroups,
+    userLanguages
+  ].some(dataItem => dataItem.isLoading)
   return {
     dataLoading,
     user: user.data,

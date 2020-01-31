@@ -1,11 +1,10 @@
 //React related imports
 import React, { ReactElement, Fragment, useEffect } from 'react'
 import { HashRouter, Route, Switch, Redirect } from 'react-router-dom'
-import { connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { ReduxState } from '../store'
 import { getAllLanguagesThunk } from '../store/language/actions'
 import { checkIfUserLoggedInProcess } from '../store/auth/thunks'
-import { User } from '../../entities'
 
 //Components imports
 import Signup from './Login_Signup/Signup'
@@ -13,28 +12,22 @@ import Login from './Login_Signup/Login'
 import Navbar from './Navbar'
 import LoggedInUserController from './LoggedInUserController'
 
-interface IReduxStateProps {
-  user: User
-}
-
-interface IDispatchProps {
-  getAllLanguages: () => Promise<void>
-  checkIfUserLoggedIn: () => Promise<void>
-}
-
 interface IOwnProps {
   redirectAfterLogin: string
 }
 
-const App: React.FC<IOwnProps & IReduxStateProps & IDispatchProps> = ({
-  user,
-  getAllLanguages,
-  checkIfUserLoggedIn,
-  redirectAfterLogin
-}): ReactElement => {
+const App: React.FC<IOwnProps> = ({ redirectAfterLogin }): ReactElement => {
+  const { user } = useSelector(({ auth }: ReduxState) => ({
+    user: auth.user.data
+  }))
+  const dispatch = useDispatch()
+
   let websiteLoadError: boolean = false
   useEffect(() => {
-    Promise.all([getAllLanguages(), checkIfUserLoggedIn()])
+    Promise.all([
+      dispatch(getAllLanguagesThunk()),
+      dispatch(checkIfUserLoggedInProcess())
+    ])
       .then(() => {
         window.location.hash = redirectAfterLogin
       })
@@ -70,15 +63,4 @@ const App: React.FC<IOwnProps & IReduxStateProps & IDispatchProps> = ({
   )
 }
 
-const mapStateToProps = ({ auth }: ReduxState): IReduxStateProps => ({
-  user: auth.user.data
-})
-
-const mapDispatchToProps = (dispatch: any): IDispatchProps => {
-  return {
-    getAllLanguages: () => dispatch(getAllLanguagesThunk()),
-    checkIfUserLoggedIn: () => dispatch(checkIfUserLoggedInProcess())
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+export default App

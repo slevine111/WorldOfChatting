@@ -1,7 +1,7 @@
 import { IUserNormalizedShape } from '../user/reducer'
 import { IUserChatGroupNormalizedShape } from '../userchatgroup/reducer'
 import { IUserAndChatGroupGetReturn } from '../../../types-for-both-server-and-client'
-import { CHAT_GROUP_KEY_PREFIX } from '../constants'
+import { CHAT_GROUP_KEY_PREFIX } from '../userchatgroup/reducer'
 
 interface IUsersAndUserChatGroups {
   usersNormalizedAll: IUserNormalizedShape

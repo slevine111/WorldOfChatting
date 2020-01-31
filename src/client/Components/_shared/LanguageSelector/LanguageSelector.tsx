@@ -132,7 +132,7 @@ const LanguageSelector: React.FC<IReduxStateProps & IOwnProps> = ({
 }
 
 const mapStateToProps = ({ languages }: ReduxState): IReduxStateProps => ({
-  languages: languages.data
+  languages: Object.values(languages.data.byId)
 })
 
 export default connect(mapStateToProps)(LanguageSelector)

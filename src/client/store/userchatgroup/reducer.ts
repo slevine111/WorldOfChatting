@@ -16,6 +16,8 @@ const {
   REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE
 } = RequestDataFailureConstants
 
+export const CHAT_GROUP_KEY_PREFIX = <const>'chatGroup'
+
 export type IUserChatGroupNormalizedShape = INormalizedReducerShape<
   UserChatGroup
 >

@@ -5,9 +5,9 @@ export function normalizeData<T extends { [key: string]: any }>(
   optionalParams: {
     subGroupingKey?: string
     subGroupingFunction?: (
-      subGroupings: { [key: string]: any },
+      subGroupings: { [key: string]: string[] },
       dataItem: T
-    ) => { [key: string]: any }
+    ) => { [key: string]: string[] }
     currentNormalizedData?: INormalizedReducerShape<T>
     dataItemKey?: string
   } = {}
@@ -28,7 +28,10 @@ export function normalizeData<T extends { [key: string]: any }>(
     }
   }
 
-  if (subGroupingKey !== undefined) {
+  if (
+    subGroupingKey !== undefined &&
+    normalizedData.subGroupings[subGroupingKey] === undefined
+  ) {
     normalizedData.subGroupings[subGroupingKey] = []
   }
   const existsNormalizedData: boolean = currentNormalizedData !== undefined

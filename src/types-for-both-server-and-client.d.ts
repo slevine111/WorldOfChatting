@@ -1,19 +1,11 @@
-import { ChatGroup, User, UserLanguage } from './entities'
+import { ChatGroup, User } from './entities'
 import { UserLanguageTypeFieldOptions } from './entities/UserLanguage'
 import { OnlineStatusesEnum } from './entities/User'
 import { NotificationTypeOptions } from './entities/NotificationType'
 
-export interface IUserLangugeWithOnlineUserCount extends UserLanguage {
-  usersOnlineCount: number
-}
-
 export interface IChatGroupAPIReturn extends ChatGroup {
   favorite: boolean
   lastMessageSeenId: string
-}
-
-export interface IChatGroupReducer {
-  [key: string]: IChatGroupAPIReturn[]
 }
 
 export interface IUserAndChatGroupGetReturn {

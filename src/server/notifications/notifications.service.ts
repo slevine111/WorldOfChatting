@@ -17,12 +17,11 @@ export default class ChatGroupService {
     return this.notificationRepository.query(
       `SELECT B.id,
               A."createdAt",
-              A.body,
               B.read,
               A."senderId",
               A."notificationType"
        FROM notification A
-       JOIN "notificationRecipient" B ON A.id = B."notificationId"
+       JOIN notification_recipient B ON A.id = B."notificationId"
        WHERE B."targetUserId" = $1
        ORDER BY "createdAt" DESC
       `,

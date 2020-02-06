@@ -3,7 +3,7 @@ import {
   RequestDataSuccessConstants,
   RequestDataFailureConstants
 } from '../APIRequestsHandling/types'
-import { IBaseReducerTwo, INormalizedReducerShape } from '../reducer.base'
+import { IBaseReducer, INormalizedReducerShape } from '../reducer.base'
 import { normalizeData } from '../utilityfunctions'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { IReduxStoreUserFields } from '../../../types-for-both-server-and-client'
@@ -26,7 +26,7 @@ export type IUserNormalizedShape = INormalizedReducerShape<
   IReduxStoreUserFields
 >
 
-export type IUserReducerState = IBaseReducerTwo<IUserNormalizedShape>
+export type IUserReducerState = IBaseReducer<IUserNormalizedShape>
 
 const initialState: IUserReducerState = {
   data: { byId: {}, allIds: [], subGroupings: {} },

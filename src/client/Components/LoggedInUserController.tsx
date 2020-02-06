@@ -7,17 +7,22 @@ import { userLoggedInDataRetrivalThunk } from '../store/APIRequestsHandling/mult
 import { User } from '../../entities'
 import { ReduxState } from '../store'
 import { IAuthReducerState } from '../store/auth/reducer'
-import { RequestDataFailureConstants } from '../store/APIRequestsHandling/types'
+import {
+  RequestDataFailureConstants,
+  RequestDataConstants
+} from '../store/APIRequestsHandling/types'
 import CircularProgress from '@material-ui/core/CircularProgress'
 //import Backdrop from '@material-ui/core/Backdrop'
 import Typography from '@material-ui/core/Typography'
 import WillNameLaterHOC from './WillNameLaterHOC'
 const { USER_LOGGING_OUT_REQUEST_FAILURE } = RequestDataFailureConstants
+const { HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST } = RequestDataConstants
 
 interface IReduxStateProps {
   dataLoading: boolean
   user: User
   auth: IAuthReducerState
+  reduxStoreDataSlices: null[]
 }
 
 interface IDispatchProps {
@@ -39,7 +44,7 @@ const LoggedInUserController: React.FC<IReduxStateProps & IDispatchProps> = ({
       {auth.error !== null &&
         auth.error.actionType === USER_LOGGING_OUT_REQUEST_FAILURE && (
           <Typography variant="body1">
-            Error occured in logout :(. Stay on the site :).
+            Error occured in logout :(. Stay on the site por favor34\ :).
           </Typography>
         )}
       <Switch>
@@ -53,22 +58,26 @@ const LoggedInUserController: React.FC<IReduxStateProps & IDispatchProps> = ({
 
 const mapStateToProps = ({
   auth,
-  users,
+  ui: { apiCalling }
+}: /* users,
   userLanguages,
   chatGroups,
-  userChatGroups
-}: ReduxState): IReduxStateProps => {
+  userChatGroups*/
+ReduxState): IReduxStateProps => {
   const { user } = auth
-  const dataLoading: boolean = [
+  const { dataLoading, event } = apiCalling
+  /*const dataLoading: boolean = [
     users,
     chatGroups,
     userChatGroups,
     userLanguages
-  ].some(dataItem => dataItem.isLoading)
+  ].some(dataItem => dataItem.isLoading)*/
   return {
-    dataLoading,
+    dataLoading:
+      event === HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST && dataLoading,
     user: user.data,
-    auth
+    auth,
+    reduxStoreDataSlices: []
   }
 }
 

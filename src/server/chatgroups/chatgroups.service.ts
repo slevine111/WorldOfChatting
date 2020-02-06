@@ -13,7 +13,7 @@ export default class ChatGroupService {
 
   getChatGroupsOfSingleUser(userId: string): Promise<IChatGroupAPIReturn[]> {
     return this.chatGroupRepository.query(
-      `SELECT A.*, favorite, "lastMessageSeenId"
+      `SELECT A.*, favorite, "lastMessageSeenTimeStamp"
          FROM chat_group A
          JOIN user_chat_group B ON A.id = B."chatGroupId"
          WHERE "userId" = $1`,

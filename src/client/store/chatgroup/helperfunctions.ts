@@ -1,8 +1,10 @@
 import { IChatGroupNormalizedShape } from './reducer'
+import { UserLanguage } from '../../../entities'
 import { IChatGroupAPIReturn } from '../../../types-for-both-server-and-client'
 
 export const normalizeInitialChatGroupData = (
-  chatGroupData: IChatGroupAPIReturn[]
+  chatGroupData: IChatGroupAPIReturn[],
+  userLanguageData: UserLanguage[]
 ): IChatGroupNormalizedShape => {
   let normalizedData: IChatGroupNormalizedShape = {
     byId: {},
@@ -19,6 +21,12 @@ export const normalizeInitialChatGroupData = (
       normalizedData.subGroupings[language] = [id]
     }
     if (favorite) normalizedData.subGroupings.favorites.push(id)
+  }
+  for (let i = 0; i < userLanguageData.length; ++i) {
+    const { language } = userLanguageData[i]
+    if (normalizedData.subGroupings[language] === undefined) {
+      normalizedData.subGroupings[language] = []
+    }
   }
   return normalizedData
 }

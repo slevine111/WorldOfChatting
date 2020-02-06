@@ -3,7 +3,7 @@ import {
   RequestDataSuccessConstants,
   RequestDataFailureConstants
 } from '../APIRequestsHandling/types'
-import { IBaseReducerTwo, INormalizedReducerShape } from '../reducer.base'
+import { IBaseReducer, INormalizedReducerShape } from '../reducer.base'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { UserChatGroup } from '../../../entities'
 const { HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST } = RequestDataConstants
@@ -22,7 +22,7 @@ export type IUserChatGroupNormalizedShape = INormalizedReducerShape<
   UserChatGroup
 >
 
-export type IUserChatGroupReducerState = IBaseReducerTwo<
+export type IUserChatGroupReducerState = IBaseReducer<
   IUserChatGroupNormalizedShape
 >
 

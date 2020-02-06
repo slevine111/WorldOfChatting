@@ -2,10 +2,12 @@ import { AxiosResponse, AxiosError } from 'axios'
 import {
   RequestDataConstants,
   RequestDataFailureConstants,
-  ActionOnRequestData,
   IThunkReturnObject,
   IAxiosErrorData,
-  ActionOnRequestDataFailure
+  ActionOnTriggerDataRequest,
+  ActionOnDataRequestFaiure,
+  TRIGGER_DATA_REQUEST,
+  DATA_REQUEST_FAILURE
 } from './types'
 import { MyStoreType } from '../index'
 import { addPostponnedAction } from '../auth/actions'
@@ -31,9 +33,9 @@ export const refreshTokenMiddleware = (store: MyStoreType) => {
 
     const { bypassRefreshTokenMiddleware, requestDataActionType } = action
 
-    const requestDataAction: ActionOnRequestData = {
-      type: requestDataActionType,
-      isLoading: true
+    const requestDataAction: ActionOnTriggerDataRequest = {
+      type: TRIGGER_DATA_REQUEST,
+      eventTriggeringDataRequest: requestDataActionType
     }
     next(requestDataAction)
 
@@ -97,9 +99,8 @@ export const callAPIMiddleware = () => {
       } else {
         errorData = errorTyped.response.data
       }
-      const dispatchFailureActionObject: ActionOnRequestDataFailure = {
-        type: apiFailureActionType,
-        isLoading: false,
+      const dispatchFailureActionObject: ActionOnDataRequestFaiure = {
+        type: DATA_REQUEST_FAILURE,
         error: errorData
       }
       next(dispatchFailureActionObject)

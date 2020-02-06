@@ -14,8 +14,7 @@ export const generateWordCloudArray = (
   const { subGroupings, byId } = userLanguages.data
   const selectedUserLangsId: string[] =
     subGroupings[LOGGED_IN_USER_SUBGROUPING_KEY]
-  const chatGroupsByLanguage: { [key: string]: string[] } =
-    chatGroups.data.subGroupings
+  const chatGroupsByLanguage = chatGroups.data.subGroupings
   for (let i = 0; i < selectedUserLangsId.length; ++i) {
     const { language, type } = byId[selectedUserLangsId[i]]
     wordCloudArray.push({

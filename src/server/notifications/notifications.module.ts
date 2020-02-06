@@ -9,4 +9,4 @@ import NotificationService from './notifications.service'
   providers: [NotificationService],
   controllers: [NotificationController]
 })
-export default class ChatGroupModule {}
+export default class NotificationModule {}

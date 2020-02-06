@@ -89,15 +89,15 @@ export default class UserService {
               ucg.id as "userChatGroupId",
               ucg."userId",
               ucg."chatGroupId",
-              ucg.favorite
-              ucg."lastMessageSeenId"
+              ucg.favorite,
+              ucg."lastMessageSeenTimeStamp"
       FROM user_chat_group ucg
       JOIN (SELECT "chatGroupId" FROM user_chat_group WHERE "userId" = $1) filter
       ON ucg."chatGroupId" = filter."chatGroupId"
       JOIN "user" u ON ucg."userId" = u.id
       WHERE ucg."userId" != $2
     `,
-      [userId, userId, userId]
+      [userId, userId]
     )
   }
 
@@ -108,6 +108,7 @@ export default class UserService {
     let endQuery: string = ''
     if (entity === EntityGetUsersLinkedTo.NOTIFICATION) {
       endQuery = `JOIN notification B ON A.id = B."senderId"
+                  JOIN notification_recipient C ON B.id = C."notificationId"
                   WHERE "targetUserId" = $1`
     } else {
       endQuery = `JOIN user_language B ON A.id = B."userId"

@@ -1,6 +1,5 @@
 import {
   Entity,
-  Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   ManyToOne,
@@ -14,11 +13,8 @@ export default class Notification {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date
-
-  @Column('varchar')
-  body: string
 
   @ManyToOne(() => NotificationType)
   @JoinColumn({ name: 'notificationType' })

@@ -22,6 +22,7 @@ export const separateUserAndChatGroupFields = (
     allIds: [],
     subGroupings: {}
   }
+  let uniqueUserIdsChattingWith: Set<string> = new Set()
   let count: number = 0
   for (let i = 0; i < usersWithChatGroups.length; ++i) {
     if (usersWithChatGroups[i].userId !== userIdToFilterOn) {
@@ -66,7 +67,10 @@ export const separateUserAndChatGroupFields = (
         }
         usersNormalizedAll.allIds.push(userTableId)
       }
-      usersNormalizedAll.subGroupings.userIdsChattingWith.push(userTableId)
+      if (!uniqueUserIdsChattingWith.has(userTableId)) {
+        usersNormalizedAll.subGroupings.userIdsChattingWith.push(userTableId)
+        uniqueUserIdsChattingWith.add(userTableId)
+      }
     }
   }
   console.log(count, usersWithChatGroups.length)

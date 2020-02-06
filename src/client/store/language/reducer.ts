@@ -5,7 +5,7 @@ import {
   RequestDataSuccessConstants,
   RequestDataFailureConstants
 } from '../APIRequestsHandling/types'
-import { IBaseReducerTwo, INormalizedReducerShape } from '../reducer.base'
+import { IBaseReducer, INormalizedReducerShape } from '../reducer.base'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { normalizeData } from '../utilityfunctions'
 const { ENTERED_SITE_LOADING_BASE_DATA_REQUEST } = RequestDataConstants
@@ -19,7 +19,7 @@ const {
 
 export type ILanguageNormalizedShape = INormalizedReducerShape<Language>
 
-export type ILanguageReducerState = IBaseReducerTwo<ILanguageNormalizedShape>
+export type ILanguageReducerState = IBaseReducer<ILanguageNormalizedShape>
 
 const initialState: ILanguageReducerState = {
   data: { byId: {}, allIds: [], subGroupings: {} },

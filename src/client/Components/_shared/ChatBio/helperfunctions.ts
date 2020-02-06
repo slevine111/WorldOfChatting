@@ -7,10 +7,12 @@ export const getUsersOfChatGroup = (
   chatGroupId: string
 ): IReduxStoreUserFields[] => {
   const subGroupKey: string = `${CHAT_GROUP_KEY_PREFIX}${chatGroupId}`
-  const userIds: string[] = userChatGroups.data.subGroupings[subGroupKey]
+  const userChatGroupIds: string[] =
+    userChatGroups.data.subGroupings[subGroupKey]
   let usersOfChatGroup: IReduxStoreUserFields[] = []
-  for (let i = 0; i < userIds.length; ++i) {
-    usersOfChatGroup.push(users.data.byId[userIds[i]])
+  for (let i = 0; i < userChatGroupIds.length; ++i) {
+    const { userId } = userChatGroups.data.byId[userChatGroupIds[i]]
+    usersOfChatGroup.push(users.data.byId[userId])
   }
   return usersOfChatGroup
 }

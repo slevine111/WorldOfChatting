@@ -17,7 +17,7 @@ export default class Message {
   @Column('varchar')
   body: string
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date
 
   @ManyToOne(() => User)

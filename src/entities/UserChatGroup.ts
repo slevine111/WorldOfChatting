@@ -7,7 +7,6 @@ import {
 } from 'typeorm'
 import User from './User'
 import ChatGroup from './ChatGroup'
-import Message from './Message'
 
 @Entity()
 export default class UserChatGroup {
@@ -17,9 +16,8 @@ export default class UserChatGroup {
   @Column({ type: 'boolean', default: false })
   favorite: boolean
 
-  @ManyToOne(() => Message)
-  @JoinColumn({ name: 'lastMessageSeenId' })
-  lastMessageSeenId: string
+  @Column({ type: 'timestamptz', nullable: true })
+  lastMessageSeenTimeStamp: string
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'userId' })

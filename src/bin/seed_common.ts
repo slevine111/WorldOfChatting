@@ -1,4 +1,5 @@
 import { Message, UserChatGroup, User, ChatGroup } from '../entities'
+import { NotificationTypeOptions } from '../entities/NotificationType'
 import { Repository, getConnection } from 'typeorm'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
 import { hashSync } from 'bcrypt'
@@ -52,6 +53,23 @@ export interface IUserLanguageSubset {
   language: string
 }
 
+export interface IMessageSubset {
+  body: string
+  userId: string
+  chatGroupId: string
+}
+
+export interface INotificationSubset {
+  notificationType: NotificationTypeOptions
+  senderId: string
+}
+
+export interface INotificationRecipientSubset {
+  read: boolean
+  notificationId: string
+  targetUserId: string
+}
+
 export interface IObjectOfSets {
   [key: string]: Set<string>
 }
@@ -87,12 +105,6 @@ export const CHAT_GROUP_LANGUAGES_MANUALLY = <const>[
   'Spanish'
 ]
 
-interface IMessageSubset {
-  body: string
-  userId: string
-  chatGroupId: string
-}
-
 const isModel = (model: unknown): model is Function => {
   return (
     typeof model === 'function' &&
@@ -102,7 +114,10 @@ const isModel = (model: unknown): model is Function => {
       'UserLanguage',
       'Message',
       'Language',
-      'UserChatGroup'
+      'UserChatGroup',
+      'Notification',
+      'NotificationRecipient',
+      'NotificationType'
     ].includes(model.name)
   )
 }

@@ -5,7 +5,7 @@ import {
 } from '../APIRequestsHandling/types'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { UserLanguage } from '../../../entities'
-import { IBaseReducerTwo, INormalizedReducerShape } from '../reducer.base'
+import { IBaseReducer, INormalizedReducerShape } from '../reducer.base'
 import { normalizeData } from '../utilityfunctions'
 const {
   WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST,
@@ -26,7 +26,7 @@ export const LOGGED_IN_USER_SUBGROUPING_KEY = <const>'loggedInUser'
 
 export type IUserLanguageNormalizedShape = INormalizedReducerShape<UserLanguage>
 
-export type IUserLanguageReducerState = IBaseReducerTwo<
+export type IUserLanguageReducerState = IBaseReducer<
   IUserLanguageNormalizedShape
 >
 

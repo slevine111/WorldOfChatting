@@ -3,8 +3,10 @@ import {
   User,
   UserLanguage,
   UserChatGroup,
-  Language
+  Language,
+  NotificationType
 } from '../entities'
+import { NotificationTypeOptions } from '../entities/NotificationType'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
 import {
   MANUAL_USERS_ARRAY,
@@ -19,6 +21,23 @@ import {
   returnRepository
 } from './seed_common'
 import { Connection, createConnection } from 'typeorm'
+
+console.log(
+  Object.values(NotificationTypeOptions).map(nt => ({ notificationType: nt }))
+)
+
+const createAndSaveNotificationTypesToDb = (
+  connectionName: string
+): Promise<NotificationType[]> => {
+  return returnRepository(
+    (NotificationType as unknown) as NotificationType,
+    connectionName
+  ).save(
+    (Object.values(NotificationTypeOptions).map(nt => ({
+      notificationType: nt
+    })) as unknown) as NotificationType[]
+  )
+}
 
 const createAndSaveUsersToDb = (connectionName: string): Promise<User[]> => {
   return returnRepository((User as unknown) as User, connectionName).save(
@@ -180,6 +199,7 @@ export default async (
     await returnRepository((Language as unknown) as Language, name).save(
       languages
     )
+    await createAndSaveNotificationTypesToDb(name)
     const users: User[] = await createAndSaveUsersToDb(name)
     const chatGroups: ChatGroup[] = await createAndSaveChatGroupsToDb(name)
     const [userChatGroups, { languagesByUser }]: [

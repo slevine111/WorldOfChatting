@@ -4,7 +4,7 @@ import {
   RequestDataFailureConstants
 } from '../APIRequestsHandling/types'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
-import { IBaseReducerTwo, INormalizedReducerShape } from '../reducer.base'
+import { IBaseReducer, INormalizedReducerShape } from '../reducer.base'
 import { INotificationReducerFields } from '../../../types-for-both-server-and-client'
 import { normalizeData } from '../utilityfunctions'
 const {
@@ -21,7 +21,7 @@ export type INotificationsNormalizedShape = INormalizedReducerShape<
   INotificationReducerFields
 >
 
-export type INotificationReducerState = IBaseReducerTwo<
+export type INotificationReducerState = IBaseReducer<
   INotificationsNormalizedShape
 >
 

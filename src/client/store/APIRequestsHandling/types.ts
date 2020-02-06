@@ -39,6 +39,28 @@ export enum RequestDataFailureConstants {
   REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE = 'REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE'
 }
 
+interface ActionOnDataRequestSuccess {
+  type: RequestDataSuccessConstants
+  [key: string]: any
+}
+
+export const TRIGGER_DATA_REQUEST = <const>'TRIGGER_DATA_REQUEST'
+export type ActionOnTriggerDataRequest = {
+  type: typeof TRIGGER_DATA_REQUEST
+  eventTriggeringDataRequest: RequestDataConstants
+}
+
+export const DATA_REQUEST_FAILURE = <const>'DATA_REQUEST_FAILURE'
+export type ActionOnDataRequestFaiure = {
+  type: typeof DATA_REQUEST_FAILURE
+  error: IAxiosErrorData
+}
+
+export type UIAPICallingActionReturns =
+  | ActionOnTriggerDataRequest
+  | ActionOnDataRequestSuccess
+  | ActionOnDataRequestFaiure
+
 export type ActionOnRequestData = {
   type: RequestDataConstants
   isLoading: true

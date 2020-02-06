@@ -39,8 +39,8 @@ export function normalizeData<T extends { [key: string]: any }>(
   for (let i = 0; i < data.length; ++i) {
     const uniqueValue: string = data[i][dataItemKey]
     if (
-      existsNormalizedData &&
-      normalizedData.byId[uniqueValue] === undefined
+      !existsNormalizedData ||
+      (existsNormalizedData && normalizedData.byId[uniqueValue] === undefined)
     ) {
       normalizedData.allIds.push(uniqueValue)
     }

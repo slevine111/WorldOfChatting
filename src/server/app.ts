@@ -7,6 +7,7 @@ import LanguageModule from './languages/languages.module'
 import UserLanguageModule from './userlanguages/userlanguages.module'
 import ChatGroupModule from './chatgroups/chatgroups.module'
 import AuthModule from './auth/auth.module'
+import NotificationModule from './notifications/notifications.module'
 import MyJWTModule from './MyJWTModule'
 import MyCacheModule from './MyCacheModule'
 import WebpageController from './webpage.controller'
@@ -18,6 +19,7 @@ import WebpageController from './webpage.controller'
     UserLanguageModule,
     ChatGroupModule,
     AuthModule,
+    NotificationModule,
     MyJWTModule,
     TypeOrmModule.forRoot(),
     ServeStaticModule.forRoot({

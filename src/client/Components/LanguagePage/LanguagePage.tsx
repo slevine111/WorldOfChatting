@@ -13,13 +13,15 @@ import Grid from '@material-ui/core/Grid'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import styles from './styles'
 import WillNameLaterHOC from '../WillNameLaterHOC'
+import { RequestDataConstants } from '../../store/APIRequestsHandling/types'
+const { WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST } = RequestDataConstants
 
 interface IMatchParams {
   language: string
 }
 
 interface IReduxStateProps {
-  isLoading: boolean
+  dataLoading: boolean
   reduxStoreDataSlices: [IUserReducerState, IUserLanguageReducerState]
 }
 
@@ -34,7 +36,7 @@ const LanguagePage: React.FC<RouteComponentProps<IMatchParams> &
     params: { language }
   },
   languagePageDataRetrival,
-  isLoading
+  dataLoading
 }) => {
   const { paperPageSection } = styles()
   useEffect(() => {
@@ -44,8 +46,8 @@ const LanguagePage: React.FC<RouteComponentProps<IMatchParams> &
   return (
     <div>
       <Typography variant="h6">{language.toLocaleUpperCase()}</Typography>
-      {isLoading && <CircularProgress disableShrink />}
-      {!isLoading && (
+      {dataLoading && <CircularProgress disableShrink />}
+      {!dataLoading && (
         <Grid container>
           <Grid item xs={12} sm={9}>
             <Paper className={paperPageSection}>
@@ -66,11 +68,13 @@ const LanguagePage: React.FC<RouteComponentProps<IMatchParams> &
 
 const mapStateToProps = ({
   userLanguages,
-  users
+  users,
+  ui: { apiCalling }
 }: ReduxState): IReduxStateProps => {
-  const isLoading: boolean = users.isLoading || userLanguages.isLoading
+  const { dataLoading, event } = apiCalling
+  //const dataLoading: boolean = users.isLoading || userLanguages.isLoading
   return {
-    isLoading,
+    dataLoading: event === WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST && dataLoading,
     reduxStoreDataSlices: [users, userLanguages]
   }
 }

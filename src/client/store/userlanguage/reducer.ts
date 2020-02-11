@@ -1,6 +1,6 @@
 import {
   RequestDataSuccessConstants,
-  RequestDataFailureConstants
+  RequestDataConstants
 } from '../APIRequestsHandling/types'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { UserLanguage } from '../../../entities'
@@ -11,7 +11,7 @@ const {
   WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS,
   USER_LOGGING_OUT_REQUEST_SUCCESS
 } = RequestDataSuccessConstants
-const { REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE } = RequestDataFailureConstants
+const { REFRESHING_ACCESS_TOKEN_REQUEST } = RequestDataConstants
 
 export const LOGGED_IN_USER_SUBGROUPING_KEY = <const>'loggedInUser'
 
@@ -41,7 +41,7 @@ export default (
         currentNormalizedData: state
       })
     //logging out
-    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE:
+    case REFRESHING_ACCESS_TOKEN_REQUEST:
     case USER_LOGGING_OUT_REQUEST_SUCCESS:
       return { ...initialState }
     default:

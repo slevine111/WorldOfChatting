@@ -5,7 +5,7 @@ import {
 } from '../../../types-for-both-server-and-client'
 import { UserLanguage } from '../../../entities'
 import { IUserNormalizedShape } from '../user/reducer'
-import { IUserChatGroupNormalizedShape } from '../userchatgroup/reducer'
+import { IUserChatGroupReducerState } from '../userchatgroup/reducer'
 import { AnyAction } from 'redux'
 import { AxiosResponse } from 'axios'
 
@@ -82,7 +82,7 @@ export type UserLoggedInDataRetrivalArrayDataTypes = [
   UserLanguage[],
   IChatGroupAPIReturn[],
   IUserNormalizedShape,
-  IUserChatGroupNormalizedShape,
+  IUserChatGroupReducerState,
   INotificationReducerFields[]
 ]
 

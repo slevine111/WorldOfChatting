@@ -1,35 +1,28 @@
 import {
-  RequestDataConstants,
   RequestDataSuccessConstants,
-  RequestDataFailureConstants
+  RequestDataConstants
 } from '../APIRequestsHandling/types'
-import { IBaseReducer, INormalizedReducerShape } from '../reducer.base'
+import { INormalizedReducerShape } from '../reducer.base'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { UserChatGroup } from '../../../entities'
-const { HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST } = RequestDataConstants
 const {
   HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
   USER_LOGGING_OUT_REQUEST_SUCCESS
 } = RequestDataSuccessConstants
-const {
-  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE,
-  REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE
-} = RequestDataFailureConstants
+const { REFRESHING_ACCESS_TOKEN_REQUEST } = RequestDataConstants
 
 export const CHAT_GROUP_KEY_PREFIX = <const>'chatGroup'
 
-export type IUserChatGroupNormalizedShape = INormalizedReducerShape<
-  UserChatGroup
->
+//export type IUserChatGroupNormalizedShape = INormalizedReducerShape<
+//  UserChatGroup
+//>
 
-export type IUserChatGroupReducerState = IBaseReducer<
-  IUserChatGroupNormalizedShape
->
+export type IUserChatGroupReducerState = INormalizedReducerShape<UserChatGroup>
 
 const initialState: IUserChatGroupReducerState = {
-  data: { byId: {}, allIds: [], subGroupings: {} },
-  isLoading: false,
-  error: null
+  byId: {},
+  allIds: [],
+  subGroupings: {}
 }
 
 export default (
@@ -38,16 +31,8 @@ export default (
 ): IUserChatGroupReducerState => {
   switch (action.type) {
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
-      return {
-        data: action.userChatGroups,
-        isLoading: action.isLoading,
-        error: action.error
-      }
-    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST:
-      return { ...initialState, isLoading: action.isLoading }
-    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE:
-      return { ...initialState, error: action.error }
-    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE:
+      return action.userChatGroups
+    case REFRESHING_ACCESS_TOKEN_REQUEST:
     case USER_LOGGING_OUT_REQUEST_SUCCESS:
       return { ...initialState }
     default:

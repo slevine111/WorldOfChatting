@@ -1,11 +1,11 @@
 import { IUserNormalizedShape } from '../user/reducer'
-import { IUserChatGroupNormalizedShape } from '../userchatgroup/reducer'
+import { IUserChatGroupReducerState } from '../userchatgroup/reducer'
 import { IUserAndChatGroupGetReturn } from '../../../types-for-both-server-and-client'
 import { CHAT_GROUP_KEY_PREFIX } from '../userchatgroup/reducer'
 
 interface IUsersAndUserChatGroups {
   usersNormalizedAll: IUserNormalizedShape
-  userChatGroupNormalized: IUserChatGroupNormalizedShape
+  userChatGroupNormalized: IUserChatGroupReducerState
 }
 
 export const separateUserAndChatGroupFields = (
@@ -17,7 +17,7 @@ export const separateUserAndChatGroupFields = (
     ...usersNormalized
   }
   usersNormalizedAll.subGroupings.userIdsChattingWith = []
-  let userChatGroupNormalized: IUserChatGroupNormalizedShape = {
+  let userChatGroupNormalized: IUserChatGroupReducerState = {
     byId: {},
     allIds: [],
     subGroupings: {}

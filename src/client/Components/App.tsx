@@ -17,17 +17,13 @@ interface IOwnProps {
 }
 
 const App: React.FC<IOwnProps> = ({ redirectAfterLogin }): ReactElement => {
-  const { user } = useSelector(({ auth }: ReduxState) => ({
-    user: auth.user.data
-  }))
+  const user = useSelector(({ auth }: ReduxState) => auth.user.data)
   const dispatch = useDispatch()
 
   let websiteLoadError: boolean = false
   useEffect(() => {
-    Promise.all([
-      dispatch(getAllLanguagesThunk()),
-      dispatch(checkIfUserLoggedInProcess())
-    ])
+    dispatch(getAllLanguagesThunk())
+      .then(() => dispatch(checkIfUserLoggedInProcess()))
       .then(() => {
         window.location.hash = redirectAfterLogin
       })

@@ -1,4 +1,5 @@
 import React, { ReactElement, useState, ChangeEvent } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Location } from 'history'
 import TextField from '@material-ui/core/TextField'
@@ -6,37 +7,38 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import useStyles from './styles'
-import { connect } from 'react-redux'
 import { loginUserProcess } from '../../store/auth/thunks'
 import { IUserSignInDTO } from '../../../server/auth/auth.dto'
-import { RequestDataFailureConstants } from '../../store/APIRequestsHandling/types'
+import { RequestDataConstants } from '../../store/APIRequestsHandling/types'
 import { ReduxState } from '../../store'
-import { IAuthReducerState } from '../../store/auth/reducer'
 import Grid from '@material-ui/core/Grid'
 import ErrorMessageCaption from '../_shared/utility/ErrorMessageCaption'
 const {
-  REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE,
-  AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_FAILURE
-} = RequestDataFailureConstants
+  REFRESHING_ACCESS_TOKEN_REQUEST,
+  AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST
+} = RequestDataConstants
 
-interface IReduxStateProps {
-  auth: IAuthReducerState
-}
+const Login: React.FC<{
+  location: Location<
+    | {
+        email: string
+        password: string
+      }
+    | undefined
+  >
+}> = ({ location }): ReactElement => {
+  const {
+    formContainer,
+    paperPadding,
+    topMargin,
+    topMarginButton,
+    centerText
+  } = useStyles()
+  const dispatch = useDispatch()
+  const {
+    apiCalling: { error, event }
+  } = useSelector(({ ui }: ReduxState) => ui)
 
-interface IDispatchProps {
-  loginUser: (userLoginInfo: IUserSignInDTO) => Promise<void>
-}
-
-const Login: React.FC<IReduxStateProps &
-  IDispatchProps & {
-    location: Location<
-      | {
-          email: string
-          password: string
-        }
-      | undefined
-    >
-  }> = ({ auth, loginUser, location }): ReactElement => {
   let initialEmail: string = ''
   let initialPassword: string = ''
   if (typeof location.state === 'object' && location.state !== null) {
@@ -54,22 +56,13 @@ const Login: React.FC<IReduxStateProps &
     setLoginInfo({ ...loginInfo, [name]: value })
   }
 
-  const {
-    formContainer,
-    paperPadding,
-    topMargin,
-    topMarginButton,
-    centerText
-  } = useStyles()
-  const { error } = auth
   return (
     <Grid container className={formContainer}>
-      {error !== null &&
-        error.actionType == REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE && (
-          <div>
-            You accidentally got logged out. Please log back in. Fixing it ASAP.
-          </div>
-        )}
+      {error !== null && event == REFRESHING_ACCESS_TOKEN_REQUEST && (
+        <div>
+          You accidentally got logged out. Please log back in. Fixing it ASAP.
+        </div>
+      )}
       <Paper className={paperPadding} square={true}>
         <Typography className={centerText} variant="body1">
           <i>Ready to keep chatting with the world?!</i>
@@ -92,7 +85,7 @@ const Login: React.FC<IReduxStateProps &
           value={loginInfo.password}
           onChange={handleChange}
           onKeyDown={event => {
-            if (event.which === 13) loginUser(loginInfo)
+            if (event.which === 13) dispatch(loginUserProcess(loginInfo))
           }}
           margin="normal"
           fullWidth
@@ -100,8 +93,7 @@ const Login: React.FC<IReduxStateProps &
           type="password"
         />
         {error !== null &&
-          error.actionType ===
-            AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_FAILURE && (
+          event === AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST && (
             <ErrorMessageCaption errorMessage={error.message} />
           )}
         <div className={topMarginButton}>
@@ -111,7 +103,7 @@ const Login: React.FC<IReduxStateProps &
             variant="contained"
             color="primary"
             disabled={loginInfo.email === '' || loginInfo.password === ''}
-            onClick={() => loginUser(loginInfo)}
+            onClick={() => dispatch(loginUserProcess(loginInfo))}
           >
             Log in
           </Button>
@@ -126,14 +118,4 @@ const Login: React.FC<IReduxStateProps &
   )
 }
 
-const mapStateToProps = ({ auth }: ReduxState): IReduxStateProps => ({ auth })
-
-const mapDispatchToProps = (dispatch: any): IDispatchProps => {
-  return {
-    loginUser: (userLoginInfo: IUserSignInDTO) => {
-      return dispatch(loginUserProcess(userLoginInfo))
-    }
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login)
+export default Login

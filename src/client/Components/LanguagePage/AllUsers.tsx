@@ -26,20 +26,24 @@ interface IOwnProps {
 }
 
 const AllUsers: React.FC<IOwnProps> = ({ language }) => {
+  console.log('rerendering')
   const usersOfLanguage: IUserWithLanguageFields[] = useSelector(
     (state: ReduxState) => {
       const {
-        auth: { user }
+        auth: { user },
+        userLanguages
       } = state
 
-      return getAllUsersOfLanguage(
-        language,
-        user.data.id,
-        state.userLanguages.data,
-        state.chatGroups.data,
-        state.userChatGroups.data,
-        state.users.data
-      )
+      return userLanguages.data.subGroupings[language] !== undefined
+        ? getAllUsersOfLanguage(
+            language,
+            user.data.id,
+            state.userLanguages.data,
+            state.chatGroups.data,
+            state.userChatGroups.data,
+            state.users.data
+          )
+        : []
     }
   )
 

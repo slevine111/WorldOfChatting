@@ -1,8 +1,7 @@
 //Packages
 import React, { useState, ReactElement, ChangeEvent } from 'react'
-import { Link, Redirect } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { History } from 'history'
-import { connect } from 'react-redux'
 
 //Components
 import PersonalInfoForm from './PersonalInfoForm'
@@ -13,9 +12,7 @@ import ErrorMessageCaption from '../_shared/utility/ErrorMessageCaption'
 //My modules
 import { ISignupInfo } from './index'
 import { signupNewUserProcess } from './helperfunctions'
-import { ReduxState } from '../../store/index'
 import { IUserLanguagePostDTOSubset } from '../../../server/userlanguages/userlanguages.dto'
-import { User } from '../../../entities'
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
 
 //Material-UI
@@ -25,17 +22,7 @@ import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 import useStyles from './styles'
 
-interface IReduxStateProps {
-  user: User
-}
-
-interface ISignupProps extends IReduxStateProps {
-  history: History
-}
-
-const Signup: React.FC<ISignupProps> = ({ user, history }): ReactElement => {
-  if (user.id) return <Redirect to="/home" />
-
+const Signup: React.FC<{ history: History }> = ({ history }): ReactElement => {
   let [signupInfo, setSignupFields] = useState<ISignupInfo>({
     firstName: '',
     lastName: '',
@@ -169,8 +156,4 @@ const Signup: React.FC<ISignupProps> = ({ user, history }): ReactElement => {
   )
 }
 
-const mapStateToProps = ({ auth: { user } }: ReduxState): IReduxStateProps => ({
-  user: user.data
-})
-
-export default connect(mapStateToProps)(Signup)
+export default Signup

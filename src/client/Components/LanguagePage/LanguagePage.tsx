@@ -1,10 +1,8 @@
 import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { ReduxState } from '../../store'
 import { RouteComponentProps } from 'react-router-dom'
 import { languagePageDataRetrivalThunk } from '../../store/APIRequestsHandling/multiplereducerthunks'
-import { IUserReducerState } from '../../store/user/reducer'
-import { IUserLanguageReducerState } from '../../store/userlanguage/reducer'
 import CurrentChats from './CurrentChats'
 import AllUsers from './AllUsers'
 import Typography from '@material-ui/core/Typography'
@@ -20,27 +18,28 @@ interface IMatchParams {
   language: string
 }
 
-interface IReduxStateProps {
+/*interface IReduxStateProps {
   dataLoading: boolean
   reduxStoreDataSlices: [IUserReducerState, IUserLanguageReducerState]
-}
+}*/
 
-interface IDispatchProps {
-  languagePageDataRetrival: (language: string) => void
-}
-
-const LanguagePage: React.FC<RouteComponentProps<IMatchParams> &
-  IDispatchProps &
-  IReduxStateProps> = ({
+const LanguagePage: React.FC<RouteComponentProps<IMatchParams>> = ({
   match: {
     params: { language }
-  },
-  languagePageDataRetrival,
-  dataLoading
+  }
 }) => {
+  const dispatch = useDispatch()
+  const dataLoading = useSelector(
+    ({
+      ui: {
+        apiCalling: { event, dataLoading }
+      }
+    }: ReduxState) =>
+      event === WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST && dataLoading
+  )
   const { paperPageSection } = styles()
   useEffect(() => {
-    languagePageDataRetrival(language)
+    dispatch(languagePageDataRetrivalThunk(language))
   }, [language])
 
   return (
@@ -66,7 +65,7 @@ const LanguagePage: React.FC<RouteComponentProps<IMatchParams> &
   )
 }
 
-const mapStateToProps = ({
+/*const mapStateToProps = ({
   userLanguages,
   users,
   ui: { apiCalling }
@@ -77,17 +76,8 @@ const mapStateToProps = ({
     dataLoading: event === WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST && dataLoading,
     reduxStoreDataSlices: [users, userLanguages]
   }
-}
+}*/
 
-const mapDispatchToProps = (dispatch: any): IDispatchProps => {
-  return {
-    languagePageDataRetrival: (language: string) => {
-      dispatch(languagePageDataRetrivalThunk(language))
-    }
-  }
-}
+//export default connect(mapStateToProps)(WillNameLaterHOC(LanguagePage))
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(WillNameLaterHOC(LanguagePage))
+export default WillNameLaterHOC(LanguagePage)

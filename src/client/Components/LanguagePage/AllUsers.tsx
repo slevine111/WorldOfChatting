@@ -41,7 +41,7 @@ const AllUsers: React.FC<IOwnProps> = ({ language }) => {
             state.userLanguages,
             state.chatGroups.data,
             state.userChatGroups,
-            state.users.data
+            state.users
           )
         : []
     }

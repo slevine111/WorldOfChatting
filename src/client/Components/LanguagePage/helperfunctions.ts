@@ -15,7 +15,7 @@ import {
 } from '../../store/userlanguage/reducer'
 import { IChatGroupNormalizedShape } from '../../store/chatgroup/reducer'
 import { IUserChatGroupReducerState } from '../../store/userchatgroup/reducer'
-import { IUserNormalizedShape } from '../../store/user/reducer'
+import { IUserReducerState } from '../../store/user/reducer'
 import { CHAT_GROUP_KEY_PREFIX } from '../../store/userchatgroup/reducer'
 
 export const getAllUsersOfLanguage = (
@@ -24,7 +24,7 @@ export const getAllUsersOfLanguage = (
   userLanguages: IUserLanguageReducerState,
   chatGroups: IChatGroupNormalizedShape,
   userChatGroups: IUserChatGroupReducerState,
-  users: IUserNormalizedShape
+  users: IUserReducerState
 ): IUserWithLanguageFields[] => {
   const { byId, subGroupings } = userLanguages
   const loggedInUserLangsIds: string[] =

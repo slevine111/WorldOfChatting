@@ -13,10 +13,6 @@ const { REFRESHING_ACCESS_TOKEN_REQUEST } = RequestDataConstants
 
 export const CHAT_GROUP_KEY_PREFIX = <const>'chatGroup'
 
-//export type IUserChatGroupNormalizedShape = INormalizedReducerShape<
-//  UserChatGroup
-//>
-
 export type IUserChatGroupReducerState = INormalizedReducerShape<UserChatGroup>
 
 const initialState: IUserChatGroupReducerState = {

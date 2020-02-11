@@ -11,7 +11,7 @@ export const getUsersOfChatGroup = (
   let usersOfChatGroup: IReduxStoreUserFields[] = []
   for (let i = 0; i < userChatGroupIds.length; ++i) {
     const { userId } = userChatGroups.byId[userChatGroupIds[i]]
-    usersOfChatGroup.push(users.data.byId[userId])
+    usersOfChatGroup.push(users.byId[userId])
   }
   return usersOfChatGroup
 }

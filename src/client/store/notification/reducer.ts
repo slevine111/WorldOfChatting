@@ -1,34 +1,25 @@
 import {
   RequestDataConstants,
-  RequestDataSuccessConstants,
-  RequestDataFailureConstants
+  RequestDataSuccessConstants
 } from '../APIRequestsHandling/types'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
-import { IBaseReducer, INormalizedReducerShape } from '../reducer.base'
+import { INormalizedReducerShape } from '../reducer.base'
 import { INotificationReducerFields } from '../../../types-for-both-server-and-client'
 import { normalizeData } from '../utilityfunctions'
 const {
   HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
   USER_LOGGING_OUT_REQUEST_SUCCESS
 } = RequestDataSuccessConstants
-const { HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST } = RequestDataConstants
-const {
-  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE,
-  REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE
-} = RequestDataFailureConstants
+const { REFRESHING_ACCESS_TOKEN_REQUEST } = RequestDataConstants
 
-export type INotificationsNormalizedShape = INormalizedReducerShape<
+export type INotificationReducerState = INormalizedReducerShape<
   INotificationReducerFields
 >
 
-export type INotificationReducerState = IBaseReducer<
-  INotificationsNormalizedShape
->
-
 const initialState: INotificationReducerState = {
-  data: { byId: {}, allIds: [], subGroupings: {} },
-  isLoading: false,
-  error: null
+  byId: {},
+  allIds: [],
+  subGroupings: {}
 }
 
 export default (
@@ -37,17 +28,9 @@ export default (
 ): INotificationReducerState => {
   switch (action.type) {
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
-      return {
-        data: normalizeData(action.notifications),
-        isLoading: action.isLoading,
-        error: action.error
-      }
-    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST:
-      return { ...initialState, isLoading: action.isLoading }
-    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE:
-      return { ...initialState, error: action.error }
+      return normalizeData(action.notifications)
     case USER_LOGGING_OUT_REQUEST_SUCCESS:
-    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE:
+    case REFRESHING_ACCESS_TOKEN_REQUEST:
       return { ...initialState }
     default:
       return state

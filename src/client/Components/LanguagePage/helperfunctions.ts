@@ -10,7 +10,7 @@ import {
 } from './shared-types'
 import { displayAndDataNames } from './constants'
 import {
-  IUserLanguageNormalizedShape,
+  IUserLanguageReducerState,
   LOGGED_IN_USER_SUBGROUPING_KEY
 } from '../../store/userlanguage/reducer'
 import { IChatGroupNormalizedShape } from '../../store/chatgroup/reducer'
@@ -21,7 +21,7 @@ import { CHAT_GROUP_KEY_PREFIX } from '../../store/userchatgroup/reducer'
 export const getAllUsersOfLanguage = (
   language: string,
   loggedInUserId: string,
-  userLanguages: IUserLanguageNormalizedShape,
+  userLanguages: IUserLanguageReducerState,
   chatGroups: IChatGroupNormalizedShape,
   userChatGroups: IUserChatGroupNormalizedShape,
   users: IUserNormalizedShape

@@ -34,11 +34,11 @@ const AllUsers: React.FC<IOwnProps> = ({ language }) => {
         userLanguages
       } = state
 
-      return userLanguages.data.subGroupings[language] !== undefined
+      return userLanguages.subGroupings[language] !== undefined
         ? getAllUsersOfLanguage(
             language,
             user.data.id,
-            state.userLanguages.data,
+            state.userLanguages,
             state.chatGroups.data,
             state.userChatGroups.data,
             state.users.data

@@ -11,7 +11,7 @@ export const generateWordCloudArray = (
   chatGroups: IChatGroupReducerState
 ): IWordCloudArrayObject[] => {
   let wordCloudArray: IWordCloudArrayObject[] = []
-  const { subGroupings, byId } = userLanguages.data
+  const { subGroupings, byId } = userLanguages
   const selectedUserLangsId: string[] =
     subGroupings[LOGGED_IN_USER_SUBGROUPING_KEY]
   const chatGroupsByLanguage = chatGroups.data.subGroupings

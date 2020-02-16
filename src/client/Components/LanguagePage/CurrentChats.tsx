@@ -11,7 +11,7 @@ interface IOwnProps {
 
 const FavoriteChats: React.FC<IOwnProps> = ({ language }) => {
   const chatGroupsOfLanguage: string[] = useSelector(
-    ({ chatGroups: { data } }: ReduxState) => data.subGroupings[language]
+    ({ chatGroups }: ReduxState) => chatGroups.subGroupings[language]
   )
   return (
     <div>

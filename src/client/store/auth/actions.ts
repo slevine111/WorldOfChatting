@@ -8,51 +8,33 @@ export const addPostponnedAction = (postponnedAction: IThunkReturnObject) => ({
 })
 type AddPostponnedActionReturn = ReturnType<typeof addPostponnedAction>
 
-export const loggedInUserFoundEnteringSite = (
-  data: IUserAndExpireTime,
-  isLoading: boolean,
-  error: null
-) => ({
+export const loggedInUserFoundEnteringSite = (data: IUserAndExpireTime) => ({
   type: <const>(
     RequestDataSuccessConstants.CHECKING_IF_USER_LOGGED_IN_REQUEST_SUCCESS
   ),
   user: data.user,
-  tokenExpireTime: data.expireTime,
-  isLoading,
-  error
+  tokenExpireTime: data.expireTime
 })
 type LoggedInUserFoundEnteringSiteActionReturn = ReturnType<
   typeof loggedInUserFoundEnteringSite
 >
 
-export const userLoginAttemptSucceeded = (
-  data: IUserAndExpireTime,
-  isLoading: boolean,
-  error: null
-) => ({
+export const userLoginAttemptSucceeded = (data: IUserAndExpireTime) => ({
   type: <const>(
     RequestDataSuccessConstants.AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_SUCCESS
   ),
   user: data.user,
-  tokenExpireTime: data.expireTime,
-  isLoading,
-  error
+  tokenExpireTime: data.expireTime
 })
 type UserLoginAttemptSucceededActionReturn = ReturnType<
   typeof userLoginAttemptSucceeded
 >
 
-export const accessTokenRefreshed = (
-  accessTokenExpireTime: number,
-  isLoading: boolean,
-  error: null
-) => ({
+export const accessTokenRefreshed = (accessTokenExpireTime: number) => ({
   type: <const>(
     RequestDataSuccessConstants.REFRESHING_ACCESS_TOKEN_REQUEST_SUCCESS
   ),
-  accessTokenExpireTime,
-  isLoading,
-  error
+  accessTokenExpireTime
 })
 type AccessTokenRefreshedActionReturn = ReturnType<typeof accessTokenRefreshed>
 

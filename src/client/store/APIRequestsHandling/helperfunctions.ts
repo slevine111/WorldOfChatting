@@ -10,8 +10,7 @@ interface IUsersAndUserChatGroups {
 
 export const separateUserAndChatGroupFields = (
   usersNormalized: IUserReducerState,
-  usersWithChatGroups: IUserAndChatGroupGetReturn[],
-  userIdToFilterOn: string
+  usersWithChatGroups: IUserAndChatGroupGetReturn[]
 ): IUsersAndUserChatGroups => {
   let usersNormalizedAll: IUserReducerState = {
     ...usersNormalized
@@ -23,56 +22,51 @@ export const separateUserAndChatGroupFields = (
     subGroupings: {}
   }
   let uniqueUserIdsChattingWith: Set<string> = new Set()
-  let count: number = 0
   for (let i = 0; i < usersWithChatGroups.length; ++i) {
-    if (usersWithChatGroups[i].userId !== userIdToFilterOn) {
-      ++count
-      const {
-        userTableId,
+    const {
+      userTableId,
+      firstName,
+      lastName,
+      fullName,
+      email,
+      loggedIn,
+      loggedInAsString,
+      ...userChatGroupFields
+    } = usersWithChatGroups[i]
+    const {
+      userChatGroupId,
+      chatGroupId,
+      ...otherUserChatGroupFields
+    } = userChatGroupFields
+    userChatGroupNormalized.byId[userChatGroupId] = {
+      id: userChatGroupId,
+      chatGroupId,
+      ...otherUserChatGroupFields
+    }
+    userChatGroupNormalized.allIds.push(userChatGroupId)
+    const subGroupKey: string = `${CHAT_GROUP_KEY_PREFIX}${chatGroupId}`
+    if (userChatGroupNormalized.subGroupings[subGroupKey] !== undefined) {
+      userChatGroupNormalized.subGroupings[subGroupKey].push(userChatGroupId)
+    } else {
+      userChatGroupNormalized.subGroupings[subGroupKey] = [userChatGroupId]
+    }
+
+    if (usersNormalizedAll.byId[userTableId] === undefined) {
+      usersNormalizedAll.byId[userTableId] = {
+        id: userTableId,
         firstName,
         lastName,
         fullName,
         email,
         loggedIn,
-        loggedInAsString,
-        ...userChatGroupFields
-      } = usersWithChatGroups[i]
-      const {
-        userChatGroupId,
-        chatGroupId,
-        ...otherUserChatGroupFields
-      } = userChatGroupFields
-      userChatGroupNormalized.byId[userChatGroupId] = {
-        id: userChatGroupId,
-        chatGroupId,
-        ...otherUserChatGroupFields
+        loggedInAsString
       }
-      userChatGroupNormalized.allIds.push(userChatGroupId)
-      const subGroupKey: string = `${CHAT_GROUP_KEY_PREFIX}${chatGroupId}`
-      if (userChatGroupNormalized.subGroupings[subGroupKey] !== undefined) {
-        userChatGroupNormalized.subGroupings[subGroupKey].push(userChatGroupId)
-      } else {
-        userChatGroupNormalized.subGroupings[subGroupKey] = [userChatGroupId]
-      }
-
-      if (usersNormalizedAll.byId[userTableId] === undefined) {
-        usersNormalizedAll.byId[userTableId] = {
-          id: userTableId,
-          firstName,
-          lastName,
-          fullName,
-          email,
-          loggedIn,
-          loggedInAsString
-        }
-        usersNormalizedAll.allIds.push(userTableId)
-      }
-      if (!uniqueUserIdsChattingWith.has(userTableId)) {
-        usersNormalizedAll.subGroupings.userIdsChattingWith.push(userTableId)
-        uniqueUserIdsChattingWith.add(userTableId)
-      }
+      usersNormalizedAll.allIds.push(userTableId)
+    }
+    if (!uniqueUserIdsChattingWith.has(userTableId)) {
+      usersNormalizedAll.subGroupings.userIdsChattingWith.push(userTableId)
+      uniqueUserIdsChattingWith.add(userTableId)
     }
   }
-  console.log(count, usersWithChatGroups.length)
   return { usersNormalizedAll, userChatGroupNormalized }
 }

@@ -18,11 +18,6 @@ interface IMatchParams {
   language: string
 }
 
-/*interface IReduxStateProps {
-  dataLoading: boolean
-  reduxStoreDataSlices: [IUserReducerState, IUserLanguageReducerState]
-}*/
-
 const LanguagePage: React.FC<RouteComponentProps<IMatchParams>> = ({
   match: {
     params: { language }
@@ -64,20 +59,5 @@ const LanguagePage: React.FC<RouteComponentProps<IMatchParams>> = ({
     </div>
   )
 }
-
-/*const mapStateToProps = ({
-  userLanguages,
-  users,
-  ui: { apiCalling }
-}: ReduxState): IReduxStateProps => {
-  const { dataLoading, event } = apiCalling
-  //const dataLoading: boolean = users.isLoading || userLanguages.isLoading
-  return {
-    dataLoading: event === WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST && dataLoading,
-    reduxStoreDataSlices: [users, userLanguages]
-  }
-}*/
-
-//export default connect(mapStateToProps)(WillNameLaterHOC(LanguagePage))
 
 export default WillNameLaterHOC(LanguagePage)

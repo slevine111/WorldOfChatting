@@ -3,25 +3,15 @@ import { Language } from '../../../entities'
 import { IThunkReturnObject } from '../APIRequestsHandling/types'
 import {
   RequestDataConstants,
-  RequestDataSuccessConstants,
-  RequestDataFailureConstants
+  RequestDataSuccessConstants
 } from '../APIRequestsHandling/types'
 const { ENTERED_SITE_LOADING_BASE_DATA_REQUEST } = RequestDataConstants
-const {
-  ENTERED_SITE_LOADING_BASE_DATA_REQUEST_FAILURE
-} = RequestDataFailureConstants
 
-const gotAllLanguages = (
-  languages: Language[],
-  isLoading: boolean,
-  error: null
-) => ({
+const gotAllLanguages = (languages: Language[]) => ({
   type: <const>(
     RequestDataSuccessConstants.ENTERED_SITE_LOADING_BASE_DATA_REQUEST_SUCCESS
   ),
-  languages,
-  isLoading,
-  error
+  languages
 })
 type GotAllLanguagesActionReturn = ReturnType<typeof gotAllLanguages>
 
@@ -34,7 +24,6 @@ export const getAllLanguagesThunk = (): IThunkReturnObject<Language[]> => {
       return axios.get('/api/language')
     },
     dispatchActionOnSuccess: gotAllLanguages,
-    apiFailureActionType: ENTERED_SITE_LOADING_BASE_DATA_REQUEST_FAILURE,
     dispatchProps: {}
   }
 }

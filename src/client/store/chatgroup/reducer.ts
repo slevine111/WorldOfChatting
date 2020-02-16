@@ -1,55 +1,29 @@
-import {
-  RequestDataConstants,
-  RequestDataSuccessConstants,
-  RequestDataFailureConstants
-} from '../APIRequestsHandling/types'
+import { RequestDataSuccessConstants } from '../APIRequestsHandling/types'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
-import { IBaseReducer, INormalizedReducerShape } from '../reducer.base'
+import { INormalizedReducerShape } from '../reducer.base'
 import { IChatGroupAPIReturn } from '../../../types-for-both-server-and-client'
 import { normalizeInitialChatGroupData } from './helperfunctions'
+import { createInitialState } from '../utilityfunctions'
 const {
-  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
-  USER_LOGGING_OUT_REQUEST_SUCCESS
+  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS
 } = RequestDataSuccessConstants
-const { HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST } = RequestDataConstants
-const {
-  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE,
-  REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE
-} = RequestDataFailureConstants
 
-export type IChatGroupNormalizedShape = INormalizedReducerShape<
+export type IChatGroupReducerState = INormalizedReducerShape<
   IChatGroupAPIReturn
-> & { subGroupings: { favorites: string[] } }
+>
 
-export type IChatGroupReducerState = IBaseReducer<IChatGroupNormalizedShape>
-
-const initialState: IChatGroupReducerState = {
-  data: { byId: {}, allIds: [], subGroupings: { favorites: [] } },
-  isLoading: false,
-  error: null
-}
+export const FAVORITE_CHAT_GROUPS_KEY = <const>'favorites'
 
 export default (
-  state: IChatGroupReducerState = { ...initialState },
+  state: IChatGroupReducerState = createInitialState(FAVORITE_CHAT_GROUPS_KEY),
   action: SharedActionsTypes
 ): IChatGroupReducerState => {
   switch (action.type) {
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
-      return {
-        data: normalizeInitialChatGroupData(
-          action.chatGroups,
-          action.userLangsOfLoggedInUser
-        ),
-        isLoading: action.isLoading,
-        error: action.error
-      }
-    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST:
-      return { ...initialState, isLoading: action.isLoading }
-    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE:
-      return { ...initialState, error: action.error }
-    case USER_LOGGING_OUT_REQUEST_SUCCESS:
-    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE:
-      return { ...initialState }
+      return normalizeInitialChatGroupData(
+        action.chatGroups,
+        action.userLangsOfLoggedInUser
+      )
     default:
       return state
   }

@@ -1,13 +1,15 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { ReduxState } from '../../store'
+import { FAVORITE_CHAT_GROUPS_KEY } from '../../store/chatgroup/reducer'
 import ChatBio from '../_shared/ChatBio'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 
 const FavoriteChats: React.FC<{}> = ({}) => {
   const favoriteChatGroupIds: string[] = useSelector(
-    ({ chatGroups: { data } }: ReduxState) => data.subGroupings.favorites
+    ({ chatGroups }: ReduxState) =>
+      chatGroups.subGroupings[FAVORITE_CHAT_GROUPS_KEY]
   )
   return (
     <div>

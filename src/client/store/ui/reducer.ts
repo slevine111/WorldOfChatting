@@ -6,17 +6,24 @@ import {
   TRIGGER_DATA_REQUEST,
   DATA_REQUEST_FAILURE
 } from '../APIRequestsHandling/types'
+const { REFRESHING_ACCESS_TOKEN_REQUEST } = RequestDataConstants
 
 export interface UIReducerState {
   apiCalling: {
     dataLoading: boolean
     error: ReducerErrorProperty
     event: RequestDataConstants | ''
+    accessTokenBeingRefreshed: boolean
   }
 }
 
 const initialState: UIReducerState = {
-  apiCalling: { dataLoading: false, error: null, event: '' }
+  apiCalling: {
+    dataLoading: false,
+    error: null,
+    event: '',
+    accessTokenBeingRefreshed: false
+  }
 }
 
 export default (
@@ -30,7 +37,7 @@ export default (
   ) {
     return {
       ...state,
-      apiCalling: { dataLoading: false, error: null, event: '' }
+      apiCalling: initialState.apiCalling
     }
   }
 
@@ -41,8 +48,14 @@ export default (
         apiCalling: {
           dataLoading: true,
           error: null,
-          event: action.eventTriggeringDataRequest
+          event: action.eventTriggeringDataRequest,
+          accessTokenBeingRefreshed: false
         }
+      }
+    case REFRESHING_ACCESS_TOKEN_REQUEST:
+      return {
+        ...state,
+        apiCalling: { ...state.apiCalling, accessTokenBeingRefreshed: true }
       }
     case DATA_REQUEST_FAILURE:
       return {
@@ -50,7 +63,8 @@ export default (
         apiCalling: {
           dataLoading: false,
           error: action.error,
-          event: state.apiCalling.event
+          event: action.event,
+          accessTokenBeingRefreshed: false
         }
       }
     default:

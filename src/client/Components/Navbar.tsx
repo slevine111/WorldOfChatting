@@ -36,7 +36,7 @@ const Navbar: React.FC<{ history: History }> = ({ history }): ReactElement => {
         <Toolbar>
           <Button
             className={classes.buttonStyle}
-            onClick={() => history.push(user.data.id ? '/home' : '/')}
+            onClick={() => history.push(user.id ? '/home' : '/')}
           >
             <Typography variant="h6">World of Chatting</Typography>
           </Button>
@@ -46,13 +46,11 @@ const Navbar: React.FC<{ history: History }> = ({ history }): ReactElement => {
           >
             About
           </Button>
-          {user.data.id && (
+          {user.id && (
             <Button
               className={classes.buttonStyle}
               onClick={() =>
-                dispatch(
-                  logoutUserProcessThunk(user.data.id, { loggedIn: false })
-                )
+                dispatch(logoutUserProcessThunk(user.id, { loggedIn: false }))
               }
             >
               Logout

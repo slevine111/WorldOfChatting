@@ -17,7 +17,7 @@ interface IOwnProps {
 }
 
 const App: React.FC<IOwnProps> = ({ redirectAfterLogin }): ReactElement => {
-  const user = useSelector(({ auth }: ReduxState) => auth.user.data)
+  const user = useSelector(({ auth }: ReduxState) => auth.user)
   const dispatch = useDispatch()
 
   let websiteLoadError: boolean = false

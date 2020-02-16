@@ -25,7 +25,7 @@ const ChatBio: React.FC<IOwnProps & RouteComponentProps> = ({
     return getUsersOfChatGroup(state, chatGroupId)
   })
   const { language, name } = useSelector(
-    (state: ReduxState) => state.chatGroups.data.byId[chatGroupId]
+    (state: ReduxState) => state.chatGroups.byId[chatGroupId]
   )
   const {
     loggedInBadge,

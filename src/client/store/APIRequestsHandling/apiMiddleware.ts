@@ -1,21 +1,20 @@
 import { AxiosResponse, AxiosError } from 'axios'
 import {
   RequestDataConstants,
-  RequestDataFailureConstants,
   IThunkReturnObject,
   IAxiosErrorData,
   ActionOnTriggerDataRequest,
-  ActionOnDataRequestFaiure,
+  ActionOnDataRequestFailure,
   TRIGGER_DATA_REQUEST,
   DATA_REQUEST_FAILURE
 } from './types'
 import { MyStoreType } from '../index'
 import { addPostponnedAction } from '../auth/actions'
 import { refreshToken } from '../auth/thunks'
-const { REFRESHING_ACCESS_TOKEN_REQUEST } = RequestDataConstants
 const {
-  CHECKING_IF_USER_LOGGED_IN_REQUEST_FAILURE
-} = RequestDataFailureConstants
+  REFRESHING_ACCESS_TOKEN_REQUEST,
+  CHECKING_IF_USER_LOGGED_IN_REQUEST
+} = RequestDataConstants
 
 const isThunkOject = (action: unknown): action is IThunkReturnObject<any> => {
   return (action as IThunkReturnObject<any>).requestDataActionType !== undefined
@@ -41,14 +40,21 @@ export const refreshTokenMiddleware = (store: MyStoreType) => {
 
     if (bypassRefreshTokenMiddleware === true) return next(action)
 
-    const { isLoading, tokenExpireTime } = store.getState().auth.accessToken
-    if (!isLoading && tokenExpireTime * 1000 > Date.now() + 50 * 1000) {
+    const {
+      auth: { accessTokenExpireTime },
+      ui: { apiCalling }
+    } = store.getState()
+    const { accessTokenBeingRefreshed } = apiCalling
+    if (
+      !accessTokenBeingRefreshed &&
+      accessTokenExpireTime * 1000 > Date.now() + 50 * 1000
+    ) {
       return next(action)
     }
 
     next(addPostponnedAction(action))
 
-    if (!isLoading) {
+    if (!accessTokenBeingRefreshed) {
       next(refreshToken()).then(() => {
         Promise.all(
           store.getState().auth.postponnedActions.map(action => next(action))
@@ -58,7 +64,7 @@ export const refreshTokenMiddleware = (store: MyStoreType) => {
   }
 }
 
-export const callAPIMiddleware = () => {
+export const callAPIMiddleware = (store: MyStoreType) => {
   return (next: any) => async (action: unknown): Promise<void> => {
     if (!isThunkOject(action)) return next(action)
 
@@ -66,15 +72,13 @@ export const callAPIMiddleware = () => {
       requestDataActionType,
       apiCall,
       dispatchActionOnSuccess,
-      apiFailureActionType,
       dispatchProps,
       dataTransformationCall
     } = action
 
     if (requestDataActionType === REFRESHING_ACCESS_TOKEN_REQUEST) {
       next({
-        type: requestDataActionType,
-        isLoading: true
+        type: requestDataActionType
       })
     }
 
@@ -87,7 +91,7 @@ export const callAPIMiddleware = () => {
         data = apiResponse.data
       }
       if (dataTransformationCall) data = dataTransformationCall(data)
-      next(dispatchActionOnSuccess(data, false, null, dispatchProps))
+      next(dispatchActionOnSuccess(data, dispatchProps))
     } catch (error) {
       const errorTyped = error as AxiosError<IAxiosErrorData>
       let errorData: IAxiosErrorData
@@ -99,12 +103,17 @@ export const callAPIMiddleware = () => {
       } else {
         errorData = errorTyped.response.data
       }
-      const dispatchFailureActionObject: ActionOnDataRequestFaiure = {
+      const {
+        accessTokenBeingRefreshed,
+        event
+      } = store.getState().ui.apiCalling
+      const dispatchFailureActionObject: ActionOnDataRequestFailure = {
         type: DATA_REQUEST_FAILURE,
-        error: errorData
+        error: errorData,
+        event: accessTokenBeingRefreshed ? requestDataActionType : event
       }
       next(dispatchFailureActionObject)
-      if (apiFailureActionType === CHECKING_IF_USER_LOGGED_IN_REQUEST_FAILURE) {
+      if (requestDataActionType === CHECKING_IF_USER_LOGGED_IN_REQUEST) {
         throw error
       }
     }

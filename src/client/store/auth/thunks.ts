@@ -4,10 +4,7 @@ import {
   loggedInUserFoundEnteringSite
 } from './actions'
 import { IUserAndExpireTime } from './types'
-import {
-  RequestDataConstants,
-  RequestDataFailureConstants
-} from '../APIRequestsHandling/types'
+import { RequestDataConstants } from '../APIRequestsHandling/types'
 import { IThunkReturnObject } from '../APIRequestsHandling/types'
 import { IUserSignInDTO } from '../../../server/auth/auth.dto'
 import axios, { AxiosResponse } from 'axios'
@@ -16,11 +13,6 @@ const {
   CHECKING_IF_USER_LOGGED_IN_REQUEST,
   REFRESHING_ACCESS_TOKEN_REQUEST
 } = RequestDataConstants
-const {
-  CHECKING_IF_USER_LOGGED_IN_REQUEST_FAILURE,
-  AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_FAILURE,
-  REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE
-} = RequestDataFailureConstants
 
 export const refreshToken = (): IThunkReturnObject<number> => {
   return {
@@ -29,7 +21,6 @@ export const refreshToken = (): IThunkReturnObject<number> => {
       return axios.get('/api/auth/refreshToken')
     },
     dispatchActionOnSuccess: accessTokenRefreshed,
-    apiFailureActionType: REFRESHING_ACCESS_TOKEN_REQUEST_FAILURE,
     dispatchProps: {}
   }
 }
@@ -43,7 +34,6 @@ export const loginUserProcess = (
       return axios.post('/api/auth/login', userEmailAndPassword)
     },
     dispatchActionOnSuccess: userLoginAttemptSucceeded,
-    apiFailureActionType: AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_FAILURE,
     dispatchProps: {}
   }
 }
@@ -55,7 +45,6 @@ export const checkIfUserLoggedInProcess = (): IThunkReturnObject<IUserAndExpireT
       return axios.get('/api/auth')
     },
     dispatchActionOnSuccess: loggedInUserFoundEnteringSite,
-    apiFailureActionType: CHECKING_IF_USER_LOGGED_IN_REQUEST_FAILURE,
     dispatchProps: {}
   }
 }

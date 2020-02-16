@@ -37,7 +37,7 @@ const LanguageSelector: React.FC<IOwnProps> = ({
   languagesToTeach
 }): ReactElement => {
   const languages = useSelector(({ languages }: ReduxState) =>
-    Object.values(languages.data.byId)
+    Object.values(languages.byId)
   )
   let [orderDirection, setOrderDirection] = useState<'desc' | 'asc'>('asc')
   let [selectedAndLetterFilter, setSelectedAndLetterFilter] = useState('')

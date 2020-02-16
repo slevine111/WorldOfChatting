@@ -6,8 +6,7 @@ import {
 import {
   LanguagePageDataRetrivalArrayDataTypes,
   UserLoggedInDataRetrivalArrayDataTypes,
-  RequestDataConstants,
-  RequestDataFailureConstants
+  RequestDataConstants
 } from './types'
 import { separateUserAndChatGroupFields } from './helperfunctions'
 import { normalizeData } from '../utilityfunctions'
@@ -22,11 +21,6 @@ import { INormalizedReducerShape } from '../reducer.base'
 import { User, UserLanguage } from '../../../entities'
 import axios, { AxiosResponse } from 'axios'
 import { IThunkReturnObject } from './types'
-const {
-  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE,
-  WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_FAILURE,
-  USER_LOGGING_OUT_REQUEST_FAILURE
-} = RequestDataFailureConstants
 
 export const logoutUserProcessThunk = (
   userId: string,
@@ -39,7 +33,6 @@ export const logoutUserProcessThunk = (
       return axios.delete('/api/auth')
     },
     dispatchActionOnSuccess: userLoggedOut,
-    apiFailureActionType: USER_LOGGING_OUT_REQUEST_FAILURE,
     dispatchProps: {},
     bypassRefreshTokenMiddleware: true
   }
@@ -84,11 +77,7 @@ export const userLoggedInDataRetrivalThunk = (
       const {
         usersNormalizedAll,
         userChatGroupNormalized
-      } = separateUserAndChatGroupFields(
-        usersNormalized,
-        usersWithChatGroups,
-        user.id
-      )
+      } = separateUserAndChatGroupFields(usersNormalized, usersWithChatGroups)
       return [
         userLangsOfLoggedInUser,
         chatGroups,
@@ -98,7 +87,6 @@ export const userLoggedInDataRetrivalThunk = (
       ]
     },
     dispatchActionOnSuccess: userLoggedIn,
-    apiFailureActionType: HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_FAILURE,
     dispatchProps: {}
   }
 }
@@ -127,7 +115,6 @@ export const languagePageDataRetrivalThunk = (
       return [userLanguages, user, language]
     },
     dispatchActionOnSuccess: wentToLanguagePageView,
-    apiFailureActionType: WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_FAILURE,
     dispatchProps: {}
   }
 }

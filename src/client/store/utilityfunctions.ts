@@ -1,4 +1,13 @@
+import { Reducer } from 'redux'
 import { INormalizedReducerShape } from './reducer.base'
+import {
+  DATA_REQUEST_FAILURE,
+  RequestDataConstants,
+  RequestDataSuccessConstants
+} from './APIRequestsHandling/types'
+import { SharedActionsTypes } from './APIRequestsHandling/multiplereduceractions'
+const { REFRESHING_ACCESS_TOKEN_REQUEST } = RequestDataConstants
+const { USER_LOGGING_OUT_REQUEST_SUCCESS } = RequestDataSuccessConstants
 
 export function normalizeData<T extends { [key: string]: any }>(
   data: T[],
@@ -53,4 +62,46 @@ export function normalizeData<T extends { [key: string]: any }>(
     }
   }
   return normalizedData
+}
+
+export const checkIfActionResetsToInitialState = (
+  action: SharedActionsTypes
+): boolean => {
+  return (
+    (action.type === DATA_REQUEST_FAILURE &&
+      action.event === REFRESHING_ACCESS_TOKEN_REQUEST) ||
+    action.type === USER_LOGGING_OUT_REQUEST_SUCCESS
+  )
+}
+
+export const createInitialState = <T>(
+  initialSubGroupingsKey: string = ''
+): INormalizedReducerShape<T> => {
+  let initialState: INormalizedReducerShape<T> = {
+    byId: {},
+    allIds: [],
+    subGroupings: {}
+  }
+  if (initialSubGroupingsKey !== '') {
+    initialState.subGroupings[initialSubGroupingsKey] = []
+  }
+  return initialState
+}
+
+export const createReducerSlice = <T>(
+  reducer: Reducer<INormalizedReducerShape<T>>,
+  initialSubGroupingsKey: string = ''
+): Reducer<INormalizedReducerShape<T>> => {
+  let initialState: INormalizedReducerShape<T> = createInitialState(
+    initialSubGroupingsKey
+  )
+  return (
+    state: INormalizedReducerShape<T> = initialState,
+    action: any
+  ): INormalizedReducerShape<T> => {
+    if (checkIfActionResetsToInitialState(action)) {
+      return { ...initialState }
+    }
+    return reducer(state, action)
+  }
 }

@@ -17,7 +17,7 @@ const LoggedInUserController: React.FC<{}> = () => {
       apiCalling.event === HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST &&
       apiCalling.dataLoading
   )
-  const user = useSelector(({ auth }: ReduxState) => auth.user.data)
+  const user = useSelector(({ auth }: ReduxState) => auth.user)
   useEffect(() => {
     dispatch(userLoggedInDataRetrivalThunk(user))
   }, [])

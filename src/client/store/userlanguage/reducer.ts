@@ -1,30 +1,21 @@
-import {
-  RequestDataSuccessConstants,
-  RequestDataConstants
-} from '../APIRequestsHandling/types'
+import { RequestDataSuccessConstants } from '../APIRequestsHandling/types'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { UserLanguage } from '../../../entities'
 import { INormalizedReducerShape } from '../reducer.base'
-import { normalizeData } from '../utilityfunctions'
+import { normalizeData, createInitialState } from '../utilityfunctions'
 const {
   HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
-  WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS,
-  USER_LOGGING_OUT_REQUEST_SUCCESS
+  WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS
 } = RequestDataSuccessConstants
-const { REFRESHING_ACCESS_TOKEN_REQUEST } = RequestDataConstants
 
 export const LOGGED_IN_USER_SUBGROUPING_KEY = <const>'loggedInUser'
 
 export type IUserLanguageReducerState = INormalizedReducerShape<UserLanguage>
 
-const initialState: IUserLanguageReducerState = {
-  byId: {},
-  allIds: [],
-  subGroupings: { [LOGGED_IN_USER_SUBGROUPING_KEY]: [] }
-}
-
 export default (
-  state: IUserLanguageReducerState = { ...initialState },
+  state: IUserLanguageReducerState = createInitialState(
+    LOGGED_IN_USER_SUBGROUPING_KEY
+  ),
   action: SharedActionsTypes
 ): IUserLanguageReducerState => {
   switch (action.type) {
@@ -40,10 +31,6 @@ export default (
         subGroupingKey: language,
         currentNormalizedData: state
       })
-    //logging out
-    case REFRESHING_ACCESS_TOKEN_REQUEST:
-    case USER_LOGGING_OUT_REQUEST_SUCCESS:
-      return { ...initialState }
     default:
       return state
   }

@@ -9,7 +9,7 @@ const commonFields = {
   type: 'postgres',
   host: process.env.DB_SERVICE_SERVICE_HOST,
   port: process.env.DB_SERVICE_SERVICE_PORT,
-  username: process.env.POSTGRES_USERNAME,
+  username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD
 }
 

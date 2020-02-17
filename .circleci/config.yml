@@ -71,11 +71,15 @@ jobs:
       - run:
           name: put environment variables in secrets
           command: |
+            DB_SERVICE_SERVICE_HOST_ENCODED=$(echo -n $DB_SERVICE_SERVICE_HOST | base64)
+            DATABASE_NAME_ENCODED=$(echo -n $DATABASE_NAME | base64)
             POSTGRES_USER_ENCODED=$(echo -n $POSTGRES_USER | base64)
             POSTGRES_PASSWORD_ENCODED=$(echo -n $POSTGRES_PASSWORD | base64)
             REDIS_PASSWORD_ENCODED=$(echo -n $REDIS_PASSWORD | base64)
             JWT_SECRET_ENCODED=$(echo -n $JWT_SECRET | base64)
             jwt_secret_lines=$(echo $JWT_SECRET_ENCODED | tr " " "\n")
+            sed -i "s/ENV-VAR-DB-SERVICE-SERVICE-HOST/${DB_SERVICE_SERVICE_HOST_ENCODED}/" ./k8s-prod/secret.yaml
+            sed -i "s/ENV-VAR-DATABASE-NAME/${DATABASE_NAME_ENCODED}/" ./k8s-prod/secret.yaml
             sed -i "s/ENV-VAR-POSTGRES-USER/${POSTGRES_USER_ENCODED}/" ./k8s-prod/secret.yaml
             sed -i "s/ENV-VAR-POSTGRES-PASSWORD/${POSTGRES_PASSWORD_ENCODED}/" ./k8s-prod/secret.yaml
             sed -i "s/ENV-VAR-REDIS-PASSWORD/${REDIS_PASSWORD_ENCODED}/" ./k8s-prod/secret.yaml

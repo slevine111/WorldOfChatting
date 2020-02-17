@@ -15,14 +15,14 @@ const commonFields = {
 
 module.exports = [
   {
-    database: process.env.DATABASE,
+    database: process.env.DATABASE_NAME,
     ...commonFields,
     entities: [resolve(__dirname, 'js', 'entities', '*.js')]
   },
   {
     name: 'test',
     ...commonFields,
-    database: process.env.DATABASE_TEST,
+    database: process.env.TEST_DATABASE_NAME,
     entities: [resolve(__dirname, 'src', 'entities', '*.ts')]
   }
 ]

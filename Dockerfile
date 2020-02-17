@@ -22,7 +22,6 @@ COPY --from=build  /user/app/public ./public
 COPY --from=build  /user/app/js/entities ./js/entities
 COPY --from=build  /user/app/js/server ./js/server
 COPY --from=build  /user/app/js/bin ./js/bin
-COPY --from=build  /user/app/js/shared-types ./js/shared-types
 EXPOSE 3000
 CMD ["node","./js/server"]
 

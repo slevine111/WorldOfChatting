@@ -23,36 +23,16 @@ spec:
         app: node
     spec:
       containers:
+        - envFrom:
+            - secretRef:
+                name: world-of-chatting-secrets
         - env:
-            - name: JWT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: world-of-chatting-secrets
-                  key: JWT_SECRET
-            - name: DATABASE
-              valueFrom:
-                secretKeyRef:
-                  name: world-of-chatting-secrets
-                  key: POSTGRES_USER
-            - name: POSTGRES_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: world-of-chatting-secrets
-                  key: POSTGRES_USER
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: world-of-chatting-secrets
-                  key: POSTGRES_PASSWORD
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: world-of-chatting-secrets
-                  key: REDIS_PASSWORD
             - name: APP_PORT
               value: '3000'
             - name: LOAD_CONFIG_FILE
               value: 'false'
+            - name: DB_SERVICE_SERVICE_PORT
+              value: '5432'
           name: api
           image: dscr.io/slevine111/worldofchatting
           ports:

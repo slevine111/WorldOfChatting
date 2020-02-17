@@ -34,7 +34,7 @@ spec:
                 secretKeyRef:
                   name: world-of-chatting-secrets
                   key: POSTGRES_USER
-            - name: POSTGRES_USERNAME
+            - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
                   name: world-of-chatting-secrets

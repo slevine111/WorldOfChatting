@@ -1,4 +1,5 @@
 import React, { ReactElement, useState, ChangeEvent } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Location } from 'history'
 import TextField from '@material-ui/core/TextField'
@@ -6,58 +7,26 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import useStyles from './styles'
-import { connect } from 'react-redux'
 import { loginUserProcess } from '../../store/auth/thunks'
 import { IUserSignInDTO } from '../../../server/auth/auth.dto'
-import { OnApiFailureActionTypes } from '../../store/shared/types'
+import { RequestDataConstants } from '../../store/APIRequestsHandling/types'
 import { ReduxState } from '../../store'
-import { IAuthReducerState } from '../../store/auth/reducer'
 import Grid from '@material-ui/core/Grid'
-const { REFRESHING_ACCESS_TOKEN_REQUEST_FAILED } = OnApiFailureActionTypes
+import ErrorMessageCaption from '../_shared/utility/ErrorMessageCaption'
+const {
+  REFRESHING_ACCESS_TOKEN_REQUEST,
+  AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST
+} = RequestDataConstants
 
-interface IReduxStateProps {
-  auth: IAuthReducerState
-}
-
-interface IDispatchProps {
-  loginUser: (userLoginInfo: IUserSignInDTO) => Promise<void>
-}
-
-const Login: React.FC<IReduxStateProps &
-  IDispatchProps & {
-    location: Location<
-      | {
-          email: string
-          password: string
-        }
-      | undefined
-    >
-  }> = ({ auth, loginUser, location }): ReactElement => {
-  let email: string = ''
-  let password: string = ''
-  if (typeof location.state === 'object' && location.state !== null) {
-    const { state } = location
-    email = state.email
-    password = state.password
-  }
-  const [loginInfo, setLoginInfo] = useState<IUserSignInDTO>({
-    email,
-    password
-  })
-  const [loginError, setLoginError] = useState('')
-
-  const handleChange = ({ target }: ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = target
-    setLoginInfo({ ...loginInfo, [name]: value })
-  }
-
-  const onSubmit = (event: ChangeEvent<HTMLFormElement>): void => {
-    event.preventDefault()
-    loginUser(loginInfo).catch(error => {
-      setLoginError(error.response.data.message)
-    })
-  }
-
+const Login: React.FC<{
+  location: Location<
+    | {
+        email: string
+        password: string
+      }
+    | undefined
+  >
+}> = ({ location }): ReactElement => {
   const {
     formContainer,
     paperPadding,
@@ -65,57 +34,80 @@ const Login: React.FC<IReduxStateProps &
     topMarginButton,
     centerText
   } = useStyles()
-  const { error } = auth
+  const dispatch = useDispatch()
+  const {
+    apiCalling: { error, event }
+  } = useSelector(({ ui }: ReduxState) => ui)
+
+  let initialEmail: string = ''
+  let initialPassword: string = ''
+  if (typeof location.state === 'object' && location.state !== null) {
+    const { state } = location
+    initialEmail = state.email
+    initialPassword = state.password
+  }
+  const [loginInfo, setLoginInfo] = useState<IUserSignInDTO>({
+    email: initialEmail,
+    password: initialPassword
+  })
+
+  const handleChange = ({ target }: ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = target
+    setLoginInfo({ ...loginInfo, [name]: value })
+  }
+
   return (
     <Grid container className={formContainer}>
-      {error !== null &&
-        error.actionType == REFRESHING_ACCESS_TOKEN_REQUEST_FAILED && (
-          <div>
-            You accidentally got logged out. Please log back in. Fixing it ASAP.
-          </div>
-        )}
+      {error !== null && event == REFRESHING_ACCESS_TOKEN_REQUEST && (
+        <div>
+          You accidentally got logged out. Please log back in. Fixing it ASAP.
+        </div>
+      )}
       <Paper className={paperPadding} square={true}>
         <Typography className={centerText} variant="body1">
           <i>Ready to keep chatting with the world?!</i>
         </Typography>
-        <form onSubmit={onSubmit}>
-          <TextField
-            id="email"
-            name="email"
-            label="Email"
-            value={loginInfo.email}
-            onChange={handleChange}
-            margin="normal"
-            fullWidth
-            variant="outlined"
-          />
-          <TextField
-            id="password"
-            name="password"
-            label="Password"
-            value={loginInfo.password}
-            onChange={handleChange}
-            margin="normal"
-            fullWidth
-            variant="outlined"
-          />
-          {loginError !== '' && (
-            <Typography variant="caption" style={{ color: 'red' }}>
-              {loginError}
-            </Typography>
+
+        <TextField
+          id="email"
+          name="email"
+          label="Email"
+          value={loginInfo.email}
+          onChange={handleChange}
+          margin="normal"
+          fullWidth
+          variant="outlined"
+        />
+        <TextField
+          id="password"
+          name="password"
+          label="Password"
+          value={loginInfo.password}
+          onChange={handleChange}
+          onKeyDown={event => {
+            if (event.which === 13) dispatch(loginUserProcess(loginInfo))
+          }}
+          margin="normal"
+          fullWidth
+          variant="outlined"
+          type="password"
+        />
+        {error !== null &&
+          event === AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST && (
+            <ErrorMessageCaption errorMessage={error.message} />
           )}
-          <div className={topMarginButton}>
-            <Button
-              type="submit"
-              size="small"
-              fullWidth
-              variant="contained"
-              color="primary"
-            >
-              Log in
-            </Button>
-          </div>
-        </form>
+        <div className={topMarginButton}>
+          <Button
+            size="small"
+            fullWidth
+            variant="contained"
+            color="primary"
+            disabled={loginInfo.email === '' || loginInfo.password === ''}
+            onClick={() => dispatch(loginUserProcess(loginInfo))}
+          >
+            Log in
+          </Button>
+        </div>
         <div className={topMargin}>
           <Typography className={centerText}>
             Don't have an account? <Link to="/signup">Sign up here</Link>
@@ -126,14 +118,4 @@ const Login: React.FC<IReduxStateProps &
   )
 }
 
-const mapStateToProps = ({ auth }: ReduxState): IReduxStateProps => ({ auth })
-
-const mapDispatchToProps = (dispatch: any): IDispatchProps => {
-  return {
-    loginUser: (userLoginInfo: IUserSignInDTO) => {
-      return dispatch(loginUserProcess(userLoginInfo))
-    }
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login)
+export default Login

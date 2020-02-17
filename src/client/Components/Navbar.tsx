@@ -1,9 +1,7 @@
 import React, { ReactElement } from 'react'
-import { connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { ReduxState } from '../store/index'
-import { User } from '../../entities'
-import { logoutUserProcessThunk } from '../store/shared/thunks'
-import { IUserUpdateDTO } from '../../server/users/users.dto'
+import { logoutUserProcessThunk } from '../store/APIRequestsHandling/multiplereducerthunks'
 import { History } from 'history'
 
 //Material-UI components
@@ -16,21 +14,6 @@ import Button from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import { Style } from 'jss'
 
-interface IReduxStateProps {
-  user: User
-}
-
-interface IDispatchProps {
-  logoutUser: (
-    userId: string,
-    updatedUserFields: IUserUpdateDTO
-  ) => Promise<void>
-}
-
-interface INavbarProps extends IReduxStateProps, IDispatchProps {
-  history: History
-}
-
 const useStyles: Style = makeStyles(theme => ({
   siteNameLink: { textDecoration: 'none', color: 'white', width: '100%' },
   buttonStyle: {
@@ -41,11 +24,11 @@ const useStyles: Style = makeStyles(theme => ({
   toolbar: theme.mixins.toolbar
 }))
 
-const Navbar: React.FC<INavbarProps> = ({
-  user,
-  logoutUser,
-  history
-}): ReactElement => {
+const Navbar: React.FC<{ history: History }> = ({ history }): ReactElement => {
+  const dispatch = useDispatch()
+  const {
+    auth: { user }
+  } = useSelector((state: ReduxState) => state)
   const classes = useStyles()
   return (
     <div>
@@ -66,7 +49,9 @@ const Navbar: React.FC<INavbarProps> = ({
           {user.id && (
             <Button
               className={classes.buttonStyle}
-              onClick={() => logoutUser(user.id, { loggedIn: false })}
+              onClick={() =>
+                dispatch(logoutUserProcessThunk(user.id, { loggedIn: false }))
+              }
             >
               Logout
             </Button>
@@ -78,15 +63,4 @@ const Navbar: React.FC<INavbarProps> = ({
   )
 }
 
-const mapStateToProps = ({ auth: { user } }: ReduxState): IReduxStateProps => ({
-  user: user.data
-})
-
-const mapDispatchToProps = (dispatch: any): IDispatchProps => {
-  return {
-    logoutUser: (userId, updatedUserFields) =>
-      dispatch(logoutUserProcessThunk(userId, updatedUserFields))
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Navbar)
+export default Navbar

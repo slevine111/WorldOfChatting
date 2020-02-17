@@ -1,29 +1,32 @@
 import React from 'react'
-import { IUsersByChatGroup } from '../intercomponent-types'
+import { useSelector } from 'react-redux'
+import { ReduxState } from '../../store'
 import ChatBio from '../_shared/ChatBio'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 
 interface IOwnProps {
-  usersByChatGroup: IUsersByChatGroup[]
   language: string
 }
 
-const FavoriteChats: React.FC<IOwnProps> = ({ usersByChatGroup, language }) => {
+const FavoriteChats: React.FC<IOwnProps> = ({ language }) => {
+  const chatGroupsOfLanguage: string[] = useSelector(
+    ({ chatGroups }: ReduxState) => chatGroups.subGroupings[language]
+  )
   return (
     <div>
       <Typography variant="h6">Current Chats</Typography>
-      {!usersByChatGroup.length && (
+      {!chatGroupsOfLanguage.length && (
         <Typography variant="body1">{`You are not currently chatting with anybody in ${language}. Click on someone below to start chatting!!`}</Typography>
       )}
-      {!!usersByChatGroup.length && (
+      {!!chatGroupsOfLanguage.length && (
         <Grid container>
-          {usersByChatGroup.map((ch: IUsersByChatGroup, idx: number) => {
+          {chatGroupsOfLanguage.map((chatGroupId: string) => {
             return (
               <ChatBio
-                usersByChatGroup={ch}
+                chatGroupId={chatGroupId}
                 displayLanguage={false}
-                key={idx}
+                key={chatGroupId}
               />
             )
           })}

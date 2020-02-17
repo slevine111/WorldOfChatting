@@ -9,7 +9,7 @@ import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 import { IOnlineStatusesChecked, IUserLangsTypesChecked } from './shared-types'
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
-import { OnlineStatusesEnum } from '../../../shared-types/shared-enums'
+import { OnlineStatusesEnum } from '../../../entities/User'
 import styles from './styles'
 
 enum DisplayFilters {

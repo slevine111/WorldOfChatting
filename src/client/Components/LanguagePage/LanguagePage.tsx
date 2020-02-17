@@ -1,12 +1,8 @@
 import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { ReduxState } from '../../store'
 import { RouteComponentProps } from 'react-router-dom'
-import { languagePageDataRetrivalThunk } from '../../store/shared/thunks'
-import { getUsersOfLanguageInformation } from './helperfunctions'
-import { IUsersofLanguageInformation } from './shared-types'
-import { IUserReducerDataSlice } from '../../store/user/reducer'
-import { IUserLanguagesOfSingleLanguageDataSlice } from '../../store/userlanguage/reducer'
+import { languagePageDataRetrivalThunk } from '../../store/APIRequestsHandling/multiplereducerthunks'
 import CurrentChats from './CurrentChats'
 import AllUsers from './AllUsers'
 import Typography from '@material-ui/core/Typography'
@@ -15,53 +11,44 @@ import Grid from '@material-ui/core/Grid'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import styles from './styles'
 import WillNameLaterHOC from '../WillNameLaterHOC'
+import { RequestDataConstants } from '../../store/APIRequestsHandling/types'
+const { WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST } = RequestDataConstants
 
 interface IMatchParams {
   language: string
 }
 
-interface IReduxStateProps extends IUsersofLanguageInformation {
-  isLoading: boolean
-  reduxStoreDataSlices:
-    | []
-    | [IUserReducerDataSlice, IUserLanguagesOfSingleLanguageDataSlice]
-}
-
-interface IDispatchProps {
-  languagePageDataRetrival: (language: string) => void
-}
-
-const LanguagePage: React.FC<RouteComponentProps<IMatchParams> &
-  IDispatchProps &
-  IReduxStateProps> = ({
+const LanguagePage: React.FC<RouteComponentProps<IMatchParams>> = ({
   match: {
     params: { language }
-  },
-  languagePageDataRetrival,
-  isLoading,
-  usersByChatGroup,
-  userIdsOfSoloChats,
-  usersMap
+  }
 }) => {
+  const dispatch = useDispatch()
+  const dataLoading = useSelector(
+    ({
+      ui: {
+        apiCalling: { event, dataLoading }
+      }
+    }: ReduxState) =>
+      event === WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST && dataLoading
+  )
   const { paperPageSection } = styles()
   useEffect(() => {
-    languagePageDataRetrival(language)
+    dispatch(languagePageDataRetrivalThunk(language))
   }, [language])
 
   return (
     <div>
       <Typography variant="h6">{language.toLocaleUpperCase()}</Typography>
-      {isLoading && <CircularProgress disableShrink />}
-      {!isLoading && (
+      {dataLoading && <CircularProgress disableShrink />}
+      {!dataLoading && (
         <Grid container>
           <Grid item xs={12} sm={9}>
             <Paper className={paperPageSection}>
-              <CurrentChats {...{ ...{ language, usersByChatGroup } }} />
+              <CurrentChats language={language} />
             </Paper>
             <Paper className={paperPageSection}>
-              <AllUsers
-                {...{ ...{ language, userIdsOfSoloChats, usersMap } }}
-              />
+              <AllUsers language={language} />
             </Paper>
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -73,50 +60,4 @@ const LanguagePage: React.FC<RouteComponentProps<IMatchParams> &
   )
 }
 
-const mapStateToProps = (
-  { userChatGroups, userLanguages, users, chatGroups }: ReduxState,
-  {
-    match: {
-      params: { language }
-    }
-  }: RouteComponentProps<IMatchParams>
-): IReduxStateProps => {
-  const { currentLanguageUsers } = users
-  const { ofLanguagePage } = userLanguages
-  const isLoading: boolean =
-    currentLanguageUsers.isLoading || ofLanguagePage.isLoading
-  if (!isLoading) {
-    const usersOfLanguageInfo = getUsersOfLanguageInformation(
-      currentLanguageUsers.data,
-      chatGroups.data,
-      userChatGroups.data,
-      language
-    )
-    return {
-      isLoading,
-      reduxStoreDataSlices: [currentLanguageUsers, ofLanguagePage],
-      ...usersOfLanguageInfo
-    }
-  } else {
-    return {
-      isLoading,
-      reduxStoreDataSlices: [],
-      usersByChatGroup: [],
-      usersMap: {},
-      userIdsOfSoloChats: {}
-    }
-  }
-}
-
-const mapDispatchToProps = (dispatch: any): IDispatchProps => {
-  return {
-    languagePageDataRetrival: (language: string) => {
-      dispatch(languagePageDataRetrivalThunk(language))
-    }
-  }
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(WillNameLaterHOC(LanguagePage))
+export default WillNameLaterHOC(LanguagePage)

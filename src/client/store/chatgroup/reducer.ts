@@ -1,50 +1,29 @@
-import {
-  LOGOUT_USER_PROCESS,
-  USER_LOGGED_IN,
-  RequestDataConstants,
-  OnApiFailureActionTypes
-} from '../shared/types'
-import { SharedActionsTypes } from '../shared/actions'
-import { IAxiosErrorData } from '../apiMiddleware'
-import { IChatGroupReducer } from '../../../shared-types'
-const { REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
+import { RequestDataSuccessConstants } from '../APIRequestsHandling/types'
+import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
+import { INormalizedReducerShape } from '../reducer.base'
+import { IChatGroupAPIReturn } from '../../../types-for-both-server-and-client'
+import { normalizeInitialChatGroupData } from './helperfunctions'
+import { createInitialState } from '../utilityfunctions'
 const {
-  REQUEST_DATA_USER_LOGGED_IN_FAILED,
-  USER_LOGGING_OUT_REQUEST_FAILED,
-  REFRESHING_ACCESS_TOKEN_REQUEST_FAILED
-} = OnApiFailureActionTypes
+  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS
+} = RequestDataSuccessConstants
 
-export interface IChatGroupReducerState {
-  data: IChatGroupReducer
-  isLoading: boolean
-  error: null | IAxiosErrorData
-}
+export type IChatGroupReducerState = INormalizedReducerShape<
+  IChatGroupAPIReturn
+>
 
-const initialState: IChatGroupReducerState = {
-  data: {},
-  isLoading: false,
-  error: null
-}
+export const FAVORITE_CHAT_GROUPS_KEY = <const>'favorites'
 
 export default (
-  state: IChatGroupReducerState = { ...initialState },
+  state: IChatGroupReducerState = createInitialState(FAVORITE_CHAT_GROUPS_KEY),
   action: SharedActionsTypes
 ): IChatGroupReducerState => {
   switch (action.type) {
-    case USER_LOGGED_IN:
-      return {
-        data: action.chatGroups,
-        isLoading: action.isLoading,
-        error: action.error
-      }
-    case REQUEST_DATA_USER_LOGGED_IN:
-      return { ...initialState, isLoading: action.isLoading }
-    case REQUEST_DATA_USER_LOGGED_IN_FAILED:
-      return { ...initialState, error: action.error }
-    case LOGOUT_USER_PROCESS:
-    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILED:
-      return { ...initialState }
-    case USER_LOGGING_OUT_REQUEST_FAILED:
+    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
+      return normalizeInitialChatGroupData(
+        action.chatGroups,
+        action.userLangsOfLoggedInUser
+      )
     default:
       return state
   }

@@ -6,11 +6,13 @@ import { ISignupInfo } from './index'
 interface IPersonalInfoFormProps {
   handleChange: (event: ChangeEvent<HTMLInputElement>) => void
   signupInfo: ISignupInfo
+  switchHaveClickedOnConfirmPasswordInputToTrue: () => void
 }
 
 const PersonalInfoForm: React.FC<IPersonalInfoFormProps> = ({
   handleChange,
-  signupInfo
+  signupInfo,
+  switchHaveClickedOnConfirmPasswordInputToTrue
 }): ReactElement => {
   const { flexSpaceBetween, firstNameInput } = useStyles()
   return (
@@ -53,6 +55,19 @@ const PersonalInfoForm: React.FC<IPersonalInfoFormProps> = ({
         margin="normal"
         fullWidth
         variant="outlined"
+        type="password"
+      />
+      <TextField
+        id="passwordConfirmed"
+        name="passwordConfirmed"
+        label="Confirm Password"
+        value={signupInfo.passwordConfirmed}
+        onChange={handleChange}
+        onClick={switchHaveClickedOnConfirmPasswordInputToTrue}
+        margin="normal"
+        fullWidth
+        variant="outlined"
+        type="password"
       />
     </div>
   )

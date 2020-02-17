@@ -87,9 +87,12 @@ const MyLanguages: React.FC<IMyLanguagesProps> = ({
   )
 }
 
-const mapStateToProps = ({ userLanguages }: ReduxState): IReduxStateProps => {
+const mapStateToProps = ({
+  userLanguages,
+  chatGroups
+}: ReduxState): IReduxStateProps => {
   return {
-    usersCountByLanguage: generateWordCloudArray(userLanguages.ofUser.data)
+    usersCountByLanguage: generateWordCloudArray(userLanguages, chatGroups)
   }
 }
 

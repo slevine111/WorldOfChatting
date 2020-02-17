@@ -5,10 +5,15 @@ import { User } from '../../entities'
 import {
   IUserAndChatGroupGetReturn,
   IReduxStoreUserFields
-} from '../../shared-types'
-import { OnlineStatusesEnum } from '../../shared-types/shared-enums'
+} from '../../types-for-both-server-and-client'
+import { OnlineStatusesEnum } from '../../entities/User'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
 import { compare, hash } from 'bcrypt'
+
+export enum EntityGetUsersLinkedTo {
+  NOTIFICATION = 'notification',
+  USER_LANGUAGE = 'user_language'
+}
 
 @Injectable()
 export default class UserService {
@@ -84,7 +89,8 @@ export default class UserService {
               ucg.id as "userChatGroupId",
               ucg."userId",
               ucg."chatGroupId",
-              ucg.favorite
+              ucg.favorite,
+              ucg."lastMessageSeenTimeStamp"
       FROM user_chat_group ucg
       JOIN (SELECT "chatGroupId" FROM user_chat_group WHERE "userId" = $1) filter
       ON ucg."chatGroupId" = filter."chatGroupId"
@@ -95,7 +101,20 @@ export default class UserService {
     )
   }
 
-  getUsersLinkedToLanguage(language: string): Promise<IReduxStoreUserFields[]> {
+  getUsersLinked(
+    entityValue: string,
+    entity: EntityGetUsersLinkedTo
+  ): Promise<IReduxStoreUserFields[]> {
+    let endQuery: string = ''
+    if (entity === EntityGetUsersLinkedTo.NOTIFICATION) {
+      endQuery = `JOIN notification B ON A.id = B."senderId"
+                  JOIN notification_recipient C ON B.id = C."notificationId"
+                  WHERE "targetUserId" = $1`
+    } else {
+      endQuery = `JOIN user_language B ON A.id = B."userId"
+                 WHERE language = $1`
+    }
+
     return this.userRepository.query(
       `SELECT A.id,
               A."firstName",
@@ -106,10 +125,9 @@ export default class UserService {
               CASE WHEN A."loggedIn" = true THEN '${OnlineStatusesEnum.Online}'
                    ELSE '${OnlineStatusesEnum.Offline}' END AS "loggedInAsString"
        FROM "user" A
-       JOIN user_language B ON A.id = B."userId"
-       WHERE language = $1
+       ${endQuery}
       `,
-      [language]
+      [entityValue]
     )
   }
 

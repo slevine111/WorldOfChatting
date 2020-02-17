@@ -1,25 +1,32 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { IUsersByChatGroup } from '../../intercomponent-types'
 import Typography from '@material-ui/core/Typography'
 import Badge from '@material-ui/core/Badge'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import styles from './styles'
+import { ReduxState } from '../../../store'
+import { IReduxStoreUserFields } from '../../../../types-for-both-server-and-client'
+import { getUsersOfChatGroup } from './helperfunctions'
 
 interface IOwnProps {
-  usersByChatGroup: IUsersByChatGroup
+  chatGroupId: string
   displayLanguage: boolean
 }
 
-interface IChatBioProps extends IOwnProps, RouteComponentProps {}
-
-const ChatBio: React.FC<IChatBioProps> = ({
-  usersByChatGroup,
+const ChatBio: React.FC<IOwnProps & RouteComponentProps> = ({
+  chatGroupId,
   history,
   displayLanguage
 }) => {
+  const users: IReduxStoreUserFields[] = useSelector((state: ReduxState) => {
+    return getUsersOfChatGroup(state, chatGroupId)
+  })
+  const { language, name } = useSelector(
+    (state: ReduxState) => state.chatGroups.byId[chatGroupId]
+  )
   const {
     loggedInBadge,
     loggedOutBadge,
@@ -28,7 +35,6 @@ const ChatBio: React.FC<IChatBioProps> = ({
     itemBottomMargin,
     badgeRightMargin
   } = styles()
-  const { users, language, name } = usersByChatGroup
   const groupChat: boolean = users.length > 1
   const numberUsersOnline: number = users.reduce(
     (sum, user) => sum + Number(user.loggedIn),

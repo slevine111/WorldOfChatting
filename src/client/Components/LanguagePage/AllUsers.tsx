@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { ReduxState } from '../../store'
 import {
   IUserWithLanguageFields,
@@ -12,8 +12,6 @@ import {
   filterUsers,
   getUsersToDisplayFromFilteredUsers
 } from './helperfunctions'
-import { IObjectOfOneType } from '../intercomponent-types'
-import { IReduxStoreUserFields } from '../../../shared-types'
 import PersonIconList from './PersonIconList'
 import TableList from './TableList'
 import InviteToChatDialog from './InviteToChatDialog'
@@ -23,21 +21,32 @@ import TablePagination from '@material-ui/core/TablePagination'
 import Typography from '@material-ui/core/Typography'
 import styles from './styles'
 
-interface IReduxStateProps {
-  usersOfLanguage: IUserWithLanguageFields[]
-}
-
 interface IOwnProps {
   language: string
-  usersMap: IObjectOfOneType<IReduxStoreUserFields>
-  userIdsOfSoloChats: IObjectOfOneType<true>
 }
 
-const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
-  usersOfLanguage,
-  language
-}) => {
-  if (!Array.isArray(usersOfLanguage)) return <div>not ready</div>
+const AllUsers: React.FC<IOwnProps> = ({ language }) => {
+  console.log('rerendering')
+  const usersOfLanguage: IUserWithLanguageFields[] = useSelector(
+    (state: ReduxState) => {
+      const {
+        auth: { user },
+        userLanguages
+      } = state
+
+      return userLanguages.subGroupings[language] !== undefined
+        ? getAllUsersOfLanguage(
+            language,
+            user.id,
+            state.userLanguages,
+            state.chatGroups,
+            state.userChatGroups,
+            state.users
+          )
+        : []
+    }
+  )
+
   const { allUsersListPadding, allUsersContainerLeftPadding } = styles()
   //const [display, setDisplay] = useState<'icon' | 'table'>('icon')
   const display: string = 'icon'
@@ -65,6 +74,7 @@ const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
     userLangsTypesChecked,
     searchUserText
   )
+
   const rowsToDisplay: IUserWithLanguageFields[] = getUsersToDisplayFromFilteredUsers(
     filteredUsers,
     page,
@@ -142,23 +152,4 @@ const AllUsers: React.FC<IReduxStateProps & IOwnProps> = ({
   )
 }
 
-const mapStateToProps = (
-  { auth: { user }, userLanguages }: ReduxState,
-  { language, usersMap, userIdsOfSoloChats }: IOwnProps
-): IReduxStateProps => {
-  return {
-    usersOfLanguage:
-      userLanguages.ofLanguagePage.data.length === 1
-        ? []
-        : getAllUsersOfLanguage(
-            language,
-            user.data.id,
-            userLanguages.ofUser.data,
-            userLanguages.ofLanguagePage.data,
-            usersMap,
-            userIdsOfSoloChats
-          )
-  }
-}
-
-export default connect(mapStateToProps)(AllUsers)
+export default AllUsers

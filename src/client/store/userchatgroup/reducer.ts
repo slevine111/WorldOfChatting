@@ -1,50 +1,23 @@
-import {
-  LOGOUT_USER_PROCESS,
-  USER_LOGGED_IN,
-  RequestDataConstants,
-  OnApiFailureActionTypes
-} from '../shared/types'
-import { IAxiosErrorData } from '../apiMiddleware'
-import { SharedActionsTypes } from '../shared/actions'
+import { RequestDataSuccessConstants } from '../APIRequestsHandling/types'
+import { INormalizedReducerShape } from '../reducer.base'
+import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { UserChatGroup } from '../../../entities'
-const { REQUEST_DATA_USER_LOGGED_IN } = RequestDataConstants
+import { createInitialState } from '../utilityfunctions'
 const {
-  REQUEST_DATA_USER_LOGGED_IN_FAILED,
-  USER_LOGGING_OUT_REQUEST_FAILED,
-  REFRESHING_ACCESS_TOKEN_REQUEST_FAILED
-} = OnApiFailureActionTypes
+  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS
+} = RequestDataSuccessConstants
 
-export interface IUserChatGroupReducerState {
-  data: UserChatGroup[]
-  isLoading: boolean
-  error: null | IAxiosErrorData
-}
+export const CHAT_GROUP_KEY_PREFIX = <const>'chatGroup'
 
-const initialState: IUserChatGroupReducerState = {
-  data: [],
-  isLoading: false,
-  error: null
-}
+export type IUserChatGroupReducerState = INormalizedReducerShape<UserChatGroup>
 
 export default (
-  state: IUserChatGroupReducerState = { ...initialState },
+  state: IUserChatGroupReducerState = createInitialState(),
   action: SharedActionsTypes
 ): IUserChatGroupReducerState => {
   switch (action.type) {
-    case USER_LOGGED_IN:
-      return {
-        data: action.userChatGroups,
-        isLoading: action.isLoading,
-        error: action.error
-      }
-    case REQUEST_DATA_USER_LOGGED_IN:
-      return { ...initialState, isLoading: action.isLoading }
-    case REQUEST_DATA_USER_LOGGED_IN_FAILED:
-      return { ...initialState, error: action.error }
-    case REFRESHING_ACCESS_TOKEN_REQUEST_FAILED:
-    case LOGOUT_USER_PROCESS:
-      return { ...initialState }
-    case USER_LOGGING_OUT_REQUEST_FAILED:
+    case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
+      return action.userChatGroups
     default:
       return state
   }

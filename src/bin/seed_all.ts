@@ -1,5 +1,13 @@
-import { ChatGroup, User, UserLanguage, UserChatGroup } from '../entities'
+import {
+  ChatGroup,
+  User,
+  UserLanguage,
+  UserChatGroup,
+  Notification,
+  NotificationRecipient
+} from '../entities'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
+import { NotificationTypeOptions } from '../entities/NotificationType'
 import seedManualData from './seed_manual'
 import {
   CHAT_GROUP_LANGUAGES_MANUALLY,
@@ -7,6 +15,8 @@ import {
   IChatGroupSubset,
   IUserChatGroupSubset,
   IUserLanguageSubset,
+  INotificationSubset,
+  INotificationRecipientSubset,
   IObjectOfSets,
   ILanguageSubset,
   ICountriesByLanguageObject,
@@ -49,9 +59,10 @@ createLanguages.isAsync = true
 
 export const createUsers = async (connectionName: string): Promise<User[]> => {
   let usersArray: IUserSubset[] = []
+  const numberOfRandomUsers = <const>500
 
   let otherUserNames: IFirstAndLastName[] = []
-  for (let i = 0; i < 300; ++i) {
+  for (let i = 0; i < numberOfRandomUsers; ++i) {
     otherUserNames.push({
       firstName: name.firstName(),
       lastName: name.lastName()
@@ -60,7 +71,7 @@ export const createUsers = async (connectionName: string): Promise<User[]> => {
   const otherHashedPasswords: string[] = await Promise.all(
     otherUserNames.map(un => hash(`${un.firstName}${un.lastName}`, 5))
   )
-  for (let i = 0; i < 300; ++i) {
+  for (let i = 0; i < numberOfRandomUsers; ++i) {
     const { firstName, lastName } = otherUserNames[i]
     usersArray.push({
       firstName,
@@ -100,12 +111,15 @@ export const createChatGroups = (
   ).save(chatGroupsArray)
 }
 
-export const createUserChatGroups = (
+export const createUserChatGroups = async (
   manualUsers: User[],
   randomUsers: User[],
   randomChatGroups: ChatGroup[],
   connectionName: string
-): Promise<UserChatGroup[]> => {
+): Promise<{
+  randomUserChatGroups: UserChatGroup[]
+  randomUsersArrayIndexAt: number
+}> => {
   let userChatGroupsArray: IUserChatGroupSubset[] = []
   let otherUsersIndex: number = 0
   for (let i = 0; i < randomChatGroups.length; ++i) {
@@ -129,10 +143,11 @@ export const createUserChatGroups = (
       })
     }
   }
-  return returnRepository(
+  const randomUserChatGroups: UserChatGroup[] = await returnRepository(
     (UserChatGroup as unknown) as UserChatGroup,
     connectionName
   ).save(userChatGroupsArray)
+  return { randomUserChatGroups, randomUsersArrayIndexAt: otherUsersIndex }
 }
 
 const createSingleUserLanguage = (
@@ -216,6 +231,62 @@ export const createUserLanguages = (
   ).save(userLanguagesArray)
 }
 
+const pause = (numberSeconds: number): void => {
+  const dt: number = new Date().getTime()
+  while (new Date().getTime() - dt <= numberSeconds * 1000) {}
+}
+
+const createNotiifcations = async (
+  randomUsers: User[],
+  connectionName: string
+): Promise<Notification[][]> => {
+  let notificationsArrayFirst: INotificationSubset[] = []
+  let notificationsArraySecond: INotificationSubset[] = []
+  let notificationsArrayThird: INotificationSubset[] = []
+  const { CHAT_GROUP_INVITE } = NotificationTypeOptions
+  for (let i = 0; i < 9; ++i) {
+    const nt: INotificationSubset = {
+      notificationType: CHAT_GROUP_INVITE,
+      senderId: randomUsers[i].id
+    }
+    if (i < 3) notificationsArrayFirst.push(nt)
+    else if (i < 6) notificationsArraySecond.push(nt)
+    else notificationsArrayThird.push(nt)
+  }
+  const ntRepo = await returnRepository(
+    (Notification as unknown) as Notification,
+    connectionName
+  )
+  const ntsFirst: Notification[] = await ntRepo.save(notificationsArrayFirst)
+  pause(5)
+  const ntsSecond: Notification[] = await ntRepo.save(notificationsArraySecond)
+  pause(5)
+  const ntsThird = await ntRepo.save(notificationsArrayThird)
+  return [ntsFirst, ntsSecond, ntsThird]
+}
+
+const createNotiifcationRecipients = (
+  manualUsers: User[],
+  notifications: Notification[][],
+  connectionName: string
+): Promise<NotificationRecipient[]> => {
+  let ntRecipentsArray: INotificationRecipientSubset[] = []
+  for (let i = 0; i < notifications.length; ++i) {
+    const curNtsBatch: Notification[] = notifications[i]
+    for (let j = 0; j < curNtsBatch.length; ++j) {
+      ntRecipentsArray.push({
+        read: i === 0,
+        notificationId: curNtsBatch[j].id,
+        targetUserId: manualUsers[j].id
+      })
+    }
+  }
+  return returnRepository(
+    (NotificationRecipient as unknown) as NotificationRecipient,
+    connectionName
+  ).save(ntRecipentsArray)
+}
+
 const refreshDbWithSeedData = async (): Promise<void> => {
   try {
     const {
@@ -229,12 +300,15 @@ const refreshDbWithSeedData = async (): Promise<void> => {
     let { name } = connection
     const randomUsers: User[] = await createUsers(name)
     const randomChatGroups: ChatGroup[] = await createChatGroups(name)
-    const randomUserChatGroups: UserChatGroup[] = await createUserChatGroups(
-      users,
-      randomUsers,
-      randomChatGroups,
+    const {
+      randomUserChatGroups,
+      randomUsersArrayIndexAt
+    } = await createUserChatGroups(users, randomUsers, randomChatGroups, name)
+    const nts: Notification[][] = await createNotiifcations(
+      randomUsers.slice(randomUsersArrayIndexAt),
       name
     )
+    await createNotiifcationRecipients(users, nts, name)
     const allUserChatGroups = [...userChatGroups, ...randomUserChatGroups]
     await Promise.all([
       createUserLanguages(

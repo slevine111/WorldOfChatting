@@ -1,5 +1,10 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
 
+export enum OnlineStatusesEnum {
+  Offline = 'Offline',
+  Online = 'Online'
+}
+
 @Entity()
 export default class User {
   @PrimaryGeneratedColumn('uuid')

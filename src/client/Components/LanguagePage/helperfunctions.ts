@@ -1,90 +1,74 @@
-import { UserChatGroup, UserLanguage } from '../../../entities'
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
-import { IUsersByChatGroup, IObjectOfOneType } from '../intercomponent-types'
-import { groupUserChatGroups } from '../utilityfunctions'
-import {
-  IChatGroupReducer,
-  IChatGroupWithFavoriteField,
-  IReduxStoreUserFields,
-  IUserLangugeWithOnlineUserCount
-} from '../../../shared-types'
-import { OnlineStatusesEnum } from '../../../shared-types/shared-enums'
+import { OnlineStatusesEnum } from '../../../entities/User'
 import {
   IUserWithLanguageFields,
   LanguageTypesCombos,
-  IUsersofLanguageInformation,
   IOnlineStatusesChecked,
   IUserLangsTypesChecked,
   IOrderDirectionAndColumn,
   IDisplayAndDataNames
 } from './shared-types'
 import { displayAndDataNames } from './constants'
-
-export const getUsersOfLanguageInformation = (
-  users: IReduxStoreUserFields[],
-  chatGroups: IChatGroupReducer,
-  userChatGroups: UserChatGroup[],
-  language: string
-): IUsersofLanguageInformation => {
-  const { usersGrouped, usersMap } = groupUserChatGroups(users, userChatGroups)
-  let usersByChatGroup: IUsersByChatGroup[] = []
-  const chatGroupsOfLanguage: IChatGroupWithFavoriteField[] =
-    chatGroups[language]
-  let userIdsOfSoloChats: IObjectOfOneType<true> = {}
-  if (!Array.isArray(chatGroupsOfLanguage)) {
-    return { usersByChatGroup, usersMap, userIdsOfSoloChats }
-  }
-
-  for (let k = 0; k < chatGroupsOfLanguage.length; ++k) {
-    const { id, name } = chatGroupsOfLanguage[k]
-    const usersOfChatGroup = usersGrouped[id]
-    if (Array.isArray(usersOfChatGroup)) {
-      usersByChatGroup.push({
-        name,
-        language,
-        users: usersOfChatGroup
-      })
-      if (
-        usersOfChatGroup[0] !== undefined &&
-        usersOfChatGroup.length == 1 &&
-        usersOfChatGroup[0].hasOwnProperty('id')
-      ) {
-        userIdsOfSoloChats[usersOfChatGroup[0].id] = true
-      }
-    }
-  }
-  return { usersByChatGroup, usersMap, userIdsOfSoloChats }
-}
+import {
+  IUserLanguageReducerState,
+  LOGGED_IN_USER_SUBGROUPING_KEY
+} from '../../store/userlanguage/reducer'
+import { IChatGroupReducerState } from '../../store/chatgroup/reducer'
+import { IUserChatGroupReducerState } from '../../store/userchatgroup/reducer'
+import { IUserReducerState } from '../../store/user/reducer'
+import { CHAT_GROUP_KEY_PREFIX } from '../../store/userchatgroup/reducer'
 
 export const getAllUsersOfLanguage = (
   language: string,
   loggedInUserId: string,
-  userLoggedInLanguages: IUserLangugeWithOnlineUserCount[],
-  usersNotLoggedInLanguages: UserLanguage[],
-  usersMap: IObjectOfOneType<IReduxStoreUserFields>,
-  userIdsOfSoloChats: IObjectOfOneType<true>
+  userLanguages: IUserLanguageReducerState,
+  chatGroups: IChatGroupReducerState,
+  userChatGroups: IUserChatGroupReducerState,
+  users: IUserReducerState
 ): IUserWithLanguageFields[] => {
-  let firstLetterOfAuthUserLanguageType: 'L' | 'T' | '' = ''
-  for (let i = 0; i < userLoggedInLanguages.length; ++i) {
-    if (userLoggedInLanguages[i].language === language) {
-      firstLetterOfAuthUserLanguageType = userLoggedInLanguages[i].type[0] as
-        | 'L'
-        | 'T'
+  const { byId, subGroupings } = userLanguages
+  const loggedInUserLangsIds: string[] =
+    subGroupings[LOGGED_IN_USER_SUBGROUPING_KEY]
+
+  if (
+    loggedInUserLangsIds.length === 1 &&
+    byId[loggedInUserLangsIds[0]].userId === loggedInUserId
+  ) {
+    return []
+  }
+
+  let firstLetterOfAuthUserLanguageType: 'L' | 'T' = 'L'
+  for (let i = 0; i < loggedInUserLangsIds.length; ++i) {
+    if (byId[loggedInUserLangsIds[i]].language === language) {
+      firstLetterOfAuthUserLanguageType = byId[loggedInUserLangsIds[i]]
+        .type[0] as 'L' | 'T'
       break
     }
   }
+
+  let userIdsOfSoloChats: Set<string> = new Set()
+  for (let i = 0; i < chatGroups.subGroupings[language].length; ++i) {
+    const chatGroupId: string = chatGroups.subGroupings[language][i]
+    const userChatGroupKey: string = `${CHAT_GROUP_KEY_PREFIX}${chatGroupId}`
+    const userChatGroupIds: string[] =
+      userChatGroups.subGroupings[userChatGroupKey]
+    if (userChatGroupIds.length === 1) {
+      userIdsOfSoloChats.add(userChatGroups.byId[userChatGroupIds[0]].userId)
+    }
+  }
+
   let usersOfLanguage: IUserWithLanguageFields[] = []
-  for (let j = 0; j < usersNotLoggedInLanguages.length; ++j) {
-    const { userId, type } = usersNotLoggedInLanguages[j]
-    if (!userIdsOfSoloChats[userId] && userId !== loggedInUserId) {
-      if (usersMap[userId] !== undefined) {
-        usersOfLanguage.push({
-          ...usersMap[userId],
-          language,
-          userType: type,
-          userAndAuthUserLanguageTypes: `${type[0]}${firstLetterOfAuthUserLanguageType}` as LanguageTypesCombos
-        })
-      }
+  const selectedLangUserLangIds: string[] = subGroupings[language]
+  for (let j = 0; j < selectedLangUserLangIds.length; ++j) {
+    const { userId, type } = byId[selectedLangUserLangIds[j]]
+    if (userId !== loggedInUserId) {
+      usersOfLanguage.push({
+        ...users.byId[userId],
+        language,
+        inSoloChat: userIdsOfSoloChats.has(userId),
+        userType: type,
+        userAndAuthUserLanguageTypes: `${type[0]}${firstLetterOfAuthUserLanguageType}` as LanguageTypesCombos
+      })
     }
   }
   return usersOfLanguage

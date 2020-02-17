@@ -7,7 +7,7 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 import Checkbox from '@material-ui/core/Checkbox'
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Language } from '../../../../entities'
 import { ReduxState } from '../../../store'
 import useStyles from './styles'
@@ -21,10 +21,6 @@ const sortLanguages = (
   })
 }
 
-interface IReduxStateProps {
-  languages: Language[]
-}
-
 interface IOwnProps {
   handleChange: (
     event: ChangeEvent<HTMLInputElement>,
@@ -35,12 +31,14 @@ interface IOwnProps {
   languagesToTeach: string[]
 }
 
-const LanguageSelector: React.FC<IReduxStateProps & IOwnProps> = ({
+const LanguageSelector: React.FC<IOwnProps> = ({
   handleChange,
   languagesToLearn,
-  languagesToTeach,
-  languages
+  languagesToTeach
 }): ReactElement => {
+  const languages = useSelector(({ languages }: ReduxState) =>
+    Object.values(languages.byId)
+  )
   let [orderDirection, setOrderDirection] = useState<'desc' | 'asc'>('asc')
   let [selectedAndLetterFilter, setSelectedAndLetterFilter] = useState('')
   let languagesToDisplay: Language[] = sortLanguages(orderDirection, languages)
@@ -131,8 +129,4 @@ const LanguageSelector: React.FC<IReduxStateProps & IOwnProps> = ({
   )
 }
 
-const mapStateToProps = ({ languages }: ReduxState): IReduxStateProps => ({
-  languages: languages.data
-})
-
-export default connect(mapStateToProps)(LanguageSelector)
+export default LanguageSelector

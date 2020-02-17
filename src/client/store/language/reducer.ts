@@ -1,46 +1,22 @@
 import { Language } from '../../../entities'
 import { LanguageActionReturns } from './actions'
-import {
-  RequestDataConstants,
-  OnApiFailureActionTypes,
-  ENTERED_SITE_BASE_DATA_RECEIVED
-} from '../shared/types'
-import { SharedActionsTypes } from '../shared/actions'
-import { IAxiosErrorData } from '../apiMiddleware'
-const { ENTERED_SITE_LOADING_BASE_DATA_REQUEST } = RequestDataConstants
+import { RequestDataSuccessConstants } from '../APIRequestsHandling/types'
+import { INormalizedReducerShape } from '../reducer.base'
+import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
+import { normalizeData, createInitialState } from '../utilityfunctions'
 const {
-  ENTERED_SITE_LOADING_BASE_DATA_REQUEST_FAILED,
-  USER_LOGGING_OUT_REQUEST_FAILED
-} = OnApiFailureActionTypes
+  ENTERED_SITE_LOADING_BASE_DATA_REQUEST_SUCCESS
+} = RequestDataSuccessConstants
 
-export interface ILanguageReducerState {
-  data: Language[]
-  isLoading: boolean
-  error: null | IAxiosErrorData
-}
-
-const initialState: ILanguageReducerState = {
-  data: [],
-  isLoading: false,
-  error: null
-}
+export type ILanguageReducerState = INormalizedReducerShape<Language>
 
 export default (
-  state: ILanguageReducerState = initialState,
+  state: ILanguageReducerState = createInitialState(),
   action: LanguageActionReturns | SharedActionsTypes
 ): ILanguageReducerState => {
   switch (action.type) {
-    case ENTERED_SITE_LOADING_BASE_DATA_REQUEST:
-      return { ...initialState, isLoading: action.isLoading }
-    case ENTERED_SITE_BASE_DATA_RECEIVED:
-      return {
-        data: action.languages,
-        isLoading: action.isLoading,
-        error: action.error
-      }
-    case ENTERED_SITE_LOADING_BASE_DATA_REQUEST_FAILED:
-      return { ...initialState, error: action.error }
-    case USER_LOGGING_OUT_REQUEST_FAILED:
+    case ENTERED_SITE_LOADING_BASE_DATA_REQUEST_SUCCESS:
+      return normalizeData(action.languages, { dataItemKey: 'language' })
     default:
       return state
   }

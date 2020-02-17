@@ -1,34 +1,34 @@
-import { createStore, combineReducers, applyMiddleware, Reducer } from 'redux'
-import languageReducer, { ILanguageReducerState } from './language/reducer'
-import userReducer, { IUserReducerState } from './user/reducer'
+import { createStore, combineReducers, applyMiddleware } from 'redux'
+import languageReducer from './language/reducer'
+import userReducer from './user/reducer'
 import userLanguageReducer, {
-  IUserLangugeReducerState
+  LOGGED_IN_USER_SUBGROUPING_KEY
 } from './userlanguage/reducer'
-import chatGroupReducer, { IChatGroupReducerState } from './chatgroup/reducer'
-import userChatGroupReducer, {
-  IUserChatGroupReducerState
-} from './userchatgroup/reducer'
-import authReducer, { IAuthReducerState } from './auth/reducer'
+import chatGroupReducer, { FAVORITE_CHAT_GROUPS_KEY } from './chatgroup/reducer'
+import userChatGroupReducer from './userchatgroup/reducer'
+import authReducer from './auth/reducer'
+import notificationReducer from './notification/reducer'
+import uiReducer from './ui/reducer'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
-import { refreshTokenMiddleware, callAPIMiddleware } from './apiMiddleware'
+import {
+  refreshTokenMiddleware,
+  callAPIMiddleware
+} from './APIRequestsHandling/apiMiddleware'
+import { createReducerSlice } from './utilityfunctions'
 
-interface ICombinedReducer {
-  languages: ILanguageReducerState
-  users: IUserReducerState
-  userLanguages: IUserLangugeReducerState
-  chatGroups: IChatGroupReducerState
-  userChatGroups: IUserChatGroupReducerState
-  auth: IAuthReducerState
-}
-
-const rootReducer: Reducer<ICombinedReducer> = combineReducers({
+const rootReducer = combineReducers({
   languages: languageReducer,
-  users: userReducer,
-  userLanguages: userLanguageReducer,
-  chatGroups: chatGroupReducer,
-  userChatGroups: userChatGroupReducer,
-  auth: authReducer
+  users: createReducerSlice(userReducer),
+  userLanguages: createReducerSlice(
+    userLanguageReducer,
+    LOGGED_IN_USER_SUBGROUPING_KEY
+  ),
+  chatGroups: createReducerSlice(chatGroupReducer, FAVORITE_CHAT_GROUPS_KEY),
+  userChatGroups: createReducerSlice(userChatGroupReducer),
+  auth: authReducer,
+  notifications: createReducerSlice(notificationReducer),
+  ui: uiReducer
 })
 
 export type ReduxState = ReturnType<typeof rootReducer>

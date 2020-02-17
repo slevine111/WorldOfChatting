@@ -16,6 +16,9 @@ export default class UserChatGroup {
   @Column({ type: 'boolean', default: false })
   favorite: boolean
 
+  @Column({ type: 'timestamptz', nullable: true })
+  lastMessageSeenTimeStamp: string
+
   @ManyToOne(() => User)
   @JoinColumn({ name: 'userId' })
   userId: string

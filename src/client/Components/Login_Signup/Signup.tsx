@@ -1,20 +1,18 @@
 //Packages
 import React, { useState, ReactElement, ChangeEvent } from 'react'
-import { Link, Redirect } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { History } from 'history'
-import { connect } from 'react-redux'
 
 //Components
 import PersonalInfoForm from './PersonalInfoForm'
 import LanguageSelector from '../_shared/LanguageSelector/LanguageSelector'
 import SignupStepButtons from './SignupStepButtons'
+import ErrorMessageCaption from '../_shared/utility/ErrorMessageCaption'
 
 //My modules
 import { ISignupInfo } from './index'
 import { signupNewUserProcess } from './helperfunctions'
-import { ReduxState } from '../../store/index'
 import { IUserLanguagePostDTOSubset } from '../../../server/userlanguages/userlanguages.dto'
-import { User } from '../../../entities'
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
 
 //Material-UI
@@ -24,31 +22,32 @@ import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 import useStyles from './styles'
 
-interface IReduxStateProps {
-  user: User
-}
-
-interface ISignupProps extends IReduxStateProps {
-  history: History
-}
-
-const Signup: React.FC<ISignupProps> = ({ user, history }): ReactElement => {
-  if (user.id) return <Redirect to="/home" />
-
+const Signup: React.FC<{ history: History }> = ({ history }): ReactElement => {
   let [signupInfo, setSignupFields] = useState<ISignupInfo>({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
+    passwordConfirmed: '',
     languagesToLearn: [],
     languagesToTeach: []
   })
+  let [
+    haveClickedOnConfirmPasswordInput,
+    sethaveClickedOnConfirmPasswordInput
+  ] = useState(false)
 
   let [currentStep, setCurrentStep] = useState<string>('personal info')
 
   const handleChange = ({ target }: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = target
     setSignupFields({ ...signupInfo, [name]: value })
+  }
+
+  const switchHaveClickedOnConfirmPasswordInputToTrue = (): void => {
+    if (!haveClickedOnConfirmPasswordInput) {
+      sethaveClickedOnConfirmPasswordInput(true)
+    }
   }
 
   const handleLanguageChange = (
@@ -91,7 +90,12 @@ const Signup: React.FC<ISignupProps> = ({ user, history }): ReactElement => {
     })
   }
 
-  const { languagesToLearn, languagesToTeach } = signupInfo
+  const {
+    languagesToLearn,
+    languagesToTeach,
+    password,
+    passwordConfirmed
+  } = signupInfo
   const {
     paperPadding,
     formContainer,
@@ -107,13 +111,24 @@ const Signup: React.FC<ISignupProps> = ({ user, history }): ReactElement => {
         </Typography>
         <form onSubmit={onSubmit} className={topMargin}>
           {currentStep === 'personal info' ? (
-            <PersonalInfoForm {...{ signupInfo, handleChange }} />
+            <PersonalInfoForm
+              {...{
+                signupInfo,
+                handleChange,
+                switchHaveClickedOnConfirmPasswordInputToTrue
+              }}
+            />
           ) : (
             <LanguageSelector
               handleChange={handleLanguageChange}
               {...{ languagesToLearn, languagesToTeach }}
             />
           )}
+
+          {password !== passwordConfirmed &&
+            haveClickedOnConfirmPasswordInput && (
+              <ErrorMessageCaption errorMessage="passwords do not match" />
+            )}
 
           {currentStep === 'personal info' ? (
             <div className={topMarginButton}>
@@ -141,8 +156,4 @@ const Signup: React.FC<ISignupProps> = ({ user, history }): ReactElement => {
   )
 }
 
-const mapStateToProps = ({ auth: { user } }: ReduxState): IReduxStateProps => ({
-  user: user.data
-})
-
-export default connect(mapStateToProps)(Signup)
+export default Signup

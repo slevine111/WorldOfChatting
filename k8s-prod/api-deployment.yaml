@@ -26,7 +26,7 @@ spec:
         - envFrom:
             - secretRef:
                 name: world-of-chatting-secrets
-        - env:
+          env:
             - name: APP_PORT
               value: '3000'
             - name: LOAD_CONFIG_FILE

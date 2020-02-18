@@ -21,7 +21,7 @@
 
 circleci config validate
 
-for f in k8s-*/*.yaml
+for f in k8s-common/*.yaml k8s-dev/*.yaml k8s-prod/*.yaml
 do
    echo $f
    kubectl apply -f $f --dry-run=true

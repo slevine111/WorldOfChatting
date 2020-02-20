@@ -1,3 +1,7 @@
+import {
+  UNREAD_NOTIFICATIONS_KEY,
+  getUnreadNotificationIdsArr
+} from './helperfunctions'
 import { RequestDataSuccessConstants } from '../APIRequestsHandling/types'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { INormalizedReducerShape } from '../reducer.base'
@@ -12,12 +16,16 @@ export type INotificationReducerState = INormalizedReducerShape<
 >
 
 export default (
-  state: INotificationReducerState = createInitialState(),
+  state: INotificationReducerState = createInitialState(
+    UNREAD_NOTIFICATIONS_KEY
+  ),
   action: SharedActionsTypes
 ): INotificationReducerState => {
   switch (action.type) {
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
-      return normalizeData(action.notifications)
+      return normalizeData(action.notifications, {
+        subGroupingFunction: getUnreadNotificationIdsArr
+      })
     default:
       return state
   }

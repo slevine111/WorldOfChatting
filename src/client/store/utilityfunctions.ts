@@ -14,9 +14,9 @@ export function normalizeData<T extends { [key: string]: any }>(
   optionalParams: {
     subGroupingKey?: string
     subGroupingFunction?: (
-      subGroupings: { [key: string]: string[] },
+      subGroupings: Record<string, string[]>,
       dataItem: T
-    ) => { [key: string]: string[] }
+    ) => Record<string, string[]>
     currentNormalizedData?: INormalizedReducerShape<T>
     dataItemKey?: string
   } = {}

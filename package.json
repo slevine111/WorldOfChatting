@@ -57,6 +57,8 @@
     "redux-thunk": "^2.3.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.2",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0",
     "typeorm": "^0.2.18",
     "typescript": "^3.6.3",
     "volleyball": "^1.5.1"
@@ -79,6 +81,8 @@
     "@types/react-redux": "^7.1.2",
     "@types/react-router-dom": "^4.3.5",
     "@types/redux-logger": "^3.0.7",
+    "@types/socket.io": "^2.1.4",
+    "@types/socket.io-client": "^1.4.32",
     "dts-gen": "^0.5.8",
     "jest": "^24.8.0",
     "jest-junit": "^9.0.0",

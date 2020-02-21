@@ -8,6 +8,6 @@ export const getUnreadNotificationIdsArr = (
 ): Record<string, string[]> => {
   let subGroupingsCopy: Record<string, string[]> = { ...currentSubGroupings }
   const { read, id } = currentNt
-  if (read) currentSubGroupings[UNREAD_NOTIFICATIONS_KEY].push(id)
+  if (!read) currentSubGroupings[UNREAD_NOTIFICATIONS_KEY].push(id)
   return subGroupingsCopy
 }

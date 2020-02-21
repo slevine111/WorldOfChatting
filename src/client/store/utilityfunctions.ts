@@ -33,16 +33,10 @@ export function normalizeData<T extends { [key: string]: any }>(
     normalizedData = {
       byId: {},
       allIds: [],
-      subGroupings: {}
+      subGroupings: subGroupingKey !== undefined ? { [subGroupingKey]: [] } : {}
     }
   }
 
-  if (
-    subGroupingKey !== undefined &&
-    normalizedData.subGroupings[subGroupingKey] === undefined
-  ) {
-    normalizedData.subGroupings[subGroupingKey] = []
-  }
   const existsNormalizedData: boolean = currentNormalizedData !== undefined
   const dataItemKey: string = optionalParams.dataItemKey || 'id'
   for (let i = 0; i < data.length; ++i) {
@@ -54,11 +48,11 @@ export function normalizeData<T extends { [key: string]: any }>(
       normalizedData.allIds.push(uniqueValue)
     }
     normalizedData.byId[uniqueValue] = data[i]
-    if (subGroupingKey !== undefined) {
-      normalizedData.subGroupings[subGroupingKey].push(uniqueValue)
-    } else if (subGroupingFunction !== undefined) {
+    if (subGroupingFunction !== undefined) {
       const { subGroupings } = normalizedData
       normalizedData.subGroupings = subGroupingFunction(subGroupings, data[i])
+    } else if (subGroupingKey !== undefined) {
+      normalizedData.subGroupings[subGroupingKey].push(uniqueValue)
     }
   }
   return normalizedData

@@ -24,6 +24,7 @@ export default (
   switch (action.type) {
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
       return normalizeData(action.notifications, {
+        subGroupingKey: UNREAD_NOTIFICATIONS_KEY,
         subGroupingFunction: getUnreadNotificationIdsArr
       })
     default:

@@ -16,6 +16,7 @@ import {
   refreshTokenMiddleware,
   callAPIMiddleware
 } from './APIRequestsHandling/apiMiddleware'
+import socketMiddleware from './socket/middleware'
 import { createReducerSlice } from './utilityfunctions'
 
 const rootReducer = combineReducers({
@@ -42,6 +43,7 @@ const getMiddlewareArray = (environmentMode: string | undefined): any[] => {
     refreshTokenMiddleware,
     callAPIMiddleware,
     thunk,
+    socketMiddleware,
     ...(environmentMode === 'development' ? [logger] : [])
   ]
 }

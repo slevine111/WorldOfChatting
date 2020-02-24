@@ -16,7 +16,7 @@ export default (
 ): ILanguageReducerState => {
   switch (action.type) {
     case ENTERED_SITE_LOADING_BASE_DATA_REQUEST_SUCCESS:
-      return normalizeData(action.languages, { dataItemKey: 'language' })
+      return normalizeData(action.languages, state, { dataItemKey: 'language' })
     default:
       return state
   }

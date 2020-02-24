@@ -6,10 +6,17 @@ import {
 import {
   LanguagePageDataRetrivalArrayDataTypes,
   UserLoggedInDataRetrivalArrayDataTypes,
-  RequestDataConstants
+  RequestDataConstants,
+  IThunkReturnObject
 } from './types'
 import { separateUserAndChatGroupFields } from './helperfunctions'
-import { normalizeData } from '../utilityfunctions'
+import { normalizeData, createInitialState } from '../utilityfunctions'
+import {
+  USER_RECEIVER,
+  USER_SENDER,
+  generateInitNotficationSubGroupingFunction
+} from '../notification/helperfunctions'
+import { IUserReducerState } from '../user/reducer'
 import { IUserUpdateDTO } from '../../../server/users/users.dto'
 import {
   IChatGroupAPIReturn,
@@ -17,10 +24,8 @@ import {
   IReduxStoreUserFields,
   INotificationReducerFields
 } from '../../../types-for-both-server-and-client'
-import { INormalizedReducerShape } from '../reducer.base'
 import { User, UserLanguage } from '../../../entities'
 import axios, { AxiosResponse } from 'axios'
-import { IThunkReturnObject } from './types'
 
 export const logoutUserProcessThunk = (
   userId: string,
@@ -71,19 +76,33 @@ export const userLoggedInDataRetrivalThunk = (
         usersWhoSentNotifications,
         notifications
       ] = apiResponseData
-      const usersNormalized: INormalizedReducerShape<IReduxStoreUserFields> = normalizeData(
-        usersWhoSentNotifications
+      const usersNormalized: IUserReducerState = normalizeData(
+        usersWhoSentNotifications,
+        createInitialState()
       )
       const {
         usersNormalizedAll,
         userChatGroupNormalized
       } = separateUserAndChatGroupFields(usersNormalized, usersWithChatGroups)
+      const notificationsInitialState = createInitialState<
+        INotificationReducerFields
+      >([USER_SENDER, USER_RECEIVER])
+      const notificationsNormalized = normalizeData(
+        notifications,
+        notificationsInitialState,
+        {
+          subGroupingFunction: generateInitNotficationSubGroupingFunction(
+            user.id
+          )
+        }
+      )
+
       return [
         userLangsOfLoggedInUser,
         chatGroups,
         usersNormalizedAll,
         userChatGroupNormalized,
-        notifications
+        notificationsNormalized
       ]
     },
     dispatchActionOnSuccess: userLoggedIn,

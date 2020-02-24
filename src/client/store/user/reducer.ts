@@ -19,9 +19,8 @@ export default (
       return action.users
     case WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS:
       const { language, users } = action
-      return normalizeData(users, {
-        subGroupingKey: language,
-        currentNormalizedData: state
+      return normalizeData(users, state, {
+        subGroupingKey: language
       })
     default:
       return state

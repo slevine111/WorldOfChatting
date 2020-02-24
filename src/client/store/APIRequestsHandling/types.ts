@@ -1,11 +1,11 @@
 import {
   IReduxStoreUserFields,
-  IChatGroupAPIReturn,
-  INotificationReducerFields
+  IChatGroupAPIReturn
 } from '../../../types-for-both-server-and-client'
 import { UserLanguage } from '../../../entities'
 import { IUserReducerState } from '../user/reducer'
 import { IUserChatGroupReducerState } from '../userchatgroup/reducer'
+import { INotificationReducerState } from '../notification/reducer'
 import { AnyAction } from 'redux'
 import { AxiosResponse } from 'axios'
 
@@ -16,7 +16,8 @@ export enum RequestDataConstants {
   HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST = 'HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST',
   WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST = 'WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST',
   USER_LOGGING_OUT_REQUEST = 'USER_LOGGING_OUT_REQUEST',
-  REFRESHING_ACCESS_TOKEN_REQUEST = 'REFRESHING_ACCESS_TOKEN_REQUEST'
+  REFRESHING_ACCESS_TOKEN_REQUEST = 'REFRESHING_ACCESS_TOKEN_REQUEST',
+  INVITING_TO_CHAT_REQUEST = 'INVITING_TO_CHAT_REQUEST'
 }
 
 export enum RequestDataSuccessConstants {
@@ -26,7 +27,9 @@ export enum RequestDataSuccessConstants {
   HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS = 'HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS',
   WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS = 'WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS',
   USER_LOGGING_OUT_REQUEST_SUCCESS = 'USER_LOGGING_OUT_REQUEST_SUCCESS',
-  REFRESHING_ACCESS_TOKEN_REQUEST_SUCCESS = 'REFRESHING_ACCESS_TOKEN_REQUEST_SUCCESS'
+  REFRESHING_ACCESS_TOKEN_REQUEST_SUCCESS = 'REFRESHING_ACCESS_TOKEN_REQUEST_SUCCESS',
+  INVITING_TO_CHAT_REQUEST_SUCCESS = 'INVITING_TO_CHAT_REQUEST_SUCCESS',
+  CHAT_REQUEST_INVITATION_RECEIVED = 'CHAT_REQUEST_INVITATION_RECEIVED'
 }
 
 interface ActionOnDataRequestSuccess {
@@ -64,7 +67,7 @@ export type UserLoggedInDataRetrivalArrayDataTypes = [
   IChatGroupAPIReturn[],
   IUserReducerState,
   IUserChatGroupReducerState,
-  INotificationReducerFields[]
+  INotificationReducerState
 ]
 
 export interface IAxiosErrorData {
@@ -78,8 +81,8 @@ export interface IThunkReturnObject<T = any> {
   dataTransformationCall?: (apiResponseData: any) => T
   dispatchActionOnSuccess: (
     data: T,
-    otherInputs: { [key: string]: any }
+    otherInputs?: { [key: string]: any }
   ) => AnyAction
-  dispatchProps: { [key: string]: any }
+  dispatchProps?: { [key: string]: any }
   bypassRefreshTokenMiddleware?: boolean
 }

@@ -1,13 +1,18 @@
 import { INotificationReducerFields } from '../../../types-for-both-server-and-client'
+import { SubGroupingFunctionType } from '../utilityfunctions'
 
-export const UNREAD_NOTIFICATIONS_KEY = <const>'unreadNotifications'
+export const USER_SENDER = <const>'userSender'
+export const USER_RECEIVER = <const>'userReceiver'
 
-export const getUnreadNotificationIdsArr = (
-  currentSubGroupings: Record<string, string[]>,
-  currentNt: INotificationReducerFields
-): Record<string, string[]> => {
-  let subGroupingsCopy: Record<string, string[]> = { ...currentSubGroupings }
-  const { read, id } = currentNt
-  if (!read) currentSubGroupings[UNREAD_NOTIFICATIONS_KEY].push(id)
-  return subGroupingsCopy
+export const generateInitNotficationSubGroupingFunction = (
+  loggedInUserId: string
+): SubGroupingFunctionType<INotificationReducerFields> => {
+  return (currentSubGroupings, currentNt) => {
+    let subGroupingsCopy: Record<string, string[]> = { ...currentSubGroupings }
+    const { senderId, id } = currentNt
+    currentSubGroupings[
+      senderId === loggedInUserId ? USER_SENDER : USER_RECEIVER
+    ].push(id)
+    return subGroupingsCopy
+  }
 }

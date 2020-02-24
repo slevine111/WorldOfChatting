@@ -9,50 +9,45 @@ import { SharedActionsTypes } from './APIRequestsHandling/multiplereduceractions
 const { REFRESHING_ACCESS_TOKEN_REQUEST } = RequestDataConstants
 const { USER_LOGGING_OUT_REQUEST_SUCCESS } = RequestDataSuccessConstants
 
+export type SubGroupingFunctionType<T> = (
+  subGroupings: Record<string, string[]>,
+  dataItem: T
+) => Record<string, string[]>
+
 export function normalizeData<T extends { [key: string]: any }>(
-  data: T[],
+  data: T | T[],
+  currentNormalizedData: INormalizedReducerShape<T>,
   optionalParams: {
     subGroupingKey?: string
-    subGroupingFunction?: (
-      subGroupings: Record<string, string[]>,
-      dataItem: T
-    ) => Record<string, string[]>
-    currentNormalizedData?: INormalizedReducerShape<T>
+    subGroupingFunction?: SubGroupingFunctionType<T>
     dataItemKey?: string
   } = {}
 ): INormalizedReducerShape<T> {
-  const {
-    subGroupingKey,
-    subGroupingFunction,
-    currentNormalizedData
-  } = optionalParams
-  let normalizedData: INormalizedReducerShape<T>
-  if (currentNormalizedData !== undefined) {
-    normalizedData = currentNormalizedData
-  } else {
-    normalizedData = {
-      byId: {},
-      allIds: [],
-      subGroupings: subGroupingKey !== undefined ? { [subGroupingKey]: [] } : {}
-    }
+  const dataArr: T[] = Array.isArray(data) ? data : [data]
+  const { subGroupingKey, subGroupingFunction } = optionalParams
+  let normalizedData: INormalizedReducerShape<T> = JSON.parse(
+    JSON.stringify(currentNormalizedData)
+  )
+  let { subGroupings } = normalizedData
+  const dataItemKey: string = optionalParams.dataItemKey || 'id'
+
+  if (
+    subGroupingKey !== undefined &&
+    subGroupings[subGroupingKey] === undefined
+  ) {
+    subGroupings[subGroupingKey] = []
   }
 
-  const existsNormalizedData: boolean = currentNormalizedData !== undefined
-  const dataItemKey: string = optionalParams.dataItemKey || 'id'
-  for (let i = 0; i < data.length; ++i) {
-    const uniqueValue: string = data[i][dataItemKey]
-    if (
-      !existsNormalizedData ||
-      (existsNormalizedData && normalizedData.byId[uniqueValue] === undefined)
-    ) {
+  for (let i = 0; i < dataArr.length; ++i) {
+    const uniqueValue: string = dataArr[i][dataItemKey]
+    if (normalizedData.byId[uniqueValue] === undefined) {
       normalizedData.allIds.push(uniqueValue)
     }
-    normalizedData.byId[uniqueValue] = data[i]
+    normalizedData.byId[uniqueValue] = dataArr[i]
     if (subGroupingFunction !== undefined) {
-      const { subGroupings } = normalizedData
-      normalizedData.subGroupings = subGroupingFunction(subGroupings, data[i])
+      subGroupings = subGroupingFunction(subGroupings, dataArr[i])
     } else if (subGroupingKey !== undefined) {
-      normalizedData.subGroupings[subGroupingKey].push(uniqueValue)
+      subGroupings[subGroupingKey].push(uniqueValue)
     }
   }
   return normalizedData
@@ -69,28 +64,34 @@ export const checkIfActionResetsToInitialState = (
 }
 
 export const createInitialState = <T>(
-  initialSubGroupingsKey: string = ''
+  initialSubGroupingsKeys: string | string[] = []
 ): INormalizedReducerShape<T> => {
   let initialState: INormalizedReducerShape<T> = {
     byId: {},
     allIds: [],
     subGroupings: {}
   }
-  if (initialSubGroupingsKey !== '') {
-    initialState.subGroupings[initialSubGroupingsKey] = []
+  const keysArr: string[] = Array.isArray(initialSubGroupingsKeys)
+    ? initialSubGroupingsKeys
+    : [initialSubGroupingsKeys]
+  for (let i = 0; i < keysArr.length; ++i) {
+    initialState.subGroupings[keysArr[i]] = []
   }
   return initialState
 }
 
 export const createReducerSlice = <T>(
   reducer: Reducer<INormalizedReducerShape<T>>,
-  initialSubGroupingsKey: string = ''
+  initialSubGroupingsKeys: string | string[] = []
 ): Reducer<INormalizedReducerShape<T>> => {
   let initialState: INormalizedReducerShape<T> = createInitialState(
-    initialSubGroupingsKey
+    initialSubGroupingsKeys
   )
   return (
-    state: INormalizedReducerShape<T> = initialState,
+    state: INormalizedReducerShape<T> = JSON.parse(
+      JSON.stringify(initialState)
+    ),
+
     action: any
   ): INormalizedReducerShape<T> => {
     if (checkIfActionResetsToInitialState(action)) {

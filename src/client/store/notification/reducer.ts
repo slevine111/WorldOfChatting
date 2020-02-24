@@ -1,14 +1,14 @@
-import {
-  UNREAD_NOTIFICATIONS_KEY,
-  getUnreadNotificationIdsArr
-} from './helperfunctions'
 import { RequestDataSuccessConstants } from '../APIRequestsHandling/types'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { INormalizedReducerShape } from '../reducer.base'
 import { INotificationReducerFields } from '../../../types-for-both-server-and-client'
-import { normalizeData, createInitialState } from '../utilityfunctions'
+import { createInitialState, normalizeData } from '../utilityfunctions'
+import { NotificationActionReturns } from './actions'
+import { USER_SENDER, USER_RECEIVER } from './helperfunctions'
 const {
-  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS
+  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
+  CHAT_REQUEST_INVITATION_RECEIVED,
+  INVITING_TO_CHAT_REQUEST_SUCCESS
 } = RequestDataSuccessConstants
 
 export type INotificationReducerState = INormalizedReducerShape<
@@ -16,16 +16,22 @@ export type INotificationReducerState = INormalizedReducerShape<
 >
 
 export default (
-  state: INotificationReducerState = createInitialState(
-    UNREAD_NOTIFICATIONS_KEY
-  ),
-  action: SharedActionsTypes
+  state: INotificationReducerState = createInitialState([
+    USER_SENDER,
+    USER_RECEIVER
+  ]),
+  action: SharedActionsTypes | NotificationActionReturns
 ): INotificationReducerState => {
   switch (action.type) {
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
-      return normalizeData(action.notifications, {
-        subGroupingKey: UNREAD_NOTIFICATIONS_KEY,
-        subGroupingFunction: getUnreadNotificationIdsArr
+      return action.notifications
+    case INVITING_TO_CHAT_REQUEST_SUCCESS:
+      return normalizeData(action.notificationReducerItem, state, {
+        subGroupingKey: USER_SENDER
+      })
+    case CHAT_REQUEST_INVITATION_RECEIVED:
+      return normalizeData(action.notification, state, {
+        subGroupingKey: USER_RECEIVER
       })
     default:
       return state

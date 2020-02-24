@@ -11,6 +11,7 @@ import NotificationModule from './notifications/notifications.module'
 import MyJWTModule from './MyJWTModule'
 import MyCacheModule from './MyCacheModule'
 import WebpageController from './webpage.controller'
+import EventModule from './socket/socket.module'
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import WebpageController from './webpage.controller'
         index: false
       }
     }),
-    MyCacheModule
+    MyCacheModule,
+    EventModule
   ],
   controllers: [WebpageController]
 })

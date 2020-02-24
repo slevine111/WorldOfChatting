@@ -31,9 +31,9 @@ export interface IReduxStoreUserFields extends User {
 
 export interface INotificationReducerFields {
   id: string
-  createdAt: string
-  body: string
+  createdAt: Date
   read: boolean
   senderId: string
   notificationType: NotificationTypeOptions
+  targetUserId: string
 }

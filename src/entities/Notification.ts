@@ -6,7 +6,7 @@ import {
   JoinColumn
 } from 'typeorm'
 import User from './User'
-import NotificationType from './NotificationType'
+import NotificationType, { NotificationTypeOptions } from './NotificationType'
 
 @Entity()
 export default class Notification {
@@ -18,7 +18,7 @@ export default class Notification {
 
   @ManyToOne(() => NotificationType)
   @JoinColumn({ name: 'notificationType' })
-  notificationType: string
+  notificationType: NotificationTypeOptions
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'senderId' })

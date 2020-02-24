@@ -1,4 +1,8 @@
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ReduxState } from '../../store/'
+import { chatGroupInviteThunk } from '../../store/notification/actions'
+import { NotificationTypeOptions } from '../../../entities/NotificationType'
 import { IUserWithLanguageFields } from './shared-types'
 import { generateStringFromLanguageTypeCombo } from './helperfunctions'
 import Dialog from '@material-ui/core/Dialog'
@@ -6,6 +10,7 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import Button from '@material-ui/core/Button'
+const { CHAT_GROUP_INVITE } = NotificationTypeOptions
 
 interface IOwnProps {
   selectedUser: IUserWithLanguageFields
@@ -14,6 +19,8 @@ interface IOwnProps {
 
 const InviteToChatDialog: React.FC<IOwnProps> = ({ selectedUser, onClose }) => {
   const { id, firstName } = selectedUser
+  const senderId: string = useSelector(({ auth }: ReduxState) => auth.user.id)
+  const dispatch = useDispatch()
   return (
     <Dialog
       open={id !== undefined}
@@ -27,7 +34,18 @@ const InviteToChatDialog: React.FC<IOwnProps> = ({ selectedUser, onClose }) => {
           )}!`}
         </DialogContentText>
         <DialogActions>
-          <Button color="primary" variant="contained">
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() =>
+              dispatch(
+                chatGroupInviteThunk(
+                  { senderId, notificationType: CHAT_GROUP_INVITE },
+                  id
+                )
+              ).then(() => onClose())
+            }
+          >
             Yes
           </Button>
           <Button color="secondary" variant="contained" onClick={onClose}>

@@ -19,7 +19,9 @@ export const generateWordCloudArray = (
     const { language, type } = byId[selectedUserLangsId[i]]
     wordCloudArray.push({
       text: language,
-      value: chatGroupsByLanguage[language].length,
+      value: Array.isArray(chatGroupsByLanguage[language])
+        ? chatGroupsByLanguage[language].length
+        : 0,
       userType: type
     })
   }

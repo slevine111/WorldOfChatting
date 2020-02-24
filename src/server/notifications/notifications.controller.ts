@@ -1,6 +1,8 @@
-import { Controller, UseGuards, Get, Param } from '@nestjs/common'
+import { Controller, UseGuards, Get, Param, Post, Body } from '@nestjs/common'
 import NotificationService from './notifications.service'
 import { INotificationReducerFields } from '../../types-for-both-server-and-client'
+import { INotificationPostDTO } from './notifications.dto'
+import { Notification } from '../../entities'
 import AuthGuard from '../auth/auth.guard'
 
 @Controller('/api/notification')
@@ -14,6 +16,28 @@ export default class ChatGroupController {
   ): Promise<INotificationReducerFields[]> {
     return this.notificationService.getNotificationsSentToSingleUser(
       targetUserId
+    )
+  }
+
+  @Post()
+  createNewNotification(
+    @Body() newNotification: INotificationPostDTO
+  ): Promise<Notification> {
+    return this.notificationService.createNotification(newNotification)
+  }
+
+  @Post('/notificationRecipient/single')
+  createNewNotificationRecipient(
+    @Body()
+    newNotificationObject: {
+      targetUserId: string
+      newNotification: Notification
+    }
+  ): Promise<INotificationReducerFields> {
+    const { targetUserId, newNotification } = newNotificationObject
+    return this.notificationService.createNotificationRecipent(
+      targetUserId,
+      newNotification
     )
   }
 }

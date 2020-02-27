@@ -16,7 +16,6 @@ export default class MySocket {
   }
 
   connect(loggedInUserId: string): void {
-    console.log('x', this.store.getState())
     this.socket = io(window.location.origin, {
       query: { loggedInUserId }
     })

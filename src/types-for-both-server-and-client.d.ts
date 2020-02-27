@@ -5,7 +5,7 @@ import { NotificationTypeOptions } from './entities/NotificationType'
 
 export interface IChatGroupAPIReturn extends ChatGroup {
   favorite: boolean
-  lastMessageSeenTimeStamp: string
+  lastMessageSeenTimeStamp: string | null
 }
 
 export interface IUserAndChatGroupGetReturn {

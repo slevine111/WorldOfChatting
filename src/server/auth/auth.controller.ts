@@ -9,13 +9,14 @@ import {
   UseGuards,
   HttpStatus
 } from '@nestjs/common'
-import { Response, Request } from 'express'
+import { FastifyReply, FastifyRequest } from 'fastify'
 import AuthService from './auth.service'
 import AuthGuard from './auth.guard'
 import {
   IUserSignInDTO,
   IGetTokenResult,
-  ITokenAndRelatedInfo
+  ITokenAndRelatedInfo,
+  ITokenAndUser
 } from './auth.dto'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants'
 
@@ -31,19 +32,22 @@ export default class AuthController {
   @Post('/login')
   storeTokenAndReturnUser(
     @Body() userSignIn: IUserSignInDTO,
-    @Res() res: Response
+    @Res() res: FastifyReply<ITokenAndUser>
   ): Promise<void> {
     return this.authService
       .loginUserAndCreateToken(userSignIn.email, userSignIn.password)
       .then(({ accessToken, user, expireTime }: ITokenAndRelatedInfo) => {
         res
-          .cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, { httpOnly: true })
-          .json({ user, expireTime })
+          .setCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, { httpOnly: true })
+          .send({ user, expireTime })
       })
   }
 
   @Get('')
-  getloggedInUser(@Req() req: Request, @Res() res: Response): Promise<void> {
+  getloggedInUser(
+    @Req() req: FastifyRequest,
+    @Res() res: FastifyReply<ITokenAndUser>
+  ): Promise<void> {
     const accessToken: string | undefined =
       req.cookies[ACCESS_TOKEN_COOKIE_NAME]
     if (accessToken === undefined) {
@@ -53,26 +57,29 @@ export default class AuthController {
       .exchangeTokenForUser(accessToken!, true)
       .then(({ accessToken, user, expireTime }: ITokenAndRelatedInfo) => {
         res
-          .cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, { httpOnly: true })
-          .json({ user, expireTime })
+          .setCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, { httpOnly: true })
+          .send({ user, expireTime })
       })
   }
 
   @Delete('')
   @UseGuards(AuthGuard)
-  logoutUser(@Req() req: Request, @Res() res: Response): void {
+  logoutUser(@Req() req: FastifyRequest, @Res() res: FastifyReply<null>): void {
     this.authService.addTokenToBlacklist(req.cookies[ACCESS_TOKEN_COOKIE_NAME])
-    res.clearCookie(ACCESS_TOKEN_COOKIE_NAME).sendStatus(HttpStatus.NO_CONTENT)
+    res.clearCookie(ACCESS_TOKEN_COOKIE_NAME).status(HttpStatus.NO_CONTENT)
   }
 
   @Get('/refreshToken')
-  refreshToken(@Req() req: Request, @Res() res: Response): Promise<void> {
+  refreshToken(
+    @Req() req: FastifyRequest,
+    @Res() res: FastifyReply<number>
+  ): Promise<void> {
     return this.authService
       .exchangeTokenForUser(req.cookies[ACCESS_TOKEN_COOKIE_NAME], false)
       .then(({ accessToken, expireTime }: ITokenAndRelatedInfo) => {
         res
-          .cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, { httpOnly: true })
-          .json(expireTime)
+          .setCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, { httpOnly: true })
+          .send(expireTime)
       })
   }
 }

@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 import { IThunkReturnObject } from '../APIRequestsHandling/types'
+import { CHAT_REQUEST_INVITATION_RECEIVED } from './types'
 import {
   RequestDataConstants,
   RequestDataSuccessConstants
@@ -21,7 +22,7 @@ type ChatGroupInvitationSentActionReturn = ReturnType<
 export const chatGroupInvitationReceived = (
   notification: INotificationReducerFields
 ) => ({
-  type: <const>RequestDataSuccessConstants.CHAT_REQUEST_INVITATION_RECEIVED,
+  type: CHAT_REQUEST_INVITATION_RECEIVED,
   notification
 })
 type ChatGroupInvitationReceivedActionReturn = ReturnType<

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { IChatGroupPostDTO } from './chatgroups.dto'
 import { ChatGroup } from '../../entities'
 import { IChatGroupAPIReturn } from '../../types-for-both-server-and-client'
 
@@ -19,5 +20,13 @@ export default class ChatGroupService {
          WHERE "userId" = $1`,
       [userId]
     )
+  }
+
+  createChatGroup(
+    newChatGroup: IChatGroupPostDTO
+  ): Promise<IChatGroupAPIReturn> {
+    return this.chatGroupRepository
+      .save(newChatGroup)
+      .then(cg => ({ ...cg, favorite: false, lastMessageSeenTimeStamp: null }))
   }
 }

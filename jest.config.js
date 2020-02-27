@@ -7,8 +7,6 @@ let exportObject = {
   testEnvironment: 'node',
   testMatch: ['**/tests/**/*.spec.ts'],
   globalSetup: './jest-global-setup.ts'
-  //,
-  // globalTeardown: './jest-global-teardown.ts'
 }
 
 if (process.env.LOAD_CONFIG_FILE === 'true') {

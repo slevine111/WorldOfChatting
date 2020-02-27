@@ -3,11 +3,9 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
-  JoinColumn,
-  OneToMany
+  JoinColumn
 } from 'typeorm'
 import Language from './Language'
-import UserChatGroup from './UserChatGroup'
 
 @Entity()
 export default class ChatGroup {
@@ -20,10 +18,4 @@ export default class ChatGroup {
   @ManyToOne(() => Language)
   @JoinColumn({ name: 'language' })
   language: string
-
-  @OneToMany(
-    () => UserChatGroup,
-    userChatGroup => userChatGroup.chatGroupId
-  )
-  userChatGroups?: UserChatGroup[]
 }

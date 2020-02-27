@@ -1,9 +1,13 @@
 import { NestFactory } from '@nestjs/core'
-import { NestExpressApplication } from '@nestjs/platform-express'
-import { join } from 'path'
+import {
+  NestFastifyApplication,
+  FastifyAdapter
+} from '@nestjs/platform-fastify'
 import { config } from 'dotenv'
 import volleyball from 'volleyball'
-import cookieParser from 'cookie-parser'
+import path from 'path'
+import fastifycookie from 'fastify-cookie'
+import fastifystatic from 'fastify-static'
 import ApplicationModule from './app'
 import GlobalHttpExceptionFilter from './GlobalExceptionFilter'
 
@@ -13,14 +17,17 @@ if (process.env.LOAD_CONFIG_FILE === 'true') {
 
 const bootstrap = async (): Promise<void> => {
   try {
-    const app: NestExpressApplication = await NestFactory.create<
-      NestExpressApplication
-    >(ApplicationModule)
-    app.useStaticAssets(join(__dirname, 'public'))
+    const app: NestFastifyApplication = await NestFactory.create<
+      NestFastifyApplication
+    >(ApplicationModule, new FastifyAdapter())
+    app.register(fastifystatic, {
+      root: path.join(__dirname, '..', '..', 'public'),
+      prefix: '/public/'
+    })
     app.use(volleyball)
-    app.use(cookieParser())
+    app.register(fastifycookie)
     app.useGlobalFilters(new GlobalHttpExceptionFilter())
-    app.listen(<string>process.env.APP_PORT, () =>
+    await app.listen((process.env.APP_PORT as unknown) as number, () =>
       console.log(`listening on PORT ${process.env.APP_PORT}`)
     )
   } catch (err) {

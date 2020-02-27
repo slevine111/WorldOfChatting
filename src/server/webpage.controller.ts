@@ -1,11 +1,15 @@
 import { join } from 'path'
 import { Controller, Get, Res } from '@nestjs/common'
-import { Response } from 'express'
+import { FastifyReply } from 'fastify'
+import fs, { ReadStream } from 'fs'
 
 @Controller('')
 export default class WebpageController {
   @Get()
-  index(@Res() res: Response): void {
-    res.sendFile(join(__dirname, '..', '..', 'index.html'))
+  index(@Res() res: FastifyReply<ReadStream>): void {
+    const stream: ReadStream = fs.createReadStream(
+      join(__dirname, '..', '..', 'index.html')
+    )
+    res.type('text/html').send(stream)
   }
 }

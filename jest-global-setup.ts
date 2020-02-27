@@ -1,14 +1,6 @@
-import { Connection, createConnection } from 'typeorm'
+import { createConnection } from 'typeorm'
 import seedManualData from './src/bin/seed_manual'
 import { createMessages, ILanguageAndCountries } from './src/bin/seed_common'
-
-declare global {
-  namespace NodeJS {
-    interface Global {
-      __POSTGRES__: Connection
-    }
-  }
-}
 
 const createLanguages = (): ILanguageAndCountries[] => {
   return [

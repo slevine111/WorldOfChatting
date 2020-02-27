@@ -1,3 +1,4 @@
+import { CHAT_REQUEST_INVITATION_RECEIVED } from './types'
 import { RequestDataSuccessConstants } from '../APIRequestsHandling/types'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { INormalizedReducerShape } from '../reducer.base'
@@ -7,7 +8,6 @@ import { NotificationActionReturns } from './actions'
 import { USER_SENDER, USER_RECEIVER } from './helperfunctions'
 const {
   HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
-  CHAT_REQUEST_INVITATION_RECEIVED,
   INVITING_TO_CHAT_REQUEST_SUCCESS
 } = RequestDataSuccessConstants
 

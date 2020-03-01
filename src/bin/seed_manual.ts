@@ -22,10 +22,6 @@ import {
 } from './seed_common'
 import { Connection, createConnection } from 'typeorm'
 
-console.log(
-  Object.values(NotificationTypeOptions).map(nt => ({ notificationType: nt }))
-)
-
 const createAndSaveNotificationTypesToDb = (
   connectionName: string
 ): Promise<NotificationType[]> => {

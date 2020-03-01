@@ -1,13 +1,13 @@
 import {
   IReduxStoreUserFields,
+  INotificationReducerFields,
   IChatGroupAPIReturn
 } from '../../../types-for-both-server-and-client'
-import { UserLanguage } from '../../../entities'
+import { UserLanguage, UserChatGroup } from '../../../entities'
 import { IUserReducerState } from '../user/reducer'
 import { IUserChatGroupReducerState } from '../userchatgroup/reducer'
 import { INotificationReducerState } from '../notification/reducer'
 import { AnyAction } from 'redux'
-import { AxiosResponse } from 'axios'
 
 export enum RequestDataConstants {
   ENTERED_SITE_LOADING_BASE_DATA_REQUEST = 'ENTERED_SITE_LOADING_BASE_DATA_REQUEST',
@@ -17,7 +17,9 @@ export enum RequestDataConstants {
   WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST = 'WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST',
   USER_LOGGING_OUT_REQUEST = 'USER_LOGGING_OUT_REQUEST',
   REFRESHING_ACCESS_TOKEN_REQUEST = 'REFRESHING_ACCESS_TOKEN_REQUEST',
-  INVITING_TO_CHAT_REQUEST = 'INVITING_TO_CHAT_REQUEST'
+  INVITING_TO_CHAT_REQUEST = 'INVITING_TO_CHAT_REQUEST',
+  CHAT_GROUP_INVITE_ACCEPTED_REQUEST = 'CHAT_GROUP_INVITE_ACCEPTED_REQUEST',
+  CHAT_GROUP_INVITE_DECLINED_REQUEST = 'CHAT_GROUP_INVITE_DECLINED_REQUEST'
 }
 
 export enum RequestDataSuccessConstants {
@@ -28,7 +30,9 @@ export enum RequestDataSuccessConstants {
   WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS = 'WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST_SUCCESS',
   USER_LOGGING_OUT_REQUEST_SUCCESS = 'USER_LOGGING_OUT_REQUEST_SUCCESS',
   REFRESHING_ACCESS_TOKEN_REQUEST_SUCCESS = 'REFRESHING_ACCESS_TOKEN_REQUEST_SUCCESS',
-  INVITING_TO_CHAT_REQUEST_SUCCESS = 'INVITING_TO_CHAT_REQUEST_SUCCESS'
+  INVITING_TO_CHAT_REQUEST_SUCCESS = 'INVITING_TO_CHAT_REQUEST_SUCCESS',
+  CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS = 'CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS',
+  CHAT_GROUP_INVITE_DECLINED_REQUEST_SUCCESS = 'CHAT_GROUP_INVITE_DECLINED_REQUEST_SUCCESS'
 }
 
 interface ActionOnDataRequestSuccess {
@@ -69,6 +73,12 @@ export type UserLoggedInDataRetrivalArrayDataTypes = [
   INotificationReducerState
 ]
 
+export interface IChatGroupRequestAcceptedData {
+  newChatGroup: IChatGroupAPIReturn
+  newUserChatGroups: UserChatGroup[]
+  updatedNotification: INotificationReducerFields
+}
+
 export interface IAxiosErrorData {
   message: string
   statusCode: number
@@ -76,7 +86,7 @@ export interface IAxiosErrorData {
 
 export interface IThunkReturnObject<T = any> {
   requestDataActionType: RequestDataConstants
-  apiCall: () => Promise<AxiosResponse[] | AxiosResponse>
+  apiCall: () => Promise<any>
   dataTransformationCall?: (apiResponseData: any) => T
   dispatchActionOnSuccess: (
     data: T,

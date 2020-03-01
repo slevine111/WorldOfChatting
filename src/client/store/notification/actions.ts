@@ -1,13 +1,17 @@
 import axios, { AxiosResponse } from 'axios'
 import { IThunkReturnObject } from '../APIRequestsHandling/types'
-import { CHAT_REQUEST_INVITATION_RECEIVED } from './types'
+import { CHAT_GROUP_SOCKET_EVENT_RECEIVED } from './types'
 import {
   RequestDataConstants,
   RequestDataSuccessConstants
 } from '../APIRequestsHandling/types'
 import { INotificationReducerFields } from '../../../types-for-both-server-and-client'
 import { INotificationPostDTO } from '../../../server/notifications/notifications.dto'
-const { INVITING_TO_CHAT_REQUEST } = RequestDataConstants
+import { NtRecipientStatusOptions } from '../../../entities/NotificationRecipient'
+const {
+  INVITING_TO_CHAT_REQUEST,
+  CHAT_GROUP_INVITE_DECLINED_REQUEST
+} = RequestDataConstants
 
 const chatGroupInvitationSent = (
   notificationReducerItem: INotificationReducerFields
@@ -19,19 +23,32 @@ type ChatGroupInvitationSentActionReturn = ReturnType<
   typeof chatGroupInvitationSent
 >
 
-export const chatGroupInvitationReceived = (
+export const chatGroupSocketEventReceived = (
   notification: INotificationReducerFields
 ) => ({
-  type: CHAT_REQUEST_INVITATION_RECEIVED,
+  type: CHAT_GROUP_SOCKET_EVENT_RECEIVED,
   notification
 })
-type ChatGroupInvitationReceivedActionReturn = ReturnType<
-  typeof chatGroupInvitationReceived
+type ChatGroupSocketEventReceivedActionReturn = ReturnType<
+  typeof chatGroupSocketEventReceived
+>
+
+export const chatGroupRequestDeclined = (
+  updatedNotification: INotificationReducerFields
+) => ({
+  type: <const>(
+    RequestDataSuccessConstants.CHAT_GROUP_INVITE_DECLINED_REQUEST_SUCCESS
+  ),
+  updatedNotification
+})
+type ChatGroupRequestDeclinedActionReturn = ReturnType<
+  typeof chatGroupRequestDeclined
 >
 
 export type NotificationActionReturns =
   | ChatGroupInvitationSentActionReturn
-  | ChatGroupInvitationReceivedActionReturn
+  | ChatGroupSocketEventReceivedActionReturn
+  | ChatGroupRequestDeclinedActionReturn
 
 export const chatGroupInviteThunk = (
   newNotificationPost: INotificationPostDTO,
@@ -50,5 +67,22 @@ export const chatGroupInviteThunk = (
         })
     },
     dispatchActionOnSuccess: chatGroupInvitationSent
+  }
+}
+
+export const chatGroupRequestDeclinedThunk = (
+  ntRecipientId: string
+): IThunkReturnObject<INotificationReducerFields> => {
+  return {
+    requestDataActionType: CHAT_GROUP_INVITE_DECLINED_REQUEST,
+    apiCall: (): Promise<AxiosResponse<INotificationReducerFields>> => {
+      return axios.put(
+        `api/notification/notificationRecipient/${ntRecipientId}`,
+        {
+          status: NtRecipientStatusOptions.DECLINED
+        }
+      )
+    },
+    dispatchActionOnSuccess: chatGroupRequestDeclined
   }
 }

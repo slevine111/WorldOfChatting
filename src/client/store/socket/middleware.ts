@@ -11,7 +11,9 @@ const {
   AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_SUCCESS,
   CHECKING_IF_USER_LOGGED_IN_REQUEST_SUCCESS,
   USER_LOGGING_OUT_REQUEST_SUCCESS,
-  INVITING_TO_CHAT_REQUEST_SUCCESS
+  INVITING_TO_CHAT_REQUEST_SUCCESS,
+  CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS,
+  CHAT_GROUP_INVITE_DECLINED_REQUEST_SUCCESS
 } = RequestDataSuccessConstants
 
 const isThunkOject = (
@@ -40,6 +42,10 @@ export default (store: MyStoreType) => {
         socket.disconnect()
       case INVITING_TO_CHAT_REQUEST_SUCCESS:
         socket.sendInviteToChatGroupRequest(action.notificationReducerItem)
+        break
+      case CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS:
+      case CHAT_GROUP_INVITE_DECLINED_REQUEST_SUCCESS:
+        socket.sendChatGroupRequestResponse(action.updatedNotification)
         break
       default:
         break

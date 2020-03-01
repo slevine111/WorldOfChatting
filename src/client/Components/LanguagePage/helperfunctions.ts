@@ -30,10 +30,7 @@ export const getAllUsersOfLanguage = (
   const loggedInUserLangsIds: string[] =
     subGroupings[LOGGED_IN_USER_SUBGROUPING_KEY]
 
-  if (
-    loggedInUserLangsIds.length === 1 &&
-    byId[loggedInUserLangsIds[0]].userId === loggedInUserId
-  ) {
+  if (subGroupings[language].length === 1) {
     return []
   }
 

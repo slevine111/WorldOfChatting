@@ -50,8 +50,11 @@ export default class EventGateway
         ++this.subscriberCountByNotificationChannel[loggedInUserId[0]]
       }
       this.redisSubscriber.on('message', (_, message) => {
-        const { emitTarget, data, event } = JSON.parse(message)
-        socket.to(emitTarget).emit(event, data)
+        const { userIdEmitTarget, data, event } = JSON.parse(message)
+        const socketId = this.userIdToSocketIdMap[userIdEmitTarget]
+        if (typeof socketId === 'string') {
+          socket.to(socketId).emit(event, data)
+        }
       })
     }
   }
@@ -66,34 +69,53 @@ export default class EventGateway
     }
   }
 
+  emitOrPublishEventToSingleUser<T, K extends keyof T>(
+    socket: Socket,
+    dataSend: T,
+    key: K,
+    event: SocketEventsFromServer
+  ): void {
+    const userId: string = (dataSend[key] as unknown) as string
+    const userSocketIdSendTo: string | undefined = this.userIdToSocketIdMap[
+      userId
+    ]
+    if (typeof userSocketIdSendTo === 'string') {
+      socket.to(userSocketIdSendTo).emit(event, dataSend)
+    } else {
+      const message: string = JSON.stringify({
+        userIdEmitTarget: userId,
+        data: dataSend,
+        event
+      })
+      this.redisPublisher.publish(`notifications${userId[0]}`, message, () => {
+        console.log(`published message ${message}`)
+      })
+    }
+  }
+
   @SubscribeMessage(SocketEventsFromClient.CHAT_GROUP_INVITE_SENT)
   chatGroupInviteHasBeenSent(
     socket: Socket,
     notificationReducerItem: INotificationReducerFields
-  ) {
-    const { targetUserId } = notificationReducerItem
-    const targetUserSocketId: string | undefined = this.userIdToSocketIdMap[
-      targetUserId
-    ]
-    if (typeof targetUserSocketId === 'string') {
-      socket
-        .to(targetUserSocketId)
-        .emit(
-          SocketEventsFromServer.CHAT_GROUP_INVITE_RECEIVED,
-          notificationReducerItem
-        )
-    } else {
-      this.redisPublisher.publish(
-        `notifications${targetUserId[0]}`,
-        JSON.stringify({
-          emitTarget: targetUserSocketId,
-          data: notificationReducerItem,
-          event: SocketEventsFromServer.CHAT_GROUP_INVITE_RECEIVED
-        }),
-        () => {
-          console.log('published something')
-        }
-      )
-    }
+  ): void {
+    this.emitOrPublishEventToSingleUser(
+      socket,
+      notificationReducerItem,
+      'targetUserId',
+      SocketEventsFromServer.CHAT_GROUP_INVITE_RECEIVED
+    )
+  }
+
+  @SubscribeMessage(SocketEventsFromClient.CHAT_GROUP_INVITE_RESPONSE_SENT)
+  chatGroupInviteResponseHasBeenSent(
+    socket: Socket,
+    updatedNotification: INotificationReducerFields
+  ): void {
+    this.emitOrPublishEventToSingleUser(
+      socket,
+      updatedNotification,
+      'senderId',
+      SocketEventsFromServer.CHAT_GROUP_INVITE_RESPONSE_RECEIVED
+    )
   }
 }

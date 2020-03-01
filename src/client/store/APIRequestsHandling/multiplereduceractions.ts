@@ -2,7 +2,8 @@ import {
   RequestDataSuccessConstants,
   ActionOnDataRequestFailure,
   LanguagePageDataRetrivalArrayDataTypes,
-  UserLoggedInDataRetrivalArrayDataTypes
+  UserLoggedInDataRetrivalArrayDataTypes,
+  IChatGroupRequestAcceptedData
 } from './types'
 
 export const userLoggedOut = () => ({
@@ -34,8 +35,21 @@ export const wentToLanguagePageView = (
 })
 type WentToLanguagePageViewType = ReturnType<typeof wentToLanguagePageView>
 
+export const chatGroupRequestAccepted = (
+  data: IChatGroupRequestAcceptedData
+) => ({
+  type: <const>(
+    RequestDataSuccessConstants.CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS
+  ),
+  chatGroup: data.newChatGroup,
+  userChatGroups: data.newUserChatGroups,
+  updatedNotification: data.updatedNotification
+})
+type ChatGroupRequestAcceptedType = ReturnType<typeof chatGroupRequestAccepted>
+
 export type SharedActionsTypes =
   | UserLoggedOutActionReturn
   | UserLoggedInType
   | WentToLanguagePageViewType
   | ActionOnDataRequestFailure
+  | ChatGroupRequestAcceptedType

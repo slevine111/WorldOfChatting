@@ -8,7 +8,7 @@ import chatGroupReducer, { FAVORITE_CHAT_GROUPS_KEY } from './chatgroup/reducer'
 import userChatGroupReducer from './userchatgroup/reducer'
 import authReducer from './auth/reducer'
 import notificationReducer from './notification/reducer'
-import { USER_SENDER, USER_RECEIVER } from './notification/helperfunctions'
+import { NOTIFICATIONS_DISPLAY } from './notification/helperfunctions'
 import uiReducer from './ui/reducer'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
@@ -22,16 +22,14 @@ import { createReducerSlice } from './utilityfunctions'
 const rootReducer = combineReducers({
   languages: languageReducer,
   users: createReducerSlice(userReducer),
-  userLanguages: createReducerSlice(userLanguageReducer, [
+  userLanguages: createReducerSlice(
+    userLanguageReducer,
     LOGGED_IN_USER_SUBGROUPING_KEY
-  ]),
-  chatGroups: createReducerSlice(chatGroupReducer, [FAVORITE_CHAT_GROUPS_KEY]),
+  ),
+  chatGroups: createReducerSlice(chatGroupReducer, FAVORITE_CHAT_GROUPS_KEY),
   userChatGroups: createReducerSlice(userChatGroupReducer),
   auth: authReducer,
-  notifications: createReducerSlice(notificationReducer, [
-    USER_SENDER,
-    USER_RECEIVER
-  ]),
+  notifications: createReducerSlice(notificationReducer, NOTIFICATIONS_DISPLAY),
   ui: uiReducer
 })
 

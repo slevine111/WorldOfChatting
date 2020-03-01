@@ -2,6 +2,7 @@ import { Message, UserChatGroup, User, ChatGroup } from '../entities'
 import { NotificationTypeOptions } from '../entities/NotificationType'
 import { Repository, getConnection } from 'typeorm'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
+import { NtRecipientStatusOptions } from '../entities/NotificationRecipient'
 import { hashSync } from 'bcrypt'
 
 export interface ILanguageAndCountries {
@@ -65,7 +66,7 @@ export interface INotificationSubset {
 }
 
 export interface INotificationRecipientSubset {
-  read: boolean
+  status: NtRecipientStatusOptions
   notificationId: string
   targetUserId: string
 }

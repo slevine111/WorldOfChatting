@@ -8,6 +8,7 @@ import {
 } from '../entities'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
 import { NotificationTypeOptions } from '../entities/NotificationType'
+import { NtRecipientStatusOptions } from '../entities/NotificationRecipient'
 import seedManualData from './seed_manual'
 import {
   CHAT_GROUP_LANGUAGES_MANUALLY,
@@ -271,11 +272,12 @@ const createNotiifcationRecipients = (
   connectionName: string
 ): Promise<NotificationRecipient[]> => {
   let ntRecipentsArray: INotificationRecipientSubset[] = []
+  const { UNREAD, ACCEPTED, DECLINED } = NtRecipientStatusOptions
   for (let i = 0; i < notifications.length; ++i) {
     const curNtsBatch: Notification[] = notifications[i]
     for (let j = 0; j < curNtsBatch.length; ++j) {
       ntRecipentsArray.push({
-        read: i === 0,
+        status: i === 0 ? UNREAD : i === 1 ? ACCEPTED : DECLINED,
         notificationId: curNtsBatch[j].id,
         targetUserId: manualUsers[j].id
       })

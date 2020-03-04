@@ -20,7 +20,7 @@ const FavoriteChats: React.FC<{}> = ({}) => {
             You have no favorite chats. Go to your chats and add some!!
           </Typography>
         )}
-        {favoriteChatGroupIds.length &&
+        {!!favoriteChatGroupIds.length &&
           favoriteChatGroupIds.map((chatGroupId: string) => {
             return (
               <ChatBio

@@ -8,7 +8,7 @@ import {
   Inject
 } from '@nestjs/common'
 import { Observable } from 'rxjs'
-import { FastifyRequest } from 'fastify'
+import { Request } from 'express'
 import { JwtService } from '@nestjs/jwt'
 import { ACCESS_TOKEN_COOKIE_NAME } from '../constants'
 import { IAccessTokenClaims } from './auth.dto'
@@ -25,9 +25,9 @@ export default class AuthGuard implements CanActivate {
     context: ExecutionContext
   ): boolean | Promise<boolean> | Observable<boolean> {
     return new Promise((res, rej) => {
-      const request: FastifyRequest = context.switchToHttp().getRequest()
+      const request: Request = context.switchToHttp().getRequest()
       let accessToken: string = ''
-      const authHeader: string | undefined = request.headers.Authorization
+      const authHeader: string | undefined = request.header('Authorization')
       if (typeof authHeader === 'string') {
         accessToken = authHeader.split('Bearer ')[1]
       } else if (

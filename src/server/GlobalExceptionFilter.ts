@@ -5,16 +5,13 @@ import {
   ArgumentsHost,
   HttpStatus
 } from '@nestjs/common'
-import { FastifyReply } from 'fastify'
+import { Response } from 'express'
 
 @Catch()
 export default class GlobalHttpExceptionFilter implements ExceptionFilter {
   catch(exception: Error, host: ArgumentsHost) {
     const context = host.switchToHttp()
-    const response: FastifyReply<{
-      statusCode: HttpStatus
-      message: string
-    }> = context.getResponse()
+    const response: Response = context.getResponse()
 
     const status: number =
       exception instanceof HttpException
@@ -31,6 +28,6 @@ export default class GlobalHttpExceptionFilter implements ExceptionFilter {
             message: message !== '' ? message : 'internal server error'
           }
         : message
-    response.status(status).send(errorBody)
+    response.status(status).json(errorBody)
   }
 }

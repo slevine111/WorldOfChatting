@@ -1,5 +1,7 @@
+import { join } from 'path'
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { ServeStaticModule } from '@nestjs/serve-static'
 import UserModule from './users/users.module'
 import LanguageModule from './languages/languages.module'
 import UserLanguageModule from './userlanguages/userlanguages.module'
@@ -23,6 +25,13 @@ import EventModule from './socket/socket.module'
     NotificationModule,
     MyJWTModule,
     TypeOrmModule.forRoot(),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'public'),
+      renderPath: '/public',
+      serveStaticOptions: {
+        index: false
+      }
+    }),
     MyCacheModule,
     EventModule
   ],

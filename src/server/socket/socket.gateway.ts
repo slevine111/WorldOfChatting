@@ -7,11 +7,12 @@ import {
   SubscribeMessage
 } from '@nestjs/websockets'
 import { RedisClient, createClient, ClientOpts } from 'redis'
-import { INotificationReducerFields } from '../../types-for-both-server-and-client'
+import { IChatGroupInviteReducerFields } from '../../types-for-both-server-and-client'
 import {
   SocketEventsFromClient,
   SocketEventsFromServer
 } from '../../socket-events'
+import { Notification } from '../../entities'
 
 config()
 
@@ -96,11 +97,11 @@ export default class EventGateway
   @SubscribeMessage(SocketEventsFromClient.CHAT_GROUP_INVITE_SENT)
   chatGroupInviteHasBeenSent(
     socket: Socket,
-    notificationReducerItem: INotificationReducerFields
+    chatGroupInviteReducerItem: IChatGroupInviteReducerFields
   ): void {
     this.emitOrPublishEventToSingleUser(
       socket,
-      notificationReducerItem,
+      chatGroupInviteReducerItem,
       'targetUserId',
       SocketEventsFromServer.CHAT_GROUP_INVITE_RECEIVED
     )
@@ -109,12 +110,12 @@ export default class EventGateway
   @SubscribeMessage(SocketEventsFromClient.CHAT_GROUP_INVITE_RESPONSE_SENT)
   chatGroupInviteResponseHasBeenSent(
     socket: Socket,
-    updatedNotification: INotificationReducerFields
+    newNotification: Notification
   ): void {
     this.emitOrPublishEventToSingleUser(
       socket,
-      updatedNotification,
-      'senderId',
+      newNotification,
+      'targetUserId',
       SocketEventsFromServer.CHAT_GROUP_INVITE_RESPONSE_RECEIVED
     )
   }

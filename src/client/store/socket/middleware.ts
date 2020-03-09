@@ -4,14 +4,15 @@ import {
   RequestDataSuccessConstants
 } from '../APIRequestsHandling/types'
 import { AnyAction } from 'redux'
-import { NotificationActionReturns } from '../notification/actions'
-import { UIAPICallingActionReturns } from '../APIRequestsHandling/types'
+import { ChatGroupInviteActionReturns } from '../chatgroupinvite/actions'
+import { AuthActionReturns } from '../auth/actions'
+import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { MyStoreType } from '../index'
 const {
   AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_SUCCESS,
   CHECKING_IF_USER_LOGGED_IN_REQUEST_SUCCESS,
   USER_LOGGING_OUT_REQUEST_SUCCESS,
-  INVITING_TO_CHAT_REQUEST_SUCCESS,
+  CHAT_GROUP_INVITE_REQUEST_SUCCESS,
   CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS,
   CHAT_GROUP_INVITE_DECLINED_REQUEST_SUCCESS
 } = RequestDataSuccessConstants
@@ -27,9 +28,9 @@ export default (store: MyStoreType) => {
 
   return (next: any) => (
     action:
-      | IThunkReturnObject<any>
-      | NotificationActionReturns
-      | UIAPICallingActionReturns
+      | ChatGroupInviteActionReturns
+      | SharedActionsTypes
+      | AuthActionReturns
   ) => {
     if (isThunkOject(action)) return next(action)
 
@@ -40,12 +41,13 @@ export default (store: MyStoreType) => {
         break
       case USER_LOGGING_OUT_REQUEST_SUCCESS:
         socket.disconnect()
-      case INVITING_TO_CHAT_REQUEST_SUCCESS:
-        socket.sendInviteToChatGroupRequest(action.notificationReducerItem)
+        break
+      case CHAT_GROUP_INVITE_REQUEST_SUCCESS:
+        socket.sendInviteToChatGroupRequest(action.chatGroupInviteReducerItem)
         break
       case CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS:
       case CHAT_GROUP_INVITE_DECLINED_REQUEST_SUCCESS:
-        socket.sendChatGroupRequestResponse(action.updatedNotification)
+        socket.sendChatGroupRequestResponse(action.newNotification)
         break
       default:
         break

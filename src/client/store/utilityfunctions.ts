@@ -53,6 +53,27 @@ export function normalizeData<T extends { [key: string]: any }>(
   return normalizedData
 }
 
+export const deleteDataItem = <T extends INormalizedReducerShape<K>, K>(
+  itemIdDelete: string,
+  reducerState: T
+): T => {
+  const { allIds, byId, subGroupings } = reducerState
+  let newIdByObject: Record<string, K> = {}
+  let newAllIdArr: string[] = []
+  for (let i = 0; i < allIds.length; ++i) {
+    if (reducerState.allIds[i] !== itemIdDelete) {
+      const currentId: string = allIds[i]
+      newIdByObject[currentId] = byId[currentId]
+      newAllIdArr.push(currentId)
+    }
+  }
+  return {
+    byId: newIdByObject,
+    allIds: newAllIdArr,
+    subGroupings: JSON.parse(JSON.stringify(subGroupings))
+  } as T
+}
+
 export const checkIfActionResetsToInitialState = (
   action: SharedActionsTypes
 ): boolean => {

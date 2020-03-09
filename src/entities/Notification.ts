@@ -1,26 +1,37 @@
 import {
   Entity,
   PrimaryGeneratedColumn,
-  CreateDateColumn,
+  UpdateDateColumn,
   ManyToOne,
-  JoinColumn
+  JoinColumn,
+  Column
 } from 'typeorm'
 import User from './User'
-import NotificationType, { NotificationTypeOptions } from './NotificationType'
+
+export enum NotificationTypes {
+  CHAT_GROUP_INVITE_ACCEPTED = 'chat group invite accepted',
+  CHAT_GROUP_INVITE_DECLINED = 'chat group invite declined'
+}
 
 @Entity()
 export default class Notification {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date
 
-  @ManyToOne(() => NotificationType)
-  @JoinColumn({ name: 'notificationType' })
-  notificationType: NotificationTypeOptions
+  @Column({ type: 'bool', default: false })
+  read: boolean
+
+  @Column({ enum: NotificationTypes })
+  notificationType: NotificationTypes
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'senderId' })
-  senderId: string
+  @JoinColumn({ name: 'senderUserId' })
+  senderUserId: string
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'targetUserId' })
+  targetUserId: string
 }

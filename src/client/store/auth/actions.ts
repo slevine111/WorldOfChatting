@@ -6,7 +6,6 @@ export const addPostponnedAction = (postponnedAction: IThunkReturnObject) => ({
   type: ADD_POSTPONNED_ACTION,
   postponnedAction
 })
-type AddPostponnedActionReturn = ReturnType<typeof addPostponnedAction>
 
 export const loggedInUserFoundEnteringSite = (data: IUserAndExpireTime) => ({
   type: <const>(
@@ -15,9 +14,6 @@ export const loggedInUserFoundEnteringSite = (data: IUserAndExpireTime) => ({
   user: data.user,
   tokenExpireTime: data.expireTime
 })
-type LoggedInUserFoundEnteringSiteActionReturn = ReturnType<
-  typeof loggedInUserFoundEnteringSite
->
 
 export const userLoginAttemptSucceeded = (data: IUserAndExpireTime) => ({
   type: <const>(
@@ -26,9 +22,6 @@ export const userLoginAttemptSucceeded = (data: IUserAndExpireTime) => ({
   user: data.user,
   tokenExpireTime: data.expireTime
 })
-type UserLoginAttemptSucceededActionReturn = ReturnType<
-  typeof userLoginAttemptSucceeded
->
 
 export const accessTokenRefreshed = (accessTokenExpireTime: number) => ({
   type: <const>(
@@ -36,10 +29,9 @@ export const accessTokenRefreshed = (accessTokenExpireTime: number) => ({
   ),
   accessTokenExpireTime
 })
-type AccessTokenRefreshedActionReturn = ReturnType<typeof accessTokenRefreshed>
 
-export type AuthActionTypes =
-  | LoggedInUserFoundEnteringSiteActionReturn
-  | AddPostponnedActionReturn
-  | UserLoginAttemptSucceededActionReturn
-  | AccessTokenRefreshedActionReturn
+export type AuthActionReturns =
+  | ReturnType<typeof addPostponnedAction>
+  | ReturnType<typeof loggedInUserFoundEnteringSite>
+  | ReturnType<typeof userLoginAttemptSucceeded>
+  | ReturnType<typeof accessTokenRefreshed>

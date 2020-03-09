@@ -1,11 +1,13 @@
 import io from 'socket.io-client'
 import { MyStoreType } from '../index'
-import { chatGroupSocketEventReceived } from '../notification/actions'
-import { INotificationReducerFields } from '../../../types-for-both-server-and-client'
+import { chatGroupInviteReceived } from '../chatgroupinvite/actions'
+import { notificationReceived } from '../notification/actions'
+import { IChatGroupInviteReducerFields } from '../../../types-for-both-server-and-client'
 import {
   SocketEventsFromClient,
   SocketEventsFromServer
 } from '../../../socket-events'
+import { Notification } from '../../../entities'
 const {
   CHAT_GROUP_INVITE_RECEIVED,
   CHAT_GROUP_INVITE_RESPONSE_RECEIVED
@@ -25,20 +27,19 @@ export default class MySocket {
     })
     console.log('two-way connection has been made!')
 
-    const chatGroupEvents = [
+    this.socket.on(
       CHAT_GROUP_INVITE_RECEIVED,
-      CHAT_GROUP_INVITE_RESPONSE_RECEIVED
-    ]
-    for (let i = 0; i < chatGroupEvents.length; ++i) {
-      this.socket.on(
-        chatGroupEvents[i],
-        (notificationReducerItem: INotificationReducerFields) => {
-          this.store.dispatch(
-            chatGroupSocketEventReceived(notificationReducerItem)
-          )
-        }
-      )
-    }
+      (chatGroupInviteReducerItem: IChatGroupInviteReducerFields) => {
+        this.store.dispatch(chatGroupInviteReceived(chatGroupInviteReducerItem))
+      }
+    )
+
+    this.socket.on(
+      CHAT_GROUP_INVITE_RESPONSE_RECEIVED,
+      (notification: Notification) => {
+        this.store.dispatch(notificationReceived(notification))
+      }
+    )
   }
 
   disconnect(): void {
@@ -46,20 +47,18 @@ export default class MySocket {
   }
 
   sendInviteToChatGroupRequest(
-    notificationReducerItem: INotificationReducerFields
+    chatGroupInviteReducerItem: IChatGroupInviteReducerFields
   ): void {
     this.socket.emit(
       SocketEventsFromClient.CHAT_GROUP_INVITE_SENT,
-      notificationReducerItem
+      chatGroupInviteReducerItem
     )
   }
 
-  sendChatGroupRequestResponse(
-    updatedNotification: INotificationReducerFields
-  ): void {
+  sendChatGroupRequestResponse(newNotification: Notification): void {
     this.socket.emit(
       SocketEventsFromClient.CHAT_GROUP_INVITE_RESPONSE_SENT,
-      updatedNotification
+      newNotification
     )
   }
 }

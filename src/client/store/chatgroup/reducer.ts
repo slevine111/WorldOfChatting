@@ -22,7 +22,7 @@ export default (
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
       return normalizeInitialChatGroupData(
         action.chatGroups,
-        action.userLangsOfLoggedInUser
+        action.userLanguages
       )
     default:
       return state

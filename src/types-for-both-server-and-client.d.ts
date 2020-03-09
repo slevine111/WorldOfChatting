@@ -1,8 +1,7 @@
 import { ChatGroup, User } from './entities'
 import { UserLanguageTypeFieldOptions } from './entities/UserLanguage'
 import { OnlineStatusesEnum } from './entities/User'
-import { NotificationTypeOptions } from './entities/NotificationType'
-import { NtRecipientStatusOptions } from './entities/NotificationRecipient'
+import { ChatGroupInviteStatusOptions } from './entities/ChatGroupInviteRecipient'
 
 export interface IChatGroupAPIReturn extends ChatGroup {
   favorite: boolean
@@ -30,12 +29,11 @@ export interface IReduxStoreUserFields extends User {
   loggedInAsString: keyof typeof OnlineStatusesEnum
 }
 
-export interface INotificationReducerFields {
+export interface IChatGroupInviteReducerFields {
   id: string
   createdAt: Date
-  updatedAt: Date
-  status: NtRecipientStatusOptions
-  senderId: string
-  notificationType: NotificationTypeOptions
+  language: string
+  status: ChatGroupInviteStatusOptions
+  senderUserId: string
   targetUserId: string
 }

@@ -2,26 +2,21 @@ import {
   RequestDataSuccessConstants,
   ActionOnDataRequestFailure,
   LanguagePageDataRetrivalArrayDataTypes,
-  UserLoggedInDataRetrivalArrayDataTypes,
-  IChatGroupRequestAcceptedData
+  IUserLoggedInDataRetrival,
+  IChatGroupRequestAcceptedData,
+  IChatGroupRequestBase
 } from './types'
 
 export const userLoggedOut = () => ({
   type: <const>RequestDataSuccessConstants.USER_LOGGING_OUT_REQUEST_SUCCESS
 })
-type UserLoggedOutActionReturn = ReturnType<typeof userLoggedOut>
 
-export const userLoggedIn = (data: UserLoggedInDataRetrivalArrayDataTypes) => ({
+export const userLoggedIn = (data: IUserLoggedInDataRetrival) => ({
   type: <const>(
     RequestDataSuccessConstants.HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS
   ),
-  userLangsOfLoggedInUser: data[0],
-  chatGroups: data[1],
-  users: data[2],
-  userChatGroups: data[3],
-  notifications: data[4]
+  ...data
 })
-type UserLoggedInType = ReturnType<typeof userLoggedIn>
 
 export const wentToLanguagePageView = (
   data: LanguagePageDataRetrivalArrayDataTypes
@@ -33,7 +28,6 @@ export const wentToLanguagePageView = (
   users: data[1],
   language: data[2]
 })
-type WentToLanguagePageViewType = ReturnType<typeof wentToLanguagePageView>
 
 export const chatGroupRequestAccepted = (
   data: IChatGroupRequestAcceptedData
@@ -41,15 +35,20 @@ export const chatGroupRequestAccepted = (
   type: <const>(
     RequestDataSuccessConstants.CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS
   ),
-  chatGroup: data.newChatGroup,
-  userChatGroups: data.newUserChatGroups,
-  updatedNotification: data.updatedNotification
+  ...data
 })
-type ChatGroupRequestAcceptedType = ReturnType<typeof chatGroupRequestAccepted>
+
+export const chatGroupRequestDeclined = (data: IChatGroupRequestBase) => ({
+  type: <const>(
+    RequestDataSuccessConstants.CHAT_GROUP_INVITE_DECLINED_REQUEST_SUCCESS
+  ),
+  ...data
+})
 
 export type SharedActionsTypes =
-  | UserLoggedOutActionReturn
-  | UserLoggedInType
-  | WentToLanguagePageViewType
+  | ReturnType<typeof userLoggedOut>
+  | ReturnType<typeof userLoggedIn>
+  | ReturnType<typeof wentToLanguagePageView>
+  | ReturnType<typeof chatGroupRequestAccepted>
+  | ReturnType<typeof chatGroupRequestDeclined>
   | ActionOnDataRequestFailure
-  | ChatGroupRequestAcceptedType

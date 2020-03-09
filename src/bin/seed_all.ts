@@ -4,11 +4,12 @@ import {
   UserLanguage,
   UserChatGroup,
   Notification,
-  NotificationRecipient
+  ChatGroupInvite,
+  ChatGroupInviteRecipient
 } from '../entities'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
-import { NotificationTypeOptions } from '../entities/NotificationType'
-import { NtRecipientStatusOptions } from '../entities/NotificationRecipient'
+import { NotificationTypes} from '../entities/Notification'
+import { ChatGroupInviteStatusOptions } from '../entities/ChatGroupInviteRecipient'
 import seedManualData from './seed_manual'
 import {
   CHAT_GROUP_LANGUAGES_MANUALLY,
@@ -16,9 +17,9 @@ import {
   IChatGroupSubset,
   IUserChatGroupSubset,
   IUserLanguageSubset,
+  IChatGroupInviteSubset,
+  IChatGroupInviteRecipientSubset,
   INotificationSubset,
-  INotificationRecipientSubset,
-  IObjectOfSets,
   ILanguageSubset,
   ICountriesByLanguageObject,
   returnRepository,
@@ -34,10 +35,6 @@ import { name, internet, lorem } from 'faker'
 interface IFirstAndLastName {
   firstName: string
   lastName: string
-}
-
-interface IObjectOfStrings {
-  [key: string]: string
 }
 
 const createLanguages = async (): Promise<ILanguageSubset[]> => {
@@ -156,8 +153,8 @@ const createSingleUserLanguage = (
   language: string,
   userId: string,
   userLanguagesArray: IUserLanguageSubset[],
-  languagesByUser: IObjectOfSets
-): void => {
+  languagesByUser: Record<string, Set<String>>
+): IUserLanguageSubset => {
   const { LEARNER, TEACHER } = UserLanguageTypeFieldOptions
   let createdUserLanguage: IUserLanguageSubset = {
     type: index % 2 === 0 ? LEARNER : TEACHER,
@@ -170,18 +167,20 @@ const createSingleUserLanguage = (
   userLanguagesArray.push(createdUserLanguage)
   if (languagesByUser[userId]) languagesByUser[userId].add(language)
   else languagesByUser[userId] = new Set([language])
+  return createdUserLanguage
 }
 
-export const createUserLanguages = (
+export const createUserLanguages = async (
   manualUsers: User[],
+  randomUserSubset: User[],
   allUserChatGroups: UserChatGroup[],
   allChatGroups: ChatGroup[],
-  languagesByUser: IObjectOfSets,
+  languagesByUser: Record<string, Set<String>>,
   connectionName: string
-): Promise<UserLanguage[]> => {
+): Promise<IUserLanguageSubset[][][]> => {
   let userLanguagesArray: IUserLanguageSubset[] = []
 
-  let chatGroupLanguageMap: IObjectOfStrings = {}
+  let chatGroupLanguageMap: Record<string, string> = {}
   for (let k = 0; k < allChatGroups.length; ++k) {
     chatGroupLanguageMap[allChatGroups[k].id] = allChatGroups[k].language
   }
@@ -200,7 +199,25 @@ export const createUserLanguages = (
     }
   }
 
-  let selectedLanguages: string[] = [
+  let count: number = 0
+  let userLangsByUserAndLang: IUserLanguageSubset[][][] = []
+  for (let k = 0; k < manualUsers.length; ++k) {
+    const manualUserId: string = manualUsers[k].id
+    let userLangsByUser: IUserLanguageSubset[][] = []
+    for (let l = 0; l < 3; ++l) {
+      const language: string = languagesByUser[manualUserId].values().next().value
+      let userLangs: IUserLanguageSubset[] = []
+      for (let m = 0; m < 2; ++m) {
+        const newUserLang = createSingleUserLanguage(count, language, randomUserSubset[count].id, userLanguagesArray, languagesByUser)
+        userLangs.push(newUserLang)
+        ++count
+      }
+      userLangsByUser.push(userLangs)
+    }
+    userLangsByUserAndLang.push(userLangsByUser)
+  }
+  /*
+    let selectedLanguages: string[] = [
     'Swahili',
     'French',
     'Japanese',
@@ -224,18 +241,23 @@ export const createUserLanguages = (
         )
       }
     }
-  }
+  }*/
 
-  return returnRepository(
+  await returnRepository(
     (UserLanguage as unknown) as UserLanguage,
     connectionName
   ).save(userLanguagesArray)
+
+  return userLangsByUserAndLang
 }
 
 const pause = (numberSeconds: number): void => {
   const dt: number = new Date().getTime()
   while (new Date().getTime() - dt <= numberSeconds * 1000) {}
 }
+
+
+const createChatGroupInvites = async (manualUsers: User[], randomUsers: User[], )
 
 const createNotiifcations = async (
   randomUsers: User[],
@@ -312,14 +334,15 @@ const refreshDbWithSeedData = async (): Promise<void> => {
     )
     await createNotiifcationRecipients(users, nts, name)
     const allUserChatGroups = [...userChatGroups, ...randomUserChatGroups]
+    const userLangsForChatGroupInvites =       createUserLanguages(
+      users,
+      randomUsers.slice(randomUsersArrayIndexAt),
+      allUserChatGroups,
+      [...chatGroups, ...randomChatGroups],
+      languagesByUser,
+      name
+    )
     await Promise.all([
-      createUserLanguages(
-        users,
-        allUserChatGroups,
-        [...chatGroups, ...randomChatGroups],
-        languagesByUser,
-        name
-      ),
       createMessages(allUserChatGroups, name)
     ])
     console.log('database successfully refreshed with all seed data')

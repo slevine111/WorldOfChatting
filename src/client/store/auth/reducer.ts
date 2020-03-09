@@ -2,7 +2,7 @@ import { ADD_POSTPONNED_ACTION } from './types'
 import { RequestDataSuccessConstants } from '../APIRequestsHandling/types'
 import { User } from '../../../entities'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
-import { AuthActionTypes } from './actions'
+import { AuthActionReturns } from './actions'
 import { IThunkReturnObject } from '../APIRequestsHandling/types'
 const {
   CHECKING_IF_USER_LOGGED_IN_REQUEST_SUCCESS,
@@ -25,7 +25,7 @@ const initialState: IAuthReducerState = {
 
 export default (
   state: IAuthReducerState = initialState,
-  action: AuthActionTypes | SharedActionsTypes
+  action: AuthActionReturns | SharedActionsTypes
 ): IAuthReducerState => {
   switch (action.type) {
     //authenticating user

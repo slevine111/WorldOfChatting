@@ -1,8 +1,8 @@
 import { Message, UserChatGroup, User, ChatGroup } from '../entities'
-import { NotificationTypeOptions } from '../entities/NotificationType'
 import { Repository, getConnection } from 'typeorm'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
-import { NtRecipientStatusOptions } from '../entities/NotificationRecipient'
+import { NotificationTypes } from '../entities/Notification'
+import { ChatGroupInviteStatusOptions } from '../entities/ChatGroupInviteRecipient'
 import { hashSync } from 'bcrypt'
 
 export interface ILanguageAndCountries {
@@ -25,7 +25,7 @@ export interface ISeedDataManualReturn {
   users: User[]
   chatGroups: ChatGroup[]
   userChatGroups: UserChatGroup[]
-  languagesByUser: IObjectOfSets
+  languagesByUser: Record<string, Set<string>>
 }
 
 export interface IUserSubset {
@@ -60,19 +60,21 @@ export interface IMessageSubset {
   chatGroupId: string
 }
 
-export interface INotificationSubset {
-  notificationType: NotificationTypeOptions
-  senderId: string
+export interface IChatGroupInviteSubset {
+  senderUserId: string
+  language: string
 }
 
-export interface INotificationRecipientSubset {
-  status: NtRecipientStatusOptions
-  notificationId: string
+export interface IChatGroupInviteRecipientSubset {
+  status: ChatGroupInviteStatusOptions
+  chatGroupInviteId: string
   targetUserId: string
 }
 
-export interface IObjectOfSets {
-  [key: string]: Set<string>
+export interface INotificationSubset {
+  notificationType: NotificationTypes
+  senderUserId: string
+  targetUserId: string
 }
 
 export const MANUAL_USERS_ARRAY: IUserSubset[] = [

@@ -8,6 +8,7 @@ import UserLanguageModule from './userlanguages/userlanguages.module'
 import ChatGroupModule from './chatgroups/chatgroups.module'
 import UserChatGroupModule from './userchatgroups/userchatgroups.module'
 import AuthModule from './auth/auth.module'
+import ChatGroupInviteModule from './chatgroupinvites/chatgroupinvites.module'
 import NotificationModule from './notifications/notifications.module'
 import MyJWTModule from './MyJWTModule'
 import MyCacheModule from './MyCacheModule'
@@ -22,6 +23,7 @@ import EventModule from './socket/socket.module'
     ChatGroupModule,
     UserChatGroupModule,
     AuthModule,
+    ChatGroupInviteModule,
     NotificationModule,
     MyJWTModule,
     TypeOrmModule.forRoot(),

@@ -21,7 +21,7 @@ export default (
   switch (action.type) {
     //user logging in
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
-      return normalizeData(action.userLangsOfLoggedInUser, state, {
+      return normalizeData(action.userLanguages, state, {
         subGroupingKey: LOGGED_IN_USER_SUBGROUPING_KEY
       })
     //after user clicks on language page

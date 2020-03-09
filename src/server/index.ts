@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core'
 import { NestExpressApplication } from '@nestjs/platform-express'
-//import { join } from 'path'
 import { config } from 'dotenv'
 import volleyball from 'volleyball'
 import cookieParser from 'cookie-parser'
@@ -16,7 +15,6 @@ const bootstrap = async (): Promise<void> => {
     const app: NestExpressApplication = await NestFactory.create<
       NestExpressApplication
     >(ApplicationModule)
-    //   app.useStaticAssets(join(__dirname, 'public'))
     app.use(volleyball)
     app.use(cookieParser())
     app.useGlobalFilters(new GlobalHttpExceptionFilter())

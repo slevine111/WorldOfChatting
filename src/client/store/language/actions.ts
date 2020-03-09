@@ -13,9 +13,8 @@ const gotAllLanguages = (languages: Language[]) => ({
   ),
   languages
 })
-type GotAllLanguagesActionReturn = ReturnType<typeof gotAllLanguages>
 
-export type LanguageActionReturns = GotAllLanguagesActionReturn
+export type LanguageActionReturns = ReturnType<typeof gotAllLanguages>
 
 export const getAllLanguagesThunk = (): IThunkReturnObject<Language[]> => {
   return {

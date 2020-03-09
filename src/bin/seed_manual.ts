@@ -3,10 +3,8 @@ import {
   User,
   UserLanguage,
   UserChatGroup,
-  Language,
-  NotificationType
+  Language
 } from '../entities'
-import { NotificationTypeOptions } from '../entities/NotificationType'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
 import {
   MANUAL_USERS_ARRAY,
@@ -14,26 +12,12 @@ import {
   IChatGroupSubset,
   IUserChatGroupSubset,
   IUserLanguageSubset,
-  IObjectOfSets,
   ILanguageSubset,
   ILanguageAndCountries,
   ISeedDataManualReturn,
   returnRepository
 } from './seed_common'
 import { Connection, createConnection } from 'typeorm'
-
-const createAndSaveNotificationTypesToDb = (
-  connectionName: string
-): Promise<NotificationType[]> => {
-  return returnRepository(
-    (NotificationType as unknown) as NotificationType,
-    connectionName
-  ).save(
-    (Object.values(NotificationTypeOptions).map(nt => ({
-      notificationType: nt
-    })) as unknown) as NotificationType[]
-  )
-}
 
 const createAndSaveUsersToDb = (connectionName: string): Promise<User[]> => {
   return returnRepository((User as unknown) as User, connectionName).save(
@@ -109,13 +93,13 @@ const createAndSaveUserChatGroupsToDb = (
 
 interface IUserLanguageInterface {
   userLanguagesArray: IUserLanguageSubset[]
-  languagesByUser: IObjectOfSets
+  languagesByUser: Record<string, Set<String>>
 }
 
 const createUserLanguagesManually = (users: User[]): IUserLanguageInterface => {
   const { LEARNER, TEACHER } = UserLanguageTypeFieldOptions
   let userLanguagesArray: IUserLanguageSubset[] = []
-  let languagesByUser: IObjectOfSets = {}
+  let languagesByUser: Record<string, Set<String>> = {}
 
   const languagesArray: string[][] = [
     ['English', 'Swahili', 'Spanish', 'French', 'Czech'],
@@ -151,7 +135,7 @@ const createUserLanguagesManually = (users: User[]): IUserLanguageInterface => {
 
 interface IULManualSaveDBReturn {
   userLanguages: UserLanguage[]
-  languagesByUser: IObjectOfSets
+  languagesByUser: Record<string, Set<String>>
 }
 
 const createAndSaveUserLanguagesToDb = async (
@@ -195,7 +179,6 @@ export default async (
     await returnRepository((Language as unknown) as Language, name).save(
       languages
     )
-    await createAndSaveNotificationTypesToDb(name)
     const users: User[] = await createAndSaveUsersToDb(name)
     const chatGroups: ChatGroup[] = await createAndSaveChatGroupsToDb(name)
     const [userChatGroups, { languagesByUser }]: [

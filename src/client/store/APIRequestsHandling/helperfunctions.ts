@@ -2,6 +2,10 @@ import { IUserReducerState } from '../user/reducer'
 import { IUserChatGroupReducerState } from '../userchatgroup/reducer'
 import { IUserAndChatGroupGetReturn } from '../../../types-for-both-server-and-client'
 import { CHAT_GROUP_KEY_PREFIX } from '../userchatgroup/reducer'
+import { IChatGroupRequestBase } from './types'
+import { ChatGroupInviteStatusOptions } from '../../../entities/ChatGroupInviteRecipient'
+import { NotificationTypes } from '../../../entities/Notification'
+import axios from 'axios'
 
 interface IUsersAndUserChatGroups {
   usersNormalizedAll: IUserReducerState
@@ -69,4 +73,32 @@ export const separateUserAndChatGroupFields = (
     }
   }
   return { usersNormalizedAll, userChatGroupNormalized }
+}
+
+export const respondToChatInviteBase = async (
+  userIdSentRequest: string,
+  userIdAcceptedRequest: string,
+  chatGroupInviteRecipientId: string,
+  status: ChatGroupInviteStatusOptions
+): Promise<IChatGroupRequestBase> => {
+  const apiReturn = await Promise.all([
+    axios.post('/api/notification', {
+      notificationType: Object(NotificationTypes)[
+        `CHAT_GROUP_INVITE_${
+          status === ChatGroupInviteStatusOptions.DECLINED
+            ? 'DECLINED'
+            : 'ACCEPTED'
+        }`
+      ],
+      senderId: userIdAcceptedRequest,
+      targetUserId: userIdSentRequest
+    }),
+    axios.put(`/api/chatgroupinvite/recipient/${chatGroupInviteRecipientId}`, {
+      status: ChatGroupInviteStatusOptions.DECLINED
+    })
+  ])
+  return {
+    newNotification: apiReturn[0].data,
+    chatGroupInviteRecipientId
+  }
 }

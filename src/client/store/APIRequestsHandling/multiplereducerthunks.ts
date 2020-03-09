@@ -2,21 +2,22 @@ import {
   userLoggedOut,
   userLoggedIn,
   wentToLanguagePageView,
-  chatGroupRequestAccepted
+  chatGroupRequestAccepted,
+  chatGroupRequestDeclined
 } from './multiplereduceractions'
 import {
   LanguagePageDataRetrivalArrayDataTypes,
-  UserLoggedInDataRetrivalArrayDataTypes,
+  IUserLoggedInDataRetrival,
   IChatGroupRequestAcceptedData,
+  IChatGroupRequestBase,
   RequestDataConstants,
   IThunkReturnObject
 } from './types'
-import { separateUserAndChatGroupFields } from './helperfunctions'
-import { normalizeData, createInitialState } from '../utilityfunctions'
 import {
-  generateInitNotficationSubGroupingFunction,
-  NOTIFICATIONS_DISPLAY
-} from '../notification/helperfunctions'
+  separateUserAndChatGroupFields,
+  respondToChatInviteBase
+} from './helperfunctions'
+import { normalizeData, createInitialState } from '../utilityfunctions'
 import { IUserReducerState } from '../user/reducer'
 import { IUserUpdateDTO } from '../../../server/users/users.dto'
 import { IChatGroupPostDTO } from '../../../server/chatgroups/chatgroups.dto'
@@ -25,10 +26,10 @@ import {
   IChatGroupAPIReturn,
   IUserAndChatGroupGetReturn,
   IReduxStoreUserFields,
-  INotificationReducerFields
+  IChatGroupInviteReducerFields
 } from '../../../types-for-both-server-and-client'
-import { User, UserLanguage } from '../../../entities'
-import { NtRecipientStatusOptions } from '../../../entities/NotificationRecipient'
+import { User, UserLanguage, Notification } from '../../../entities'
+import { ChatGroupInviteStatusOptions } from '../../../entities/ChatGroupInviteRecipient'
 import axios, { AxiosResponse } from 'axios'
 
 export const logoutUserProcessThunk = (
@@ -52,12 +53,13 @@ type UserLoggedInDataTransformationInput = [
   UserLanguage[],
   IUserAndChatGroupGetReturn[],
   IReduxStoreUserFields[],
-  INotificationReducerFields[]
+  IChatGroupInviteReducerFields[],
+  Notification[]
 ]
 
 export const userLoggedInDataRetrivalThunk = (
   user: User
-): IThunkReturnObject<UserLoggedInDataRetrivalArrayDataTypes> => {
+): IThunkReturnObject<IUserLoggedInDataRetrival> => {
   return {
     requestDataActionType:
       RequestDataConstants.HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST,
@@ -67,17 +69,19 @@ export const userLoggedInDataRetrivalThunk = (
         axios.get(`/api/userlanguage/linked/${user.id}`),
         axios.get(`/api/user/${user.id}/userslinked/withchatgroup`),
         axios.get(`/api/user/${user.id}/notifications/received`),
+        axios.get(`/api/chatgroupinvite/${user.id}`),
         axios.get(`/api/notification/${user.id}`)
       ])
     },
     dataTransformationCall: (
       apiResponseData: UserLoggedInDataTransformationInput
-    ): UserLoggedInDataRetrivalArrayDataTypes => {
+    ): IUserLoggedInDataRetrival => {
       const [
         chatGroups,
-        userLangsOfLoggedInUser,
+        userLanguages,
         usersWithChatGroups,
         usersWhoSentNotifications,
+        chatGroupInvites,
         notifications
       ] = apiResponseData
       const usersNormalized: IUserReducerState = normalizeData(
@@ -88,26 +92,15 @@ export const userLoggedInDataRetrivalThunk = (
         usersNormalizedAll,
         userChatGroupNormalized
       } = separateUserAndChatGroupFields(usersNormalized, usersWithChatGroups)
-      const notificationsInitialState = createInitialState<
-        INotificationReducerFields
-      >(NOTIFICATIONS_DISPLAY)
-      const notificationsNormalized = normalizeData(
-        notifications,
-        notificationsInitialState,
-        {
-          subGroupingFunction: generateInitNotficationSubGroupingFunction(
-            user.id
-          )
-        }
-      )
 
-      return [
-        userLangsOfLoggedInUser,
+      return {
+        userLanguages,
         chatGroups,
-        usersNormalizedAll,
-        userChatGroupNormalized,
-        notificationsNormalized
-      ]
+        chatGroupInvites,
+        notifications,
+        users: usersNormalizedAll,
+        userChatGroups: userChatGroupNormalized
+      }
     },
     dispatchActionOnSuccess: userLoggedIn,
     dispatchProps: {}
@@ -143,9 +136,10 @@ export const languagePageDataRetrivalThunk = (
 }
 
 export const chatGroupRequestAcceptedThunk = (
-  ntRecipientId: string,
   newChatGroup: IChatGroupPostDTO,
-  userIdsOfChatGroup: string[]
+  userIdSentRequest: string,
+  userIdAcceptedRequest: string,
+  chatGroupInviteRecipientId: string
 ): IThunkReturnObject<IChatGroupRequestAcceptedData> => {
   return {
     requestDataActionType:
@@ -156,22 +150,46 @@ export const chatGroupRequestAcceptedThunk = (
         '/api/chatgroup',
         newChatGroup
       )
-      const newUserChatGroupsSubset: IUserChatGroupPostDTO[] = userIdsOfChatGroup.map(
-        id => ({ userId: id, chatGroupId: data.id })
-      )
+      const newUserChatGroupsSubset: IUserChatGroupPostDTO[] = [
+        userIdAcceptedRequest,
+        userIdSentRequest
+      ].map(id => ({ userId: id, chatGroupId: data.id }))
       const apiReturn = await Promise.all([
         axios.post('/api/userchatgroup', newUserChatGroupsSubset),
-        axios.put(`api/notification/notificationRecipient/${ntRecipientId}`, {
-          status: NtRecipientStatusOptions.ACCEPTED
-        })
+        respondToChatInviteBase(
+          userIdSentRequest,
+          userIdAcceptedRequest,
+          chatGroupInviteRecipientId,
+          ChatGroupInviteStatusOptions.ACCEPTED
+        )
       ])
       return {
         newChatGroup: data,
         newUserChatGroups: apiReturn[0].data,
-        updatedNotification: apiReturn[1].data
+        ...apiReturn[1]
       }
     },
 
     dispatchActionOnSuccess: chatGroupRequestAccepted
+  }
+}
+
+export const chatGroupRequestDeclinedThunk = (
+  userIdSentRequest: string,
+  userIdAcceptedRequest: string,
+  chatGroupInviteRecipientId: string
+): IThunkReturnObject<IChatGroupRequestBase> => {
+  return {
+    requestDataActionType:
+      RequestDataConstants.CHAT_GROUP_INVITE_DECLINED_REQUEST,
+    apiCall: async (): Promise<IChatGroupRequestBase> => {
+      return respondToChatInviteBase(
+        userIdSentRequest,
+        userIdAcceptedRequest,
+        chatGroupInviteRecipientId,
+        ChatGroupInviteStatusOptions.DECLINED
+      )
+    },
+    dispatchActionOnSuccess: chatGroupRequestDeclined
   }
 }

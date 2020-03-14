@@ -139,7 +139,8 @@ export const chatGroupRequestAcceptedThunk = (
   newChatGroup: IChatGroupPostDTO,
   userIdSentRequest: string,
   userIdAcceptedRequest: string,
-  chatGroupInviteRecipientId: string
+  chatGroupInviteRecipientId: string,
+  language: string
 ): IThunkReturnObject<IChatGroupRequestAcceptedData> => {
   return {
     requestDataActionType:
@@ -160,7 +161,8 @@ export const chatGroupRequestAcceptedThunk = (
           userIdSentRequest,
           userIdAcceptedRequest,
           chatGroupInviteRecipientId,
-          ChatGroupInviteStatusOptions.ACCEPTED
+          ChatGroupInviteStatusOptions.ACCEPTED,
+          language
         )
       ])
       return {
@@ -177,7 +179,8 @@ export const chatGroupRequestAcceptedThunk = (
 export const chatGroupRequestDeclinedThunk = (
   userIdSentRequest: string,
   userIdAcceptedRequest: string,
-  chatGroupInviteRecipientId: string
+  chatGroupInviteRecipientId: string,
+  language: string
 ): IThunkReturnObject<IChatGroupRequestBase> => {
   return {
     requestDataActionType:
@@ -187,7 +190,8 @@ export const chatGroupRequestDeclinedThunk = (
         userIdSentRequest,
         userIdAcceptedRequest,
         chatGroupInviteRecipientId,
-        ChatGroupInviteStatusOptions.DECLINED
+        ChatGroupInviteStatusOptions.DECLINED,
+        language
       )
     },
     dispatchActionOnSuccess: chatGroupRequestDeclined

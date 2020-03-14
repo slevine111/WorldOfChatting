@@ -1,12 +1,13 @@
 import {
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  CreateDateColumn,
   ManyToOne,
   JoinColumn,
   Column
 } from 'typeorm'
 import User from './User'
+import Language from './Language'
 
 export enum NotificationTypes {
   CHAT_GROUP_INVITE_ACCEPTED = 'chat group invite accepted',
@@ -18,8 +19,8 @@ export default class Notification {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updatedAt: Date
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date
 
   @Column({ type: 'bool', default: false })
   read: boolean
@@ -34,4 +35,8 @@ export default class Notification {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'targetUserId' })
   targetUserId: string
+
+  @ManyToOne(() => Language)
+  @JoinColumn({ name: 'language' })
+  language: string
 }

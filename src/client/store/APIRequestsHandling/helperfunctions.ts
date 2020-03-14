@@ -79,7 +79,8 @@ export const respondToChatInviteBase = async (
   userIdSentRequest: string,
   userIdAcceptedRequest: string,
   chatGroupInviteRecipientId: string,
-  status: ChatGroupInviteStatusOptions
+  status: ChatGroupInviteStatusOptions,
+  language: string
 ): Promise<IChatGroupRequestBase> => {
   const apiReturn = await Promise.all([
     axios.post('/api/notification', {
@@ -91,10 +92,11 @@ export const respondToChatInviteBase = async (
         }`
       ],
       senderId: userIdAcceptedRequest,
-      targetUserId: userIdSentRequest
+      targetUserId: userIdSentRequest,
+      language
     }),
     axios.put(`/api/chatgroupinvite/recipient/${chatGroupInviteRecipientId}`, {
-      status: ChatGroupInviteStatusOptions.DECLINED
+      status
     })
   ])
   return {

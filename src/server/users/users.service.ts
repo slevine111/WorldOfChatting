@@ -107,8 +107,7 @@ export default class UserService {
   ): Promise<IReduxStoreUserFields[]> {
     let endQuery: string = ''
     if (entity === EntityGetUsersLinkedTo.NOTIFICATION) {
-      endQuery = `JOIN notification B ON A.id = B."senderId"
-                  JOIN notification_recipient C ON B.id = C."notificationId"
+      endQuery = `JOIN notification B ON A.id = B."senderUserId"
                   WHERE "targetUserId" = $1`
     } else {
       endQuery = `JOIN user_language B ON A.id = B."userId"

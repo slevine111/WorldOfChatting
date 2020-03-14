@@ -18,7 +18,7 @@ export default class NotificationService {
       `SELECT *
        FROM notification
        WHERE "targetUserId" = $1
-       ORDER BY "updatedAt" DESC
+       ORDER BY "createdAt" DESC
       `,
       [targetUserId]
     )

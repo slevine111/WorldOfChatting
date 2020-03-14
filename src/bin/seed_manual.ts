@@ -93,13 +93,13 @@ const createAndSaveUserChatGroupsToDb = (
 
 interface IUserLanguageInterface {
   userLanguagesArray: IUserLanguageSubset[]
-  languagesByUser: Record<string, Set<String>>
+  languagesByUser: Record<string, Set<string>>
 }
 
 const createUserLanguagesManually = (users: User[]): IUserLanguageInterface => {
   const { LEARNER, TEACHER } = UserLanguageTypeFieldOptions
   let userLanguagesArray: IUserLanguageSubset[] = []
-  let languagesByUser: Record<string, Set<String>> = {}
+  let languagesByUser: Record<string, Set<string>> = {}
 
   const languagesArray: string[][] = [
     ['English', 'Swahili', 'Spanish', 'French', 'Czech'],
@@ -135,7 +135,7 @@ const createUserLanguagesManually = (users: User[]): IUserLanguageInterface => {
 
 interface IULManualSaveDBReturn {
   userLanguages: UserLanguage[]
-  languagesByUser: Record<string, Set<String>>
+  languagesByUser: Record<string, Set<string>>
 }
 
 const createAndSaveUserLanguagesToDb = async (
@@ -159,8 +159,6 @@ const createLanguagesAsyncFunction = (
 ): createLangsFunc is createLangsAsync => {
   return (createLangsFunc as any).isAsync === true
 }
-
-Function
 
 export default async (
   createLanguagesFunction: createLangsAsync | createLangsSync,

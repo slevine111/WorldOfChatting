@@ -1,8 +1,8 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { ReduxState } from '../../store/'
-import { chatGroupInviteThunk } from '../../store/notification/actions'
-import { NotificationTypeOptions } from '../../../entities/NotificationType'
+import { chatGroupInviteThunk } from '../../store/chatgroupinvite/actions'
 import { IUserWithLanguageFields } from './shared-types'
 import { generateStringFromLanguageTypeCombo } from './helperfunctions'
 import Dialog from '@material-ui/core/Dialog'
@@ -10,16 +10,24 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import Button from '@material-ui/core/Button'
-const { CHAT_GROUP_INVITE } = NotificationTypeOptions
 
 interface IOwnProps {
   selectedUser: IUserWithLanguageFields
   onClose: () => void
 }
 
-const InviteToChatDialog: React.FC<IOwnProps> = ({ selectedUser, onClose }) => {
+const InviteToChatDialog: React.FC<IOwnProps &
+  RouteComponentProps<{ language: string }>> = ({
+  selectedUser,
+  onClose,
+  match: {
+    params: { language }
+  }
+}) => {
   const { id, firstName } = selectedUser
-  const senderId: string = useSelector(({ auth }: ReduxState) => auth.user.id)
+  const senderUserId: string = useSelector(
+    ({ auth }: ReduxState) => auth.user.id
+  )
   const dispatch = useDispatch()
   return (
     <Dialog
@@ -39,10 +47,7 @@ const InviteToChatDialog: React.FC<IOwnProps> = ({ selectedUser, onClose }) => {
             variant="contained"
             onClick={() =>
               dispatch(
-                chatGroupInviteThunk(
-                  { senderId, notificationType: CHAT_GROUP_INVITE },
-                  id
-                )
+                chatGroupInviteThunk({ senderUserId, language }, id)
               ).then(() => onClose())
             }
           >
@@ -57,4 +62,4 @@ const InviteToChatDialog: React.FC<IOwnProps> = ({ selectedUser, onClose }) => {
   )
 }
 
-export default InviteToChatDialog
+export default withRouter(InviteToChatDialog)

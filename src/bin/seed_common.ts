@@ -72,9 +72,11 @@ export interface IChatGroupInviteRecipientSubset {
 }
 
 export interface INotificationSubset {
+  read: boolean
   notificationType: NotificationTypes
   senderUserId: string
   targetUserId: string
+  language: string
 }
 
 export const MANUAL_USERS_ARRAY: IUserSubset[] = [
@@ -119,8 +121,9 @@ const isModel = (model: unknown): model is Function => {
       'Language',
       'UserChatGroup',
       'Notification',
-      'NotificationRecipient',
-      'NotificationType'
+      'ChatGroupInvite',
+      'ChatGroupInviteRecipient',
+      'Notification'
     ].includes(model.name)
   )
 }

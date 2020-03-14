@@ -4,4 +4,5 @@ export interface INotificationPostDTO {
   notificationType: NotificationTypes
   senderUserId: string
   targetUserId: string
+  language: string
 }

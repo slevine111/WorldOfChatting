@@ -9,7 +9,7 @@ import { checkIfUserLoggedInProcess } from '../store/auth/thunks'
 //Components imports
 import Signup from './Login_Signup/Signup'
 import Login from './Login_Signup/Login'
-import Navbar from './Navbar'
+import Navbar from './Navbar/index'
 import LoggedInUserController from './LoggedInUserController'
 
 interface IOwnProps {

@@ -28,7 +28,12 @@ import {
   IReduxStoreUserFields,
   IChatGroupInviteReducerFields
 } from '../../../types-for-both-server-and-client'
-import { User, UserLanguage, Notification } from '../../../entities'
+import {
+  User,
+  UserLanguage,
+  Notification,
+  UserChatGroup
+} from '../../../entities'
 import { ChatGroupInviteStatusOptions } from '../../../entities/ChatGroupInviteRecipient'
 import axios, { AxiosResponse } from 'axios'
 
@@ -138,7 +143,7 @@ export const languagePageDataRetrivalThunk = (
 export const chatGroupRequestAcceptedThunk = (
   newChatGroup: IChatGroupPostDTO,
   userIdSentRequest: string,
-  userIdAcceptedRequest: string,
+  loggedInUserId: string,
   chatGroupInviteRecipientId: string,
   language: string
 ): IThunkReturnObject<IChatGroupRequestAcceptedData> => {
@@ -152,14 +157,14 @@ export const chatGroupRequestAcceptedThunk = (
         newChatGroup
       )
       const newUserChatGroupsSubset: IUserChatGroupPostDTO[] = [
-        userIdAcceptedRequest,
+        loggedInUserId,
         userIdSentRequest
       ].map(id => ({ userId: id, chatGroupId: data.id }))
       const apiReturn = await Promise.all([
         axios.post('/api/userchatgroup', newUserChatGroupsSubset),
         respondToChatInviteBase(
           userIdSentRequest,
-          userIdAcceptedRequest,
+          loggedInUserId,
           chatGroupInviteRecipientId,
           ChatGroupInviteStatusOptions.ACCEPTED,
           language
@@ -167,7 +172,11 @@ export const chatGroupRequestAcceptedThunk = (
       ])
       return {
         newChatGroup: data,
-        newUserChatGroups: apiReturn[0].data,
+        newUserChatGroups: apiReturn[0].data.filter(
+          (ucg: UserChatGroup) => ucg.userId !== loggedInUserId
+        ),
+        language,
+        newChatGroupId: data.id,
         ...apiReturn[1]
       }
     },
@@ -178,7 +187,7 @@ export const chatGroupRequestAcceptedThunk = (
 
 export const chatGroupRequestDeclinedThunk = (
   userIdSentRequest: string,
-  userIdAcceptedRequest: string,
+  loggedInUserId: string,
   chatGroupInviteRecipientId: string,
   language: string
 ): IThunkReturnObject<IChatGroupRequestBase> => {
@@ -188,7 +197,7 @@ export const chatGroupRequestDeclinedThunk = (
     apiCall: async (): Promise<IChatGroupRequestBase> => {
       return respondToChatInviteBase(
         userIdSentRequest,
-        userIdAcceptedRequest,
+        loggedInUserId,
         chatGroupInviteRecipientId,
         ChatGroupInviteStatusOptions.DECLINED,
         language

@@ -21,9 +21,15 @@ const isThunkOject = (action: unknown): action is IThunkReturnObject<any> => {
 }
 
 const responseIsArray = (
-  apiResponse: AxiosResponse[] | AxiosResponse
+  apiResponse: AxiosResponse[] | AxiosResponse | Record<string, any>
 ): apiResponse is AxiosResponse[] => {
   return Array.isArray(apiResponse)
+}
+
+const responseIsUnmodified = (
+  apiResponse: AxiosResponse | Record<string, any>
+): apiResponse is AxiosResponse => {
+  return (apiResponse as AxiosResponse).data !== undefined
 }
 
 export const refreshTokenMiddleware = (store: MyStoreType) => {
@@ -87,8 +93,10 @@ export const callAPIMiddleware = (store: MyStoreType) => {
       let data: any
       if (responseIsArray(apiResponse)) {
         data = apiResponse.map(response => response.data)
-      } else {
+      } else if (responseIsUnmodified(apiResponse)) {
         data = apiResponse.data
+      } else {
+        data = apiResponse
       }
       if (dataTransformationCall) data = dataTransformationCall(data)
       next(dispatchActionOnSuccess(data, dispatchProps))

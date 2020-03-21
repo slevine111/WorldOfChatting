@@ -210,7 +210,7 @@ export const createUserLanguages = async (
     for (let l = 0; l < 2; ++l) {
       const language: string = selectedLanguages[l]
       let userLangs: IUserLanguageSubset[] = []
-      for (let m = 0; m < 5; ++m) {
+      for (let m = 0; m < 8; ++m) {
         const newUserLang = createSingleUserLanguage(
           count,
           language,
@@ -248,11 +248,11 @@ const createChatGroupInvites = (
         userLangsByUserAndLang[i][l]
       const { language } = currentUserLangs[0]
       console.log(language)
-      for (let j = 0; j < 3; ++j) {
+      for (let j = 0; j < 6; ++j) {
         const { userId } = currentUserLangs[j]
         chatGroupInvitesArr.push({
           senderUserId:
-            (l === 0 && j < 2) || (l === 1 && j === 2) ? userId : manualUserId,
+            (l === 0 && j !== 2) || (l === 1 && j >= 2) ? userId : manualUserId,
           language
         })
       }
@@ -279,13 +279,13 @@ const createChatGroupInviteRecipients = (
     for (let l = 0; l < userLangsByUserAndLang[i].length; ++l) {
       const currentUserLangs: IUserLanguageSubset[] =
         userLangsByUserAndLang[i][l]
-      for (let j = 0; j < 3; ++j) {
+      for (let j = 0; j < 6; ++j) {
         const { userId } = currentUserLangs[j]
         cgInviteRecipientsArr.push({
           targetUserId:
-            (l === 0 && j < 2) || (l === 1 && j === 2) ? manualUserId : userId,
+            (l === 0 && j !== 2) || (l === 1 && j >= 2) ? manualUserId : userId,
           chatGroupInviteId: chatGroupInvites[count].id,
-          status: j === 0 ? PENDING : j === 1 ? ACCEPTED : DECLINED
+          status: j === 0 || j > 2 ? PENDING : j === 1 ? ACCEPTED : DECLINED
         })
         ++count
       }
@@ -320,10 +320,10 @@ const createNotiifcations = async (
       const currentUserLangs: IUserLanguageSubset[] =
         userLangsByUserAndLang[i][l]
       const { language } = currentUserLangs[0]
-      for (let j = 3; j < currentUserLangs.length; ++j) {
+      for (let j = 6; j < currentUserLangs.length; ++j) {
         const { userId } = currentUserLangs[j]
 
-        if (j === 3) {
+        if (j === 6) {
           notificationsArrayFirst.push({
             language,
             read: true,

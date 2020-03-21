@@ -12,9 +12,7 @@ import Button from '@material-ui/core/Button'
 import styles from './styles'
 
 const Navbar: React.FC<{ history: History }> = ({ history }) => {
-  const {
-    auth: { user }
-  } = useSelector((state: ReduxState) => state)
+  const user = useSelector((state: ReduxState) => state.auth.user)
   const classes = styles()
   return (
     <div>

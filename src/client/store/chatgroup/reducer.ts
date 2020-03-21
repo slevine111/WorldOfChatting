@@ -3,9 +3,10 @@ import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceraction
 import { INormalizedReducerShape } from '../reducer.base'
 import { IChatGroupAPIReturn } from '../../../types-for-both-server-and-client'
 import { normalizeInitialChatGroupData } from './helperfunctions'
-import { createInitialState } from '../utilityfunctions'
+import { createInitialState, normalizeData } from '../utilityfunctions'
 const {
-  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS
+  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
+  CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS
 } = RequestDataSuccessConstants
 
 export type IChatGroupReducerState = INormalizedReducerShape<
@@ -24,6 +25,10 @@ export default (
         action.chatGroups,
         action.userLanguages
       )
+    case CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS:
+      return normalizeData(action.newChatGroup, state, {
+        subGroupingKey: action.language
+      })
     default:
       return state
   }

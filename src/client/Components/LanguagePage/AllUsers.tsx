@@ -26,7 +26,6 @@ interface IOwnProps {
 }
 
 const AllUsers: React.FC<IOwnProps> = ({ language }) => {
-  console.log('rerendering')
   const usersOfLanguage: IUserWithLanguageFields[] = useSelector(
     (state: ReduxState) => {
       const {

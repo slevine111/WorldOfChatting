@@ -7,6 +7,7 @@ import { UserLanguage, UserChatGroup, Notification } from '../../../entities'
 import { IUserReducerState } from '../user/reducer'
 import { IUserChatGroupReducerState } from '../userchatgroup/reducer'
 import { AnyAction } from 'redux'
+import { AxiosResponse } from 'axios'
 
 export enum RequestDataConstants {
   ENTERED_SITE_LOADING_BASE_DATA_REQUEST = 'ENTERED_SITE_LOADING_BASE_DATA_REQUEST',
@@ -81,6 +82,8 @@ export interface IChatGroupRequestBase {
 export interface IChatGroupRequestAcceptedData extends IChatGroupRequestBase {
   newChatGroup: IChatGroupAPIReturn
   newUserChatGroups: UserChatGroup[]
+  language: string
+  newChatGroupId: string
 }
 
 export interface IAxiosErrorData {
@@ -90,7 +93,7 @@ export interface IAxiosErrorData {
 
 export interface IThunkReturnObject<T = any> {
   requestDataActionType: RequestDataConstants
-  apiCall: () => Promise<any>
+  apiCall: () => Promise<AxiosResponse | AxiosResponse[] | Record<string, any>>
   dataTransformationCall?: (apiResponseData: any) => T
   dispatchActionOnSuccess: (
     data: T,

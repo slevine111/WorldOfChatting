@@ -35,6 +35,7 @@ import {
   UserChatGroup
 } from '../../../entities'
 import { ChatGroupInviteStatusOptions } from '../../../entities/ChatGroupInviteRecipient'
+import { NotificationTypes } from '../../../entities/Notification'
 import axios, { AxiosResponse } from 'axios'
 
 export const logoutUserProcessThunk = (
@@ -147,6 +148,7 @@ export const chatGroupRequestAcceptedThunk = (
   chatGroupInviteRecipientId: string,
   language: string
 ): IThunkReturnObject<IChatGroupRequestAcceptedData> => {
+  console.log(loggedInUserId)
   return {
     requestDataActionType:
       RequestDataConstants.CHAT_GROUP_INVITE_ACCEPTED_REQUEST,
@@ -167,7 +169,7 @@ export const chatGroupRequestAcceptedThunk = (
           loggedInUserId,
           chatGroupInviteRecipientId,
           ChatGroupInviteStatusOptions.ACCEPTED,
-          language
+          NotificationTypes.CHAT_GROUP_INVITE_ACCEPTED
         )
       ])
       return {
@@ -188,8 +190,7 @@ export const chatGroupRequestAcceptedThunk = (
 export const chatGroupRequestDeclinedThunk = (
   userIdSentRequest: string,
   loggedInUserId: string,
-  chatGroupInviteRecipientId: string,
-  language: string
+  chatGroupInviteRecipientId: string
 ): IThunkReturnObject<IChatGroupRequestBase> => {
   return {
     requestDataActionType:
@@ -200,7 +201,7 @@ export const chatGroupRequestDeclinedThunk = (
         loggedInUserId,
         chatGroupInviteRecipientId,
         ChatGroupInviteStatusOptions.DECLINED,
-        language
+        NotificationTypes.CHAT_GROUP_INVITE_DECLINED
       )
     },
     dispatchActionOnSuccess: chatGroupRequestDeclined

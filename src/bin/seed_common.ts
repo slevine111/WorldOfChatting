@@ -74,9 +74,9 @@ export interface IChatGroupInviteRecipientSubset {
 export interface INotificationSubset {
   read: boolean
   notificationType: NotificationTypes
-  senderUserId: string
+  sendersUserIds: string[]
   targetUserId: string
-  language: string
+  createdAt: Date
 }
 
 export const MANUAL_USERS_ARRAY: IUserSubset[] = [

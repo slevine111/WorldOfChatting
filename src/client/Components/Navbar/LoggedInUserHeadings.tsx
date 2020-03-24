@@ -5,6 +5,7 @@ import { logoutUserProcessThunk } from '../../store/APIRequestsHandling/multiple
 import Button from '@material-ui/core/Button'
 import Popover from '@material-ui/core/Popover'
 import PeopleIcon from '@material-ui/icons/People'
+//import NotificationsIcon from '@material-ui/icons/Notifications'
 import IconButton from '@material-ui/core/IconButton'
 import Badge from '@material-ui/core/Badge'
 import styles from './styles'

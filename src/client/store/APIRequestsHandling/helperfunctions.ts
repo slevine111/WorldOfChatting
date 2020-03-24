@@ -3,9 +3,10 @@ import { IUserChatGroupReducerState } from '../userchatgroup/reducer'
 import { IUserAndChatGroupGetReturn } from '../../../types-for-both-server-and-client'
 import { CHAT_GROUP_KEY_PREFIX } from '../userchatgroup/reducer'
 import { IChatGroupRequestBase } from './types'
+import { Notification } from '../../../entities'
 import { ChatGroupInviteStatusOptions } from '../../../entities/ChatGroupInviteRecipient'
 import { NotificationTypes } from '../../../entities/Notification'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 
 interface IUsersAndUserChatGroups {
   usersNormalizedAll: IUserReducerState
@@ -75,26 +76,44 @@ export const separateUserAndChatGroupFields = (
   return { usersNormalizedAll, userChatGroupNormalized }
 }
 
+const notificationAPICall = async (
+  notificationType: NotificationTypes,
+  targetUserId: string,
+  loggedInUserId: string
+): Promise<AxiosResponse> => {
+  const currentNotifications: Notification[] = await axios.get(
+    `/api/notification/currentDate/${notificationType}/${targetUserId}`
+  )
+  if (currentNotifications.length >= 2) {
+    throw Error('bad')
+  }
+  if (currentNotifications.length === 1) {
+    const { id, sendersUserIds } = currentNotifications[0]
+    return axios.put(`/api/notification/${id}`, {
+      currentNotification: currentNotifications[0],
+      updatedNotification: {
+        sendersUserIds: [...sendersUserIds, loggedInUserId],
+        read: false
+      }
+    })
+  } else {
+    return axios.post('/api/notification', {
+      notificationType,
+      senderId: loggedInUserId,
+      targetUserId
+    })
+  }
+}
+
 export const respondToChatInviteBase = async (
   userIdSentRequest: string,
-  userIdAcceptedRequest: string,
+  loggedInUserId: string,
   chatGroupInviteRecipientId: string,
   status: ChatGroupInviteStatusOptions,
-  language: string
+  notificationType: NotificationTypes
 ): Promise<IChatGroupRequestBase> => {
   const apiReturn = await Promise.all([
-    axios.post('/api/notification', {
-      notificationType: Object(NotificationTypes)[
-        `CHAT_GROUP_INVITE_${
-          status === ChatGroupInviteStatusOptions.DECLINED
-            ? 'DECLINED'
-            : 'ACCEPTED'
-        }`
-      ],
-      senderId: userIdAcceptedRequest,
-      targetUserId: userIdSentRequest,
-      language
-    }),
+    notificationAPICall(notificationType, userIdSentRequest, loggedInUserId),
     axios.put(`/api/chatgroupinvite/recipient/${chatGroupInviteRecipientId}`, {
       status
     })

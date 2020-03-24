@@ -297,18 +297,18 @@ const createChatGroupInviteRecipients = (
   ).save(cgInviteRecipientsArr)
 }
 
-const pause = (numberSeconds: number): void => {
+/*const pause = (numberSeconds: number): void => {
   const dt: number = new Date().getTime()
   while (new Date().getTime() - dt <= numberSeconds * 1000) {}
-}
+}*/
 
 const createNotiifcations = async (
   manualUsers: User[],
   userLangsByUserAndLang: IUserLanguageSubset[][][],
   connectionName: string
 ): Promise<void> => {
-  let notificationsArrayFirst: INotificationSubset[] = []
-  let notificationsArraySecond: INotificationSubset[] = []
+  let notificationsArray: INotificationSubset[] = []
+  // let notificationsArraySecond: INotificationSubset[] = []
   const {
     CHAT_GROUP_INVITE_DECLINED,
     CHAT_GROUP_INVITE_ACCEPTED
@@ -319,27 +319,29 @@ const createNotiifcations = async (
     for (let l = 0; l < userLangsByUserAndLang[i].length; ++l) {
       const currentUserLangs: IUserLanguageSubset[] =
         userLangsByUserAndLang[i][l]
-      const { language } = currentUserLangs[0]
       for (let j = 6; j < currentUserLangs.length; ++j) {
         const { userId } = currentUserLangs[j]
 
-        if (j === 6) {
-          notificationsArrayFirst.push({
-            language,
-            read: true,
-            notificationType: CHAT_GROUP_INVITE_ACCEPTED,
-            senderUserId: l === 0 ? userId : manualUserId,
-            targetUserId: l === 0 ? manualUserId : userId
-          })
-        } else {
+        //  if (j === 6) {
+        notificationsArray.push({
+          createdAt:
+            j === 6
+              ? new Date()
+              : new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 2),
+          read: j === 6,
+          notificationType:
+            j === 6 ? CHAT_GROUP_INVITE_ACCEPTED : CHAT_GROUP_INVITE_DECLINED,
+          sendersUserIds: [l === 0 ? userId : manualUserId],
+          targetUserId: l === 0 ? manualUserId : userId
+        })
+        /*  } else {
           notificationsArraySecond.push({
-            language,
             read: false,
             notificationType: CHAT_GROUP_INVITE_DECLINED,
-            senderUserId: l === 0 ? manualUserId : userId,
+            sendersUserIds: [l === 0 ? manualUserId : userId],
             targetUserId: l === 0 ? userId : manualUserId
           })
-        }
+        }*/
       }
     }
   }
@@ -347,9 +349,9 @@ const createNotiifcations = async (
     (Notification as unknown) as Notification,
     connectionName
   )
-  await ntRepo.save(notificationsArrayFirst)
-  pause(5)
-  await ntRepo.save(notificationsArraySecond)
+  await ntRepo.save(notificationsArray)
+  //pause(5)
+  // await ntRepo.save(notificationsArraySecond)
 }
 
 const refreshDbWithSeedData = async (): Promise<void> => {

@@ -107,7 +107,7 @@ export default class UserService {
   ): Promise<IReduxStoreUserFields[]> {
     let endQuery: string = ''
     if (entity === EntityGetUsersLinkedTo.NOTIFICATION) {
-      endQuery = `JOIN (SELECT DISTINCT "senderUserId" FROM notification
+      endQuery = `JOIN (SELECT DISTINCT "sendersUserIds"[1] AS "senderUserId" FROM notification
       WHERE "targetUserId" = $1
       UNION
       SELECT DISTINCT "senderUserId" FROM chat_group_invite A

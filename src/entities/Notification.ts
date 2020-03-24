@@ -7,8 +7,6 @@ import {
   Column
 } from 'typeorm'
 import User from './User'
-import Language from './Language'
-
 export enum NotificationTypes {
   CHAT_GROUP_INVITE_ACCEPTED = 'chat group invite accepted',
   CHAT_GROUP_INVITE_DECLINED = 'chat group invite declined'
@@ -19,24 +17,19 @@ export default class Notification {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @CreateDateColumn({ type: 'timestamptz' })
+  @CreateDateColumn({ type: 'date' })
   createdAt: Date
-
-  @Column({ type: 'bool', default: false })
-  read: boolean
 
   @Column({ enum: NotificationTypes })
   notificationType: NotificationTypes
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'senderUserId' })
-  senderUserId: string
+  @Column({ type: 'bool', default: false })
+  read: boolean
+
+  @Column('uuid', { array: true })
+  sendersUserIds: string[]
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'targetUserId' })
   targetUserId: string
-
-  @ManyToOne(() => Language)
-  @JoinColumn({ name: 'language' })
-  language: string
 }

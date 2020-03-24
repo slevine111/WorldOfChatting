@@ -67,8 +67,7 @@ const ChatGroupInvites: React.FC<{}> = () => {
                         chatGroupRequestDeclinedThunk(
                           senderUserId,
                           loggedInUserId,
-                          id,
-                          language
+                          id
                         )
                       )
                     }

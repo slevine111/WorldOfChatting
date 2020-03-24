@@ -2,7 +2,6 @@ import { NotificationTypes } from '../../entities/Notification'
 
 export interface INotificationPostDTO {
   notificationType: NotificationTypes
-  senderUserId: string
+  senderId: string
   targetUserId: string
-  language: string
 }

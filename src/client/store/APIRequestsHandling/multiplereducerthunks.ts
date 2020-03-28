@@ -148,7 +148,6 @@ export const chatGroupRequestAcceptedThunk = (
   chatGroupInviteRecipientId: string,
   language: string
 ): IThunkReturnObject<IChatGroupRequestAcceptedData> => {
-  console.log(loggedInUserId)
   return {
     requestDataActionType:
       RequestDataConstants.CHAT_GROUP_INVITE_ACCEPTED_REQUEST,

@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Notification } from '../../entities'
 import { NotificationTypes } from '../../entities/Notification'
-import { INotificationPostDTO } from './notifications.dto'
+import {
+  INotificationPostDTO,
+  INotificationPutSingleObject
+} from './notifications.dto'
 
 @Injectable()
 export default class NotificationService {
@@ -19,7 +22,7 @@ export default class NotificationService {
       `SELECT *
        FROM notification
        WHERE "targetUserId" = $1
-       ORDER BY "createdAt" DESC
+       ORDER BY "updatedAtSendersCol" DESC, seen, "clickedOn"
       `,
       [targetUserId]
     )
@@ -51,22 +54,57 @@ export default class NotificationService {
     })
   }
 
-  async updateNotification(
+  generateUpdatedNotification(
     currentNotification: Notification,
     updatedNotification: Partial<Notification>
-  ): Promise<Notification> {
-    let ntUpdatedSendersUserIds: string[] = currentNotification.sendersUserIds
+  ): Notification {
+    let {
+      sendersUserIds: ntUpdatedSendersUserIds,
+      updatedAtSendersCol
+    } = currentNotification
     const { sendersUserIds } = updatedNotification
     if (sendersUserIds !== undefined) {
       ntUpdatedSendersUserIds = [...ntUpdatedSendersUserIds, ...sendersUserIds]
     }
 
-    const newCompleteNotification: Notification = {
+    return {
       ...currentNotification,
       ...updatedNotification,
-      sendersUserIds: ntUpdatedSendersUserIds
+      sendersUserIds: ntUpdatedSendersUserIds,
+      updatedAtSendersCol:
+        sendersUserIds !== undefined ? new Date() : updatedAtSendersCol
     }
+  }
+
+  async updateNotification(
+    currentNotification: Notification,
+    updatedNotification: Partial<Notification>
+  ): Promise<Notification> {
+    const newCompleteNotification: Notification = this.generateUpdatedNotification(
+      currentNotification,
+      updatedNotification
+    )
     await this.notificationRepository.save(newCompleteNotification)
     return newCompleteNotification
+  }
+
+  async updateMultipleNotifications(
+    notificationsPutObjects: INotificationPutSingleObject[]
+  ): Promise<Notification[]> {
+    let newCompleteNotifications: Notification[] = []
+    for (let i = 0; i < notificationsPutObjects.length; ++i) {
+      const {
+        currentNotification,
+        updatedNotification
+      } = notificationsPutObjects[i]
+      newCompleteNotifications.push(
+        this.generateUpdatedNotification(
+          currentNotification,
+          updatedNotification
+        )
+      )
+    }
+    await this.notificationRepository.save(newCompleteNotifications)
+    return newCompleteNotifications
   }
 }

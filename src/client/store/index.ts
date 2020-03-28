@@ -9,6 +9,7 @@ import userChatGroupReducer from './userchatgroup/reducer'
 import chatGroupInviteReducer from './chatgroupinvite/reducer'
 import authReducer from './auth/reducer'
 import notificationReducer from './notification/reducer'
+import { NOT_SEEN } from './notification/types'
 import uiReducer from './ui/reducer'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
@@ -29,7 +30,7 @@ const rootReducer = combineReducers({
   chatGroups: createReducerSlice(chatGroupReducer, FAVORITE_CHAT_GROUPS_KEY),
   userChatGroups: createReducerSlice(userChatGroupReducer),
   auth: authReducer,
-  notifications: createReducerSlice(notificationReducer),
+  notifications: createReducerSlice(notificationReducer, NOT_SEEN),
   chatGroupInvites: createReducerSlice(chatGroupInviteReducer),
   ui: uiReducer
 })

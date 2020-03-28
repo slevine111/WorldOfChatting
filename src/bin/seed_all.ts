@@ -242,12 +242,10 @@ const createChatGroupInvites = (
   let chatGroupInvitesArr: IChatGroupInviteSubset[] = []
   for (let i = 0; i < userLangsByUserAndLang.length; ++i) {
     const manualUserId: string = manualUsers[i].id
-    console.log(manualUserId)
     for (let l = 0; l < userLangsByUserAndLang[i].length; ++l) {
       const currentUserLangs: IUserLanguageSubset[] =
         userLangsByUserAndLang[i][l]
       const { language } = currentUserLangs[0]
-      console.log(language)
       for (let j = 0; j < 6; ++j) {
         const { userId } = currentUserLangs[j]
         chatGroupInvitesArr.push({
@@ -297,18 +295,12 @@ const createChatGroupInviteRecipients = (
   ).save(cgInviteRecipientsArr)
 }
 
-/*const pause = (numberSeconds: number): void => {
-  const dt: number = new Date().getTime()
-  while (new Date().getTime() - dt <= numberSeconds * 1000) {}
-}*/
-
 const createNotiifcations = async (
   manualUsers: User[],
   userLangsByUserAndLang: IUserLanguageSubset[][][],
   connectionName: string
 ): Promise<void> => {
   let notificationsArray: INotificationSubset[] = []
-  // let notificationsArraySecond: INotificationSubset[] = []
   const {
     CHAT_GROUP_INVITE_DECLINED,
     CHAT_GROUP_INVITE_ACCEPTED
@@ -322,26 +314,18 @@ const createNotiifcations = async (
       for (let j = 6; j < currentUserLangs.length; ++j) {
         const { userId } = currentUserLangs[j]
 
-        //  if (j === 6) {
         notificationsArray.push({
           createdAt:
             j === 6
               ? new Date()
               : new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 2),
-          read: j === 6,
+          clickedOn: j === 6,
+          seen: j === 6,
           notificationType:
             j === 6 ? CHAT_GROUP_INVITE_ACCEPTED : CHAT_GROUP_INVITE_DECLINED,
           sendersUserIds: [l === 0 ? userId : manualUserId],
           targetUserId: l === 0 ? manualUserId : userId
         })
-        /*  } else {
-          notificationsArraySecond.push({
-            read: false,
-            notificationType: CHAT_GROUP_INVITE_DECLINED,
-            sendersUserIds: [l === 0 ? manualUserId : userId],
-            targetUserId: l === 0 ? userId : manualUserId
-          })
-        }*/
       }
     }
   }
@@ -350,8 +334,6 @@ const createNotiifcations = async (
     connectionName
   )
   await ntRepo.save(notificationsArray)
-  //pause(5)
-  // await ntRepo.save(notificationsArraySecond)
 }
 
 const refreshDbWithSeedData = async (): Promise<void> => {

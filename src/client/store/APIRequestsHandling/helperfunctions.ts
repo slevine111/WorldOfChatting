@@ -89,11 +89,12 @@ const notificationAPICall = async (
   }
   if (currentNotifications.length === 1) {
     const { id, sendersUserIds } = currentNotifications[0]
-    return axios.put(`/api/notification/${id}`, {
+    return axios.put(`/api/notification/single/${id}`, {
       currentNotification: currentNotifications[0],
       updatedNotification: {
         sendersUserIds: [...sendersUserIds, loggedInUserId],
-        read: false
+        clickedOn: false,
+        seen: false
       }
     })
   } else {

@@ -72,7 +72,8 @@ export interface IChatGroupInviteRecipientSubset {
 }
 
 export interface INotificationSubset {
-  read: boolean
+  clickedOn: boolean
+  seen: boolean
   notificationType: NotificationTypes
   sendersUserIds: string[]
   targetUserId: string

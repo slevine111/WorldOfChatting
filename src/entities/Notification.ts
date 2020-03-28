@@ -20,11 +20,17 @@ export default class Notification {
   @CreateDateColumn({ type: 'date' })
   createdAt: Date
 
+  @Column({ type: 'timestamptz', default: new Date() })
+  updatedAtSendersCol: Date
+
   @Column({ enum: NotificationTypes })
   notificationType: NotificationTypes
 
   @Column({ type: 'bool', default: false })
-  read: boolean
+  clickedOn: boolean
+
+  @Column({ type: 'bool', default: false })
+  seen: boolean
 
   @Column('uuid', { array: true })
   sendersUserIds: string[]

@@ -8,7 +8,10 @@ import {
   Body
 } from '@nestjs/common'
 import NotificationService from './notifications.service'
-import { INotificationPostDTO } from './notifications.dto'
+import {
+  INotificationPostDTO,
+  INotificationPutSingleObject
+} from './notifications.dto'
 import { Notification } from '../../entities'
 import { NotificationTypes } from '../../entities/Notification'
 import AuthGuard from '../auth/auth.guard'
@@ -45,20 +48,21 @@ export default class ChatGroupController {
     return this.notificationService.createNotification(newNotification)
   }
 
-  @Put('/:notificationId')
+  @Put('/single/:notificationId')
   updateNotification(
     @Body()
-    {
-      currentNotification,
-      updatedNotification
-    }: {
-      currentNotification: Notification
-      updatedNotification: Partial<Notification>
-    }
+    { currentNotification, updatedNotification }: INotificationPutSingleObject
   ): Promise<Notification> {
     return this.notificationService.updateNotification(
       currentNotification,
       updatedNotification
     )
+  }
+
+  @Put('/multiple')
+  updateMultipleNotifications(
+    @Body() ntPutObjects: INotificationPutSingleObject[]
+  ): Promise<Notification[]> {
+    return this.notificationService.updateMultipleNotifications(ntPutObjects)
   }
 }

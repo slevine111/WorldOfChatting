@@ -1,5 +1,21 @@
 import { Notification } from '../../../entities'
-import { INotificationReducerState } from './types'
+import { NOT_SEEN, INotificationReducerState } from './types'
+import { SubGroupingFunctionType, normalizeData } from '../utilityfunctions'
+
+export const addNotSeenNt: SubGroupingFunctionType<Notification> = (
+  currentSubGroupings,
+  notification,
+  _allIds
+) => {
+  const { seen, id } = notification
+  let updatedSubGroupings: Record<string, string[]> = JSON.parse(
+    JSON.stringify(currentSubGroupings)
+  )
+  if (!seen) {
+    updatedSubGroupings[NOT_SEEN].push(id)
+  }
+  return updatedSubGroupings
+}
 
 export const normalizeAndMakeNotificationFirst = (
   notificationReceived: Notification,
@@ -24,5 +40,17 @@ export const normalizeAndMakeNotificationFirst = (
     ]
   }
   updatedState.byId[id] = notificationReceived
+  return updatedState
+}
+
+export const normalizeAndEmptyNotSeenSubgrouping = (
+  updatedNotifications: Notification[],
+  currentState: INotificationReducerState
+): INotificationReducerState => {
+  let updatedState: INotificationReducerState = JSON.parse(
+    JSON.stringify(currentState)
+  )
+  updatedState = normalizeData(updatedNotifications, updatedState)
+  updatedState.subGroupings[NOT_SEEN] = []
   return updatedState
 }

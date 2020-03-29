@@ -10,6 +10,7 @@ import UserChatGroupModule from './userchatgroups/userchatgroups.module'
 import AuthModule from './auth/auth.module'
 import ChatGroupInviteModule from './chatgroupinvites/chatgroupinvites.module'
 import NotificationModule from './notifications/notifications.module'
+import MessageModule from './messages/messages.module'
 import MyJWTModule from './MyJWTModule'
 import MyCacheModule from './MyCacheModule'
 import WebpageController from './webpage.controller'
@@ -25,6 +26,7 @@ import EventModule from './socket/socket.module'
     AuthModule,
     ChatGroupInviteModule,
     NotificationModule,
+    MessageModule,
     MyJWTModule,
     TypeOrmModule.forRoot(),
     ServeStaticModule.forRoot({

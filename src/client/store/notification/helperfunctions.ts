@@ -4,8 +4,7 @@ import { SubGroupingFunctionType, normalizeData } from '../utilityfunctions'
 
 export const addNotSeenNt: SubGroupingFunctionType<Notification> = (
   currentSubGroupings,
-  notification,
-  _allIds
+  notification
 ) => {
   const { seen, id } = notification
   let updatedSubGroupings: Record<string, string[]> = JSON.parse(

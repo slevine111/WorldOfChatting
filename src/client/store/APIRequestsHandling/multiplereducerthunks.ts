@@ -32,7 +32,8 @@ import {
   User,
   UserLanguage,
   Notification,
-  UserChatGroup
+  UserChatGroup,
+  Message
 } from '../../../entities'
 import { ChatGroupInviteStatusOptions } from '../../../entities/ChatGroupInviteRecipient'
 import { NotificationTypes } from '../../../entities/Notification'
@@ -60,7 +61,8 @@ type UserLoggedInDataTransformationInput = [
   IUserAndChatGroupGetReturn[],
   IReduxStoreUserFields[],
   IChatGroupInviteReducerFields[],
-  Notification[]
+  Notification[],
+  Message[]
 ]
 
 export const userLoggedInDataRetrivalThunk = (
@@ -76,7 +78,8 @@ export const userLoggedInDataRetrivalThunk = (
         axios.get(`/api/user/${user.id}/userslinked/withchatgroup`),
         axios.get(`/api/user/${user.id}/notifications/received`),
         axios.get(`/api/chatgroupinvite/${user.id}`),
-        axios.get(`/api/notification/${user.id}`)
+        axios.get(`/api/notification/${user.id}`),
+        axios.get(`/api/message/user/${user.id}`)
       ])
     },
     dataTransformationCall: (
@@ -88,7 +91,8 @@ export const userLoggedInDataRetrivalThunk = (
         usersWithChatGroups,
         usersWhoSentNotifications,
         chatGroupInvites,
-        notifications
+        notifications,
+        messages
       ] = apiResponseData
       const usersNormalized: IUserReducerState = normalizeData(
         usersWhoSentNotifications,
@@ -104,6 +108,7 @@ export const userLoggedInDataRetrivalThunk = (
         chatGroups,
         chatGroupInvites,
         notifications,
+        messages,
         users: usersNormalizedAll,
         userChatGroups: userChatGroupNormalized
       }

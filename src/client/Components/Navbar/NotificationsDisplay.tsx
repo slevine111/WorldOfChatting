@@ -57,7 +57,8 @@ const IndividualNotification: React.FC<{
         borderRadius: 0,
         border: 0,
         borderTop: '1px solid rgba(0, 0, 0, 0.23)',
-        fontSize: '.6rem'
+        fontSize: '.6rem',
+        justifyContent: 'left'
       }}
     >
       <div style={{ display: 'flex' }}>

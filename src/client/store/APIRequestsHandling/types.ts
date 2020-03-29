@@ -3,7 +3,12 @@ import {
   IChatGroupInviteReducerFields,
   IChatGroupAPIReturn
 } from '../../../types-for-both-server-and-client'
-import { UserLanguage, UserChatGroup, Notification } from '../../../entities'
+import {
+  UserLanguage,
+  UserChatGroup,
+  Notification,
+  Message
+} from '../../../entities'
 import { IUserReducerState } from '../user/reducer'
 import { IUserChatGroupReducerState } from '../userchatgroup/reducer'
 import { AnyAction } from 'redux'
@@ -76,6 +81,7 @@ export interface IUserLoggedInDataRetrival {
   userChatGroups: IUserChatGroupReducerState
   chatGroupInvites: IChatGroupInviteReducerFields[]
   notifications: Notification[]
+  messages: Message[]
 }
 
 export interface IChatGroupRequestBase {

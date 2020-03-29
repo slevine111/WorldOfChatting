@@ -11,8 +11,7 @@ const { USER_LOGGING_OUT_REQUEST_SUCCESS } = RequestDataSuccessConstants
 
 export type SubGroupingFunctionType<T> = (
   subGroupings: Record<string, string[]>,
-  dataItem: T,
-  allIds: string[]
+  dataItem: T
 ) => Record<string, string[]>
 
 export function normalizeData<T extends { [key: string]: any }>(
@@ -47,7 +46,7 @@ export function normalizeData<T extends { [key: string]: any }>(
     }
     byId[uniqueValue] = dataArr[i]
     if (subGroupingFunction !== undefined) {
-      subGroupings = subGroupingFunction(subGroupings, dataArr[i], allIds)
+      subGroupings = subGroupingFunction(subGroupings, dataArr[i])
     } else if (subGroupingKey !== undefined) {
       subGroupings[subGroupingKey].push(uniqueValue)
     }

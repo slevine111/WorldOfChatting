@@ -4,7 +4,7 @@ import {
   IUserLanguageReducerState,
   LOGGED_IN_USER_SUBGROUPING_KEY
 } from '../../store/userlanguage/reducer'
-import { IChatGroupReducerState } from '../../store/chatgroup/reducer'
+import { IChatGroupReducerState } from '../../store/chatgroup/helperfunctions'
 
 export const generateWordCloudArray = (
   userLanguages: IUserLanguageReducerState,

@@ -5,7 +5,8 @@ import { ChatGroupInviteStatusOptions } from './entities/ChatGroupInviteRecipien
 
 export interface IChatGroupAPIReturn extends ChatGroup {
   favorite: boolean
-  lastMessageSeenTimeStamp: string | null
+  lastMessageSeenTimeStamp: Date | null
+  datetimeLastMessage: Date | null
 }
 
 export interface IUserAndChatGroupGetReturn {
@@ -21,7 +22,7 @@ export interface IUserAndChatGroupGetReturn {
   userId: string
   chatGroupId: string
   favorite: boolean
-  lastMessageSeenTimeStamp: string
+  lastMessageSeenTimeStamp: Date
 }
 
 export interface IReduxStoreUserFields extends User {

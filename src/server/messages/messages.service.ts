@@ -13,7 +13,7 @@ export default class MessageService {
   getMessagesLinkedToUser(userId: string): Promise<Message[]> {
     return this.messageRepository.query(
       `SELECT * FROM message A
-      WHERE userId = $1`,
+      WHERE "userId" = $1`,
       [userId]
     )
   }

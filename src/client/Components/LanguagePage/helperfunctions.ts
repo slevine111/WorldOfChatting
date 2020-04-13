@@ -13,7 +13,7 @@ import {
   IUserLanguageReducerState,
   LOGGED_IN_USER_SUBGROUPING_KEY
 } from '../../store/userlanguage/reducer'
-import { IChatGroupReducerState } from '../../store/chatgroup/reducer'
+import { IChatGroupReducerState } from '../../store/chatgroup/helperfunctions'
 import { IUserChatGroupReducerState } from '../../store/userchatgroup/reducer'
 import { IUserReducerState } from '../../store/user/reducer'
 import { CHAT_GROUP_KEY_PREFIX } from '../../store/userchatgroup/reducer'

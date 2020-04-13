@@ -8,7 +8,7 @@ const {
   HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS
 } = RequestDataSuccessConstants
 
-type IMessageReducerState = INormalizedReducerShape<Message>
+export type IMessageReducerState = INormalizedReducerShape<Message>
 
 export default (
   state: IMessageReducerState = createInitialState(),

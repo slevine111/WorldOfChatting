@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { ReduxState } from '../../store'
-import { FAVORITE_CHAT_GROUPS_KEY } from '../../store/chatgroup/reducer'
+import { FAVORITE_CHAT_GROUPS_KEY } from '../../store/chatgroup/helperfunctions'
 import ChatBio from '../_shared/ChatBio'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'

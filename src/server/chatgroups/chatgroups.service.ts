@@ -17,7 +17,9 @@ export default class ChatGroupService {
       `SELECT A.*, favorite, "lastMessageSeenTimeStamp"
          FROM chat_group A
          JOIN user_chat_group B ON A.id = B."chatGroupId"
-         WHERE "userId" = $1`,
+         LEFT JOIN (SELECT "chatGroupId", MAX("createdAt") AS "datetimeLastMessage"  FROM message GROUP BY "chatGroupId") C ON A.id = C."chatGroupId"
+         WHERE "userId" = $1
+         ORDER BY "datetimeLastMessage" DESC`,
       [userId]
     )
   }
@@ -27,6 +29,11 @@ export default class ChatGroupService {
   ): Promise<IChatGroupAPIReturn> {
     return this.chatGroupRepository
       .save(newChatGroup)
-      .then(cg => ({ ...cg, favorite: false, lastMessageSeenTimeStamp: null }))
+      .then(cg => ({
+        ...cg,
+        favorite: false,
+        lastMessageSeenTimeStamp: null,
+        datetimeLastMessage: null
+      }))
   }
 }

@@ -16,6 +16,7 @@ import Button from '@material-ui/core/Button'
 import Avatar from '@material-ui/core/Avatar'
 import Grid from '@material-ui/core/Grid'
 import { History } from 'history'
+import globalstyles, { SMALL_AVATAR } from '../globalstyles'
 
 const IndividualNotification: React.FC<{
   nt: Notification
@@ -32,6 +33,7 @@ const IndividualNotification: React.FC<{
   history,
   onCloseDisplay
 }) => {
+  globalstyles()
   const dispatch = useDispatch()
   const { updatedAtSendersCol, clickedOn } = nt
   const { fullName, firstName, lastName } = user
@@ -44,7 +46,7 @@ const IndividualNotification: React.FC<{
       size="small"
       variant="outlined"
       onClick={() => {
-        history.push('/about')
+        history.push('/chat')
         if (!clickedOn) {
           dispatch(singleNotificationClickedOnThunk(nt))
         }
@@ -63,12 +65,7 @@ const IndividualNotification: React.FC<{
     >
       <div style={{ display: 'flex' }}>
         <Avatar
-          style={{
-            width: '22px',
-            height: '22px',
-            fontSize: '.6rem',
-            marginRight: '7px'
-          }}
+          className={SMALL_AVATAR}
         >{`${firstName[0]}${lastName[0]}`}</Avatar>
         <Grid container>
           <Grid item xs={12} style={{ textAlign: 'left' }}>

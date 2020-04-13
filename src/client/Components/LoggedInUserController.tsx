@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Route, Switch, Redirect } from 'react-router'
 import Home from './Home/'
 import LanguagePage from './LanguagePage'
+import ChatPage from './ChatPage'
 import { userLoggedInDataRetrivalThunk } from '../store/APIRequestsHandling/multiplereducerthunks'
 import { ReduxState } from '../store'
 import { RequestDataConstants } from '../store/APIRequestsHandling/types'
@@ -33,6 +34,7 @@ const LoggedInUserController: React.FC<{}> = () => {
       <Switch>
         <Route path="/home" exact component={Home} />
         <Route path="/language/:language" exact component={LanguagePage} />
+        <Route path="/chat" component={ChatPage} />
         <Redirect to="/home" />
       </Switch>
     </div>

@@ -5,7 +5,7 @@ import {
   UserChatGroup,
   Notification,
   ChatGroupInvite,
-  ChatGroupInviteRecipient
+  ChatGroupInviteRecipient,
 } from '../entities'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
 import { NotificationTypes } from '../entities/Notification'
@@ -23,10 +23,10 @@ import {
   ILanguageSubset,
   ICountriesByLanguageObject,
   returnRepository,
-  createMessages
+  createMessages,
 } from './seed_common'
 import scrapeAndProcessLanguageData, {
-  ICountryAndLanguage
+  ICountryAndLanguage,
 } from './languages_scraper'
 import { Connection, createConnection } from 'typeorm'
 import { hash } from 'bcrypt'
@@ -63,11 +63,11 @@ export const createUsers = async (connectionName: string): Promise<User[]> => {
   for (let i = 0; i < numberOfRandomUsers; ++i) {
     otherUserNames.push({
       firstName: name.firstName(),
-      lastName: name.lastName()
+      lastName: name.lastName(),
     })
   }
   const otherHashedPasswords: string[] = await Promise.all(
-    otherUserNames.map(un => hash(`${un.firstName}${un.lastName}`, 5))
+    otherUserNames.map((un) => hash(`${un.firstName}${un.lastName}`, 5))
   )
   for (let i = 0; i < numberOfRandomUsers; ++i) {
     const { firstName, lastName } = otherUserNames[i]
@@ -76,7 +76,7 @@ export const createUsers = async (connectionName: string): Promise<User[]> => {
       lastName,
       email: internet.email(firstName, lastName),
       password: otherHashedPasswords[i],
-      loggedIn: Math.random() <= 0.5
+      loggedIn: Math.random() <= 0.5,
     })
   }
   return returnRepository((User as unknown) as User, connectionName).save(
@@ -93,11 +93,11 @@ export const createChatGroups = (
     'French',
     'Japanese',
     'Spanish',
-    'Turkish'
+    'Turkish',
   ]
   for (let i = 0; i < 120 - CHAT_GROUP_LANGUAGES_MANUALLY.length; ++i) {
     let createdChatGroup: IChatGroupSubset = {
-      language: languages[Math.floor(5 * Math.random())]
+      language: languages[Math.floor(5 * Math.random())],
     }
     if (Math.random() <= 0.3)
       createdChatGroup.name = `${lorem.word()} ${lorem.word()}`
@@ -129,7 +129,7 @@ export const createUserChatGroups = async (
       let numberUsers: number = 3 + Math.floor(Math.random() * 3)
       currentUsers = [
         manualUsers[i % 3],
-        ...randomUsers.slice(otherUsersIndex, otherUsersIndex + numberUsers)
+        ...randomUsers.slice(otherUsersIndex, otherUsersIndex + numberUsers),
       ]
       otherUsersIndex = otherUsersIndex + numberUsers
     }
@@ -137,7 +137,7 @@ export const createUserChatGroups = async (
       userChatGroupsArray.push({
         favorite,
         userId: currentUsers[j].id,
-        chatGroupId: randomChatGroups[i].id
+        chatGroupId: randomChatGroups[i].id,
       })
     }
   }
@@ -159,7 +159,7 @@ const createSingleUserLanguage = (
   let createdUserLanguage: IUserLanguageSubset = {
     type: index % 2 === 0 ? LEARNER : TEACHER,
     language,
-    userId
+    userId,
   }
   if (Math.random() <= 0.5) {
     createdUserLanguage.numberOfYears = 1
@@ -182,7 +182,10 @@ export const createUserLanguages = async (
 
   let chatGroupLanguageMap: Record<string, string> = {}
   for (let k = 0; k < allChatGroups.length; ++k) {
-    chatGroupLanguageMap[allChatGroups[k].id] = allChatGroups[k].language
+    const { language } = allChatGroups[k]
+    if (language !== undefined) {
+      chatGroupLanguageMap[allChatGroups[k].id] = language
+    }
   }
 
   for (let k = 0; k < allUserChatGroups.length; ++k) {
@@ -251,7 +254,7 @@ const createChatGroupInvites = (
         chatGroupInvitesArr.push({
           senderUserId:
             (l === 0 && j !== 2) || (l === 1 && j >= 2) ? userId : manualUserId,
-          language
+          language,
         })
       }
     }
@@ -283,7 +286,7 @@ const createChatGroupInviteRecipients = (
           targetUserId:
             (l === 0 && j !== 2) || (l === 1 && j >= 2) ? manualUserId : userId,
           chatGroupInviteId: chatGroupInvites[count].id,
-          status: j === 0 || j > 2 ? PENDING : j === 1 ? ACCEPTED : DECLINED
+          status: j === 0 || j > 2 ? PENDING : j === 1 ? ACCEPTED : DECLINED,
         })
         ++count
       }
@@ -303,7 +306,7 @@ const createNotiifcations = async (
   let notificationsArray: INotificationSubset[] = []
   const {
     CHAT_GROUP_INVITE_DECLINED,
-    CHAT_GROUP_INVITE_ACCEPTED
+    CHAT_GROUP_INVITE_ACCEPTED,
   } = NotificationTypes
   for (let i = 0; i < userLangsByUserAndLang.length; ++i) {
     const manualUserId: string = manualUsers[i].id
@@ -324,7 +327,7 @@ const createNotiifcations = async (
           notificationType:
             j === 6 ? CHAT_GROUP_INVITE_ACCEPTED : CHAT_GROUP_INVITE_DECLINED,
           sendersUserIds: [l === 0 ? userId : manualUserId],
-          targetUserId: l === 0 ? manualUserId : userId
+          targetUserId: l === 0 ? manualUserId : userId,
         })
       }
     }
@@ -342,19 +345,19 @@ const refreshDbWithSeedData = async (): Promise<void> => {
       users,
       chatGroups,
       userChatGroups,
-      languagesByUser
+      languagesByUser,
     } = await seedManualData(createLanguages, 'default')
     const connection: Connection = await createConnection()
     await connection.synchronize(false)
     let { name } = connection
     const [randomUsers, randomChatGroups] = await Promise.all([
       createUsers(name),
-      createChatGroups(name)
+      createChatGroups(name),
     ])
 
     const {
       randomUserChatGroups,
-      randomUsersArrayIndexAt
+      randomUsersArrayIndexAt,
     } = await createUserChatGroups(users, randomUsers, randomChatGroups, name)
     const allUserChatGroups = [...userChatGroups, ...randomUserChatGroups]
     const [userLangsForChatGroupInvites] = await Promise.all([
@@ -366,11 +369,11 @@ const refreshDbWithSeedData = async (): Promise<void> => {
         languagesByUser,
         name
       ),
-      createMessages(allUserChatGroups, name)
+      createMessages(allUserChatGroups, name),
     ])
     const [chatGroupInvites] = await Promise.all([
       createChatGroupInvites(users, userLangsForChatGroupInvites, name),
-      createNotiifcations(users, userLangsForChatGroupInvites, name)
+      createNotiifcations(users, userLangsForChatGroupInvites, name),
     ])
     await createChatGroupInviteRecipients(
       users,

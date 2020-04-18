@@ -3,7 +3,7 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
-  JoinColumn
+  JoinColumn,
 } from 'typeorm'
 import Language from './Language'
 
@@ -17,5 +17,5 @@ export default class ChatGroup {
 
   @ManyToOne(() => Language)
   @JoinColumn({ name: 'language' })
-  language: string
+  language?: string
 }

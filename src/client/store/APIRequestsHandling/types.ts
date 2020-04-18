@@ -1,16 +1,14 @@
 import {
   IReduxStoreUserFields,
   IChatGroupInviteReducerFields,
-  IChatGroupAPIReturn
+  IChatGroupAPIReturn,
 } from '../../../types-for-both-server-and-client'
 import {
   UserLanguage,
   UserChatGroup,
   Notification,
-  Message
+  Message,
 } from '../../../entities'
-import { IUserReducerState } from '../user/reducer'
-import { IUserChatGroupReducerState } from '../userchatgroup/reducer'
 import { AnyAction } from 'redux'
 import { AxiosResponse } from 'axios'
 
@@ -26,7 +24,7 @@ export enum RequestDataConstants {
   CHAT_GROUP_INVITE_ACCEPTED_REQUEST = 'CHAT_GROUP_INVITE_ACCEPTED_REQUEST',
   CHAT_GROUP_INVITE_DECLINED_REQUEST = 'CHAT_GROUP_INVITE_DECLINED_REQUEST',
   CLICKED_ON_NOTIFICATIONS_ICON_REQUEST = 'CLICKED_ON_NOTIFICATIONS_ICON_REQUEST',
-  CLICKED_ON_SINGLE_NT_REQUEST = 'CLICKED_ON_SINGLE_NT_REQUEST'
+  CLICKED_ON_SINGLE_NT_REQUEST = 'CLICKED_ON_SINGLE_NT_REQUEST',
 }
 
 export enum RequestDataSuccessConstants {
@@ -41,7 +39,7 @@ export enum RequestDataSuccessConstants {
   CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS = 'CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS',
   CHAT_GROUP_INVITE_DECLINED_REQUEST_SUCCESS = 'CHAT_GROUP_INVITE_DECLINED_REQUEST_SUCCESS',
   CLICKED_ON_NOTIFICATIONS_ICON_REQUEST_SUCCESS = 'CLICKED_ON_NOTIFICATIONS_ICON_REQUEST_SUCCESS',
-  CLICKED_ON_SINGLE_NT_REQUEST_SUCCESS = 'CLICKED_ON_SINGLE_NT_REQUEST_SUCCESS'
+  CLICKED_ON_SINGLE_NT_REQUEST_SUCCESS = 'CLICKED_ON_SINGLE_NT_REQUEST_SUCCESS',
 }
 
 interface ActionOnDataRequestSuccess {
@@ -74,11 +72,21 @@ export type LanguagePageDataRetrivalArrayDataTypes = [
   string
 ]
 
+export type UserLoggedInDataTransformationInput = [
+  IChatGroupAPIReturn[],
+  UserLanguage[],
+  IReduxStoreUserFields[],
+  UserChatGroup[],
+  IChatGroupInviteReducerFields[],
+  Notification[],
+  Message[]
+]
+
 export interface IUserLoggedInDataRetrival {
   userLanguages: UserLanguage[]
   chatGroups: IChatGroupAPIReturn[]
-  users: IUserReducerState
-  userChatGroups: IUserChatGroupReducerState
+  users: IReduxStoreUserFields[]
+  userChatGroups: UserChatGroup[]
   chatGroupInvites: IChatGroupInviteReducerFields[]
   notifications: Notification[]
   messages: Message[]

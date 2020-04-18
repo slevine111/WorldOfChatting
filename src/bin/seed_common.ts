@@ -37,7 +37,7 @@ export interface IUserSubset {
 }
 
 export interface IChatGroupSubset {
-  language: string
+  language?: string
   name?: string
 }
 
@@ -86,29 +86,29 @@ export const MANUAL_USERS_ARRAY: IUserSubset[] = [
     lastName: 'Roberts',
     email: 'jroberts@gmail.com',
     password: hashSync('12345', 5),
-    loggedIn: false
+    loggedIn: false,
   },
   {
     firstName: 'Kim',
     lastName: 'Levine',
     email: 'klevine@gmail.com',
     password: hashSync('1234', 5),
-    loggedIn: false
+    loggedIn: false,
   },
   {
     firstName: 'Mike',
     lastName: 'Anderson',
     email: 'manderson@gmail.com',
     password: hashSync('123', 5),
-    loggedIn: false
-  }
+    loggedIn: false,
+  },
 ]
 
 export const CHAT_GROUP_LANGUAGES_MANUALLY = <const>[
   'Swahili',
   'French',
   'Japanese',
-  'Spanish'
+  'Spanish',
 ]
 
 const isModel = (model: unknown): model is Function => {
@@ -124,7 +124,7 @@ const isModel = (model: unknown): model is Function => {
       'Notification',
       'ChatGroupInvite',
       'ChatGroupInviteRecipient',
-      'Notification'
+      'Notification',
     ].includes(model.name)
   )
 }
@@ -149,7 +149,7 @@ export const createMessages = (
     messages.push({
       body: 'this is the best app ever :)',
       userId: userChatGroup.userId,
-      chatGroupId: userChatGroup.chatGroupId
+      chatGroupId: userChatGroup.chatGroupId,
     })
   })
   return returnRepository((Message as unknown) as Message, connectionName).save(

@@ -11,6 +11,19 @@ export default class UserChatGroupService {
     private readonly userChatGroupRepository: Repository<UserChatGroup>
   ) {}
 
+  getUserChatGroupsLinked(userId: string): Promise<UserChatGroup[]> {
+    return this.userChatGroupRepository.query(
+      `
+    SELECT A.*
+    FROM user_chat_group A
+    JOIN (SELECT "chatGroupId" FROM user_chat_group WHERE "userId" = $1) B
+    ON A."chatGroupId" = B."chatGroupId"
+    WHERE A."userId" != $2
+    `,
+      [userId, userId]
+    )
+  }
+
   createUserChatGroups(
     newUserChatGroups: IUserChatGroupPostDTO[]
   ): Promise<UserChatGroup[]> {

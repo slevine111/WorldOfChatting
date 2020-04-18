@@ -6,12 +6,12 @@ import {
   IOnlineStatusesChecked,
   IUserLangsTypesChecked,
   IOrderDirectionAndColumn,
-  IDisplayAndDataNames
+  IDisplayAndDataNames,
 } from './shared-types'
 import { displayAndDataNames } from './constants'
 import {
   IUserLanguageReducerState,
-  LOGGED_IN_USER_SUBGROUPING_KEY
+  LOGGED_IN_USER_SUBGROUPING_KEY,
 } from '../../store/userlanguage/reducer'
 import { IChatGroupReducerState } from '../../store/chatgroup/helperfunctions'
 import { IUserChatGroupReducerState } from '../../store/userchatgroup/reducer'
@@ -64,7 +64,7 @@ export const getAllUsersOfLanguage = (
         language,
         inSoloChat: userIdsOfSoloChats.has(userId),
         userType: type,
-        userAndAuthUserLanguageTypes: `${type[0]}${firstLetterOfAuthUserLanguageType}` as LanguageTypesCombos
+        userAndAuthUserLanguageTypes: `${type[0]}${firstLetterOfAuthUserLanguageType}` as LanguageTypesCombos,
       })
     }
   }
@@ -90,7 +90,7 @@ export const filterUsers = (
   userLangsTypesChecked: IUserLangsTypesChecked,
   searchUserText: string
 ): IUserWithLanguageFields[] => {
-  const { Online, Offline } = OnlineStatusesEnum
+  const { ONLINE: Online, OFFLINE: Offline } = OnlineStatusesEnum
   const { LEARNER, TEACHER } = UserLanguageTypeFieldOptions
   if (
     onlineStatusesChecked[Online] === true &&

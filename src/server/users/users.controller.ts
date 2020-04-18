@@ -5,30 +5,27 @@ import {
   Body,
   UseGuards,
   Put,
-  Param
+  Param,
 } from '@nestjs/common'
-import UserService, { EntityGetUsersLinkedTo } from './users.service'
+import UserService from './users.service'
 import AuthGuard from '../auth/auth.guard'
 import { User } from '../../entities'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
-import {
-  IUserAndChatGroupGetReturn,
-  IReduxStoreUserFields
-} from '../../types-for-both-server-and-client'
+import { IReduxStoreUserFields } from '../../types-for-both-server-and-client'
 
 @Controller('/api/user')
 export default class UserController {
   constructor(private userService: UserService) {}
 
-  @Get('/:userId/userslinked/withchatgroup')
+  @Get('/:userId/linkedto')
   @UseGuards(AuthGuard)
-  getUsersAndTheirChatGroups(
+  getUsersLinked(
     @Param('userId') userId: string
-  ): Promise<IUserAndChatGroupGetReturn[]> {
-    return this.userService.getUsersAndTheirChatGroups(userId)
+  ): Promise<IReduxStoreUserFields[]> {
+    return this.userService.getUsersLinked(userId)
   }
 
-  @Get('/:userId/notifications/received')
+  /* @Get('/:userId/notifications/received')
   @UseGuards(AuthGuard)
   getUsersLinkedToNotification(
     @Param('userId') userId: string
@@ -48,7 +45,7 @@ export default class UserController {
       language,
       EntityGetUsersLinkedTo.USER_LANGUAGE
     )
-  }
+  }*/
 
   @Post()
   addNewUser(@Body() user: IUserPostDTO): Promise<User> {

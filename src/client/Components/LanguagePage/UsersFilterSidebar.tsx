@@ -14,7 +14,7 @@ import styles from './styles'
 
 enum DisplayFilters {
   ONLINE_STATUS = 'Online Status',
-  USER_LANG_TYPE = 'Language Type'
+  USER_LANG_TYPE = 'Language Type',
 }
 
 interface IOwnPropsSidebarSingleColumn<
@@ -34,7 +34,7 @@ const SidebarSingleColumn = <
   checkedOptions,
   checkedOptionsCurrentState,
   setCheckedOptions,
-  otherClasses
+  otherClasses,
 }: IOwnPropsSidebarSingleColumn<T>) => {
   const [open, setOpen] = useState(false)
   const { hoverNoBackground, sidebarColumn, listItemRoot } = styles()
@@ -57,7 +57,7 @@ const SidebarSingleColumn = <
       </ListItem>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding dense>
-          {checkedOptions.map(curOption => {
+          {checkedOptions.map((curOption) => {
             return (
               <ListItem key={curOption}>
                 <ListItemText primary={curOption}></ListItemText>
@@ -67,7 +67,7 @@ const SidebarSingleColumn = <
                     onChange={() => {
                       setCheckedOptions({
                         ...checkedOptionsCurrentState,
-                        [curOption]: !checkedOptionsCurrentState[curOption]
+                        [curOption]: !checkedOptionsCurrentState[curOption],
                       })
                     }}
                     disableRipple={true}
@@ -96,11 +96,11 @@ const UsersFilterSidebar: React.FC<IOwnProps> = ({
   onlineStatusesChecked,
   setOnlineStatusesChecked,
   userLangsTypesChecked,
-  setUserLangsTypesChecked
+  setUserLangsTypesChecked,
 }) => {
   const { langTypeBottomMargin } = styles()
   const { ONLINE_STATUS, USER_LANG_TYPE } = DisplayFilters
-  const { Online, Offline } = OnlineStatusesEnum
+  const { ONLINE: Online, OFFLINE: Offline } = OnlineStatusesEnum
   const { LEARNER, TEACHER } = UserLanguageTypeFieldOptions
 
   return (

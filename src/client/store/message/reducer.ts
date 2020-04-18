@@ -3,9 +3,9 @@ import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceraction
 import { createInitialState, normalizeData } from '../utilityfunctions'
 import { INormalizedReducerShape } from '../reducer.base'
 import { Message } from '../../../entities'
-import { addIdToChatGroupSubGrouping } from './helperfunctions'
+import { addIdToChatGroupSubGrouping } from '../common'
 const {
-  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS
+  HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
 } = RequestDataSuccessConstants
 
 export type IMessageReducerState = INormalizedReducerShape<Message>
@@ -17,7 +17,7 @@ export default (
   switch (action.type) {
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
       return normalizeData(action.messages, state, {
-        subGroupingFunction: addIdToChatGroupSubGrouping
+        subGroupingFunction: addIdToChatGroupSubGrouping,
       })
     default:
       return state

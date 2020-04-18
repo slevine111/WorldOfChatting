@@ -2,17 +2,14 @@ import { Repository } from 'typeorm'
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'
-import {
-  IUserAndChatGroupGetReturn,
-  IReduxStoreUserFields
-} from '../../types-for-both-server-and-client'
+import { IReduxStoreUserFields } from '../../types-for-both-server-and-client'
 import { OnlineStatusesEnum } from '../../entities/User'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
 import { compare, hash } from 'bcrypt'
 
 export enum EntityGetUsersLinkedTo {
   NOTIFICATION = 'notification',
-  USER_LANGUAGE = 'user_language'
+  USER_LANGUAGE = 'user_language',
 }
 
 @Injectable()
@@ -35,9 +32,9 @@ export default class UserService {
           'lastName',
           'email',
           'password',
-          'loggedIn'
+          'loggedIn',
         ],
-        where: { email }
+        where: { email },
       })
       .then(async (user: User | undefined) => {
         if (user === undefined)
@@ -74,34 +71,33 @@ export default class UserService {
     return this.userRepository.findOne({ where: { id, loggedIn: true } })
   }
 
-  getUsersAndTheirChatGroups(
-    userId: string
-  ): Promise<IUserAndChatGroupGetReturn[]> {
+  getUsersLinked(userId: string): Promise<IReduxStoreUserFields[]> {
     return this.userRepository.query(
-      `SELECT u.id as "userTableId",
-              u."firstName",
-              u."lastName",
-              CONCAT(u."firstName",' ',u."lastName") as "fullName",
-              u."loggedIn",
-              CASE WHEN u."loggedIn" = true THEN '${OnlineStatusesEnum.Online}'
-                   ELSE '${OnlineStatusesEnum.Offline}' END AS "loggedInAsString",
-              u.email,
-              ucg.id as "userChatGroupId",
-              ucg."userId",
-              ucg."chatGroupId",
-              ucg.favorite,
-              ucg."lastMessageSeenTimeStamp"
-      FROM user_chat_group ucg
-      JOIN (SELECT "chatGroupId" FROM user_chat_group WHERE "userId" = $1) filter
-      ON ucg."chatGroupId" = filter."chatGroupId"
-      JOIN "user" u ON ucg."userId" = u.id
-      WHERE ucg."userId" != $2
+      `
+    SELECT A.id,
+       A."firstName",
+       A."lastName",
+       CONCAT(A."firstName",' ',A."lastName") as "fullName",
+ 	   A.email,
+ 	   A."loggedIn",
+ 	   B."similarityScore"
+FROM "user" A
+JOIN
+(SELECT A."userId",
+	    SUM(CASE WHEN (A.type = 'Learner' AND B.type = 'Teacher') OR (A.type = 'Teacher' AND B.type = 'Learner') THEN 1
+	             ELSE .5 END) AS "similarityScore"
+ FROM user_language A
+ JOIN (SELECT * FROM user_language WHERE "userId" = $1) B
+ ON A.language = B.language
+ WHERE A."userId" != $2
+ GROUP BY A."userId") B ON A.id = B."userId"
+ ORDER BY "similarityScore" DESC
     `,
       [userId, userId]
     )
   }
 
-  getUsersLinked(
+  getUsersLinkedhtr(
     entityValue: string,
     entity: EntityGetUsersLinkedTo
   ): Promise<IReduxStoreUserFields[]> {
@@ -124,8 +120,8 @@ export default class UserService {
               CONCAT(A."firstName",' ',A."lastName") as "fullName",
               A.email,
               A."loggedIn",
-              CASE WHEN A."loggedIn" = true THEN '${OnlineStatusesEnum.Online}'
-                   ELSE '${OnlineStatusesEnum.Offline}' END AS "loggedInAsString"
+              CASE WHEN A."loggedIn" = true THEN '${OnlineStatusesEnum.ONLINE}'
+                   ELSE '${OnlineStatusesEnum.OFFLINE}' END AS "loggedInAsString"
        FROM "user" A
        ${endQuery}
       `,
@@ -138,7 +134,7 @@ export default class UserService {
     const hashedPassword: string = await hash(password, 5)
     const { id, loggedIn } = await this.userRepository.save({
       ...otherUserFields,
-      password: hashedPassword
+      password: hashedPassword,
     })
     return { ...otherUserFields, id, loggedIn }
   }

@@ -3,7 +3,7 @@ import { INormalizedReducerShape } from './reducer.base'
 import {
   DATA_REQUEST_FAILURE,
   RequestDataConstants,
-  RequestDataSuccessConstants
+  RequestDataSuccessConstants,
 } from './APIRequestsHandling/types'
 import { SharedActionsTypes } from './APIRequestsHandling/multiplereduceractions'
 const { REFRESHING_ACCESS_TOKEN_REQUEST } = RequestDataConstants
@@ -72,7 +72,7 @@ export const deleteDataItem = <T extends INormalizedReducerShape<K>, K>(
   return {
     byId: newIdByObject,
     allIds: newAllIdArr,
-    subGroupings: JSON.parse(JSON.stringify(subGroupings))
+    subGroupings: JSON.parse(JSON.stringify(subGroupings)),
   } as T
 }
 
@@ -92,7 +92,7 @@ export const createInitialState = <T>(
   let initialState: INormalizedReducerShape<T> = {
     byId: {},
     allIds: [],
-    subGroupings: {}
+    subGroupings: {},
   }
   const keysArr: string[] = Array.isArray(initialSubGroupingsKeys)
     ? initialSubGroupingsKeys

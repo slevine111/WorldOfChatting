@@ -1,8 +1,9 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
 
 export enum OnlineStatusesEnum {
-  Offline = 'Offline',
-  Online = 'Online'
+  OFFLINE = 'Offline',
+  ONLINE = 'Online',
+  AWAY = 'Away',
 }
 
 @Entity()
@@ -22,6 +23,6 @@ export default class User {
   @Column({ type: 'varchar', unique: true, select: false })
   password?: string
 
-  @Column({ type: 'boolean', default: false })
-  loggedIn: boolean
+  @Column({ enum: OnlineStatusesEnum, default: OnlineStatusesEnum.OFFLINE })
+  loggedIn: OnlineStatusesEnum
 }

@@ -1,6 +1,4 @@
 import { ChatGroup, User } from './entities'
-import { UserLanguageTypeFieldOptions } from './entities/UserLanguage'
-import { OnlineStatusesEnum } from './entities/User'
 import { ChatGroupInviteStatusOptions } from './entities/ChatGroupInviteRecipient'
 
 export interface IChatGroupAPIReturn extends ChatGroup {
@@ -9,25 +7,9 @@ export interface IChatGroupAPIReturn extends ChatGroup {
   datetimeLastMessage: Date | null
 }
 
-export interface IUserAndChatGroupGetReturn {
-  userTableId: string
-  firstName: string
-  lastName: string
-  fullName: string
-  email: string
-  password: string
-  loggedIn: boolean
-  loggedInAsString: keyof typeof OnlineStatusesEnum
-  userChatGroupId: string
-  userId: string
-  chatGroupId: string
-  favorite: boolean
-  lastMessageSeenTimeStamp: Date
-}
-
 export interface IReduxStoreUserFields extends User {
   fullName: string
-  loggedInAsString: keyof typeof OnlineStatusesEnum
+  similarityScore: number
 }
 
 export interface IChatGroupInviteReducerFields {

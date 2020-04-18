@@ -10,7 +10,7 @@ import AddIcon from '@material-ui/icons/Add'
 import styles from './styles'
 import {
   IOrderDirectionAndColumn,
-  IUserWithLanguageFields
+  IUserWithLanguageFields,
 } from './shared-types'
 import { displayAndDataNames } from './constants'
 
@@ -27,7 +27,7 @@ const TableList: React.FC<IOwnProps> = ({
   orderDirectionAndColumn,
   setOrderDirectionAndColumn,
   rowsToDisplay,
-  setSelectedUser
+  setSelectedUser,
 }) => {
   const { maxTableWidth } = styles()
 
@@ -38,7 +38,7 @@ const TableList: React.FC<IOwnProps> = ({
       <Table stickyHeader aria-label="table-of-users-of-language">
         <TableHead>
           <TableRow>
-            {displayAndDataNames.map(row => {
+            {displayAndDataNames.map((row) => {
               const { display, data } = row
               return (
                 <TableCell key={display} scope="col">
@@ -50,7 +50,7 @@ const TableList: React.FC<IOwnProps> = ({
                       setOrderDirectionAndColumn({
                         orderDirection:
                           orderDirection === 'asc' ? 'desc' : 'asc',
-                        orderColumn: data
+                        orderColumn: data,
                       })
                     }}
                   />
@@ -60,8 +60,8 @@ const TableList: React.FC<IOwnProps> = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {rowsToDisplay.map(user => {
-            const { loggedInAsString, userType, id, fullName } = user
+          {rowsToDisplay.map((user) => {
+            const { onlineStatus, userType, id, fullName } = user
             return (
               <TableRow key={id}>
                 <TableCell>
@@ -70,7 +70,7 @@ const TableList: React.FC<IOwnProps> = ({
                     <AddIcon />
                   </IconButton>
                 </TableCell>
-                <TableCell>{loggedInAsString}</TableCell>
+                <TableCell>{onlineStatus}</TableCell>
                 <TableCell>{`${userType[0].toUpperCase()}${userType.slice(
                   1
                 )}`}</TableCell>

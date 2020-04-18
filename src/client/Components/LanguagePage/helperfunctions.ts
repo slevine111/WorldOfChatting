@@ -1,5 +1,5 @@
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
-import { OnlineStatusesEnum } from '../../../entities/User'
+import { OnlineStatuses } from '../../../entities/User'
 import {
   IUserWithLanguageFields,
   LanguageTypesCombos,
@@ -16,7 +16,7 @@ import {
 import { IChatGroupReducerState } from '../../store/chatgroup/helperfunctions'
 import { IUserChatGroupReducerState } from '../../store/userchatgroup/reducer'
 import { IUserReducerState } from '../../store/user/reducer'
-import { CHAT_GROUP_KEY_PREFIX } from '../../store/userchatgroup/reducer'
+import { CHAT_GROUP_KEY_PREFIX } from '../../store/common'
 
 export const getAllUsersOfLanguage = (
   language: string,
@@ -90,7 +90,7 @@ export const filterUsers = (
   userLangsTypesChecked: IUserLangsTypesChecked,
   searchUserText: string
 ): IUserWithLanguageFields[] => {
-  const { ONLINE: Online, OFFLINE: Offline } = OnlineStatusesEnum
+  const { ONLINE: Online, OFFLINE: Offline } = OnlineStatuses
   const { LEARNER, TEACHER } = UserLanguageTypeFieldOptions
   if (
     onlineStatusesChecked[Online] === true &&
@@ -104,9 +104,9 @@ export const filterUsers = (
   let filteredUsers: IUserWithLanguageFields[] = []
   let searchTextRegExp: RegExp = generateRegExp(searchUserText)
   for (let i = 0; i < users.length; ++i) {
-    const { loggedInAsString, userType, fullName } = users[i]
+    const { onlineStatus, userType, fullName } = users[i]
     if (
-      onlineStatusesChecked[loggedInAsString] === true &&
+      onlineStatusesChecked[onlineStatus] === true &&
       userLangsTypesChecked[userType] === true &&
       (searchUserText === '' || searchTextRegExp.test(fullName))
     )

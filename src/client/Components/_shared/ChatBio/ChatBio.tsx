@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import styles from './styles'
 import { ReduxState } from '../../../store'
+import { OnlineStatuses } from '../../../../entities/User'
 import { IReduxStoreUserFields } from '../../../../types-for-both-server-and-client'
 import { getUsersOfChatGroup } from './helperfunctions'
 
@@ -19,7 +20,7 @@ interface IOwnProps {
 const ChatBio: React.FC<IOwnProps & RouteComponentProps> = ({
   chatGroupId,
   history,
-  displayLanguage
+  displayLanguage,
 }) => {
   const users: IReduxStoreUserFields[] = useSelector((state: ReduxState) => {
     return getUsersOfChatGroup(state, chatGroupId)
@@ -33,17 +34,18 @@ const ChatBio: React.FC<IOwnProps & RouteComponentProps> = ({
     dot,
     avatarColor,
     itemBottomMargin,
-    badgeRightMargin
+    badgeRightMargin,
   } = styles()
   const groupChat: boolean = users.length > 1
   const numberUsersOnline: number = users.reduce(
-    (sum, user) => sum + Number(user.loggedIn),
+    (sum, user) => sum + Number(user.onlineStatus !== OnlineStatuses.OFFLINE),
     0
   )
   return (
     <Grid item xs={6} sm={4} className={itemBottomMargin}>
       {users.slice(0, 3).map((user, idx) => {
-        const { loggedIn, firstName, lastName, id } = user
+        const { onlineStatus, firstName, lastName, id } = user
+        const userNotOffline: boolean = onlineStatus !== OnlineStatuses.OFFLINE
         return (
           <Badge
             key={id}
@@ -52,8 +54,8 @@ const ChatBio: React.FC<IOwnProps & RouteComponentProps> = ({
             variant="dot"
             className={badgeRightMargin}
             classes={{
-              badge: loggedIn ? loggedInBadge : loggedOutBadge,
-              dot
+              badge: userNotOffline ? loggedInBadge : loggedOutBadge,
+              dot,
             }}
           >
             <Avatar className={avatarColor}>

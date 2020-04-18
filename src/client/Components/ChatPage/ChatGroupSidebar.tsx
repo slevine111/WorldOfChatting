@@ -1,8 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { ReduxState } from '../../store'
-import { CHAT_GROUP_KEY_PREFIX } from '../../store/message/helperfunctions'
-import * as ucg from '../../store/userchatgroup/reducer'
+import { CHAT_GROUP_KEY_PREFIX } from '../../store/common'
 import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
 import globalstyles, { SMALL_AVATAR } from '../globalstyles'
@@ -14,19 +13,19 @@ const ChatGroupSidebar: React.FC<{}> = () => {
       chatGroupState: state.chatGroups,
       messageState: state.messages,
       userCGState: state.userChatGroups,
-      users: state.users.byId
+      users: state.users.byId,
     })
   )
 
   return (
     <div>
       <Typography variant="h5">Chats</Typography>
-      {chatGroupState.allIds.map(id => {
+      {chatGroupState.allIds.map((id) => {
         const subGroupingPrefix: string = `${CHAT_GROUP_KEY_PREFIX}${id}`
         const chatGroupMessageIds: string[] | undefined =
           messageState.subGroupings[subGroupingPrefix]
         if (chatGroupMessageIds !== undefined) {
-          const userCGPrefix: string = `${ucg.CHAT_GROUP_KEY_PREFIX}${id}`
+          const userCGPrefix: string = `${CHAT_GROUP_KEY_PREFIX}${id}`
           const chatGroupUserIds: string[] =
             userCGState.subGroupings[userCGPrefix]
           const { userId } = userCGState.byId[chatGroupUserIds[0]]
@@ -44,7 +43,7 @@ const ChatGroupSidebar: React.FC<{}> = () => {
                 style={{
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
-                  textOverflow: 'ellipsis'
+                  textOverflow: 'ellipsis',
                 }}
               >
                 <Typography variant="body2">{fullName}</Typography>

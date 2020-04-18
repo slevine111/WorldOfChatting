@@ -1,5 +1,5 @@
 import { ReduxState } from '../../../store'
-import { CHAT_GROUP_KEY_PREFIX } from '../../../store/userchatgroup/reducer'
+import { CHAT_GROUP_KEY_PREFIX } from '../../../store/common'
 import { IReduxStoreUserFields } from '../../../../types-for-both-server-and-client'
 
 export const getUsersOfChatGroup = (

@@ -2,7 +2,6 @@ import {
   RequestDataSuccessConstants,
   ActionOnDataRequestFailure,
   LanguagePageDataRetrivalArrayDataTypes,
-  IUserLoggedInDataRetrival,
   UserLoggedInDataTransformationInput,
   IChatGroupRequestAcceptedData,
   IChatGroupRequestBase,

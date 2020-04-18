@@ -15,9 +15,10 @@ import {
   IUserWithLanguageFields,
   OrderColumns,
   OrderDirections,
-  IDisplayAndDataNames
+  IDisplayAndDataNames,
 } from './shared-types'
 import { generateOrderByOptionsIconDisplay } from './helperfunctions'
+import { OnlineStatuses } from '../../../entities/User'
 
 interface IOwnProps {
   orderDirectionAndColumn: IOrderDirectionAndColumn
@@ -36,7 +37,7 @@ const PersonIconList: React.FC<IOwnProps> = ({
   rowsToDisplay,
   setSelectedUser,
   searchUserText,
-  setSearchUserText
+  setSearchUserText,
 }) => {
   const {
     loggedInBadge,
@@ -44,7 +45,7 @@ const PersonIconList: React.FC<IOwnProps> = ({
     dot,
     blockDisplay,
     avatarColor,
-    itemBottomMargin
+    itemBottomMargin,
   } = chatBioStyles()
   const { orderByWidth, bottomMarginLarge } = styles()
 
@@ -67,7 +68,7 @@ const PersonIconList: React.FC<IOwnProps> = ({
                 const [orderColumn, orderDirection] = target.value.split('-')
                 setOrderDirectionAndColumn({
                   orderColumn: orderColumn as OrderColumns,
-                  orderDirection: orderDirection as OrderDirections
+                  orderDirection: orderDirection as OrderDirections,
                 })
               }
             }}
@@ -87,8 +88,15 @@ const PersonIconList: React.FC<IOwnProps> = ({
         </Grid>
       </Grid>
       <Grid container>
-        {rowsToDisplay.map(user => {
-          const { loggedIn, firstName, lastName, userType, id, fullName } = user
+        {rowsToDisplay.map((user) => {
+          const {
+            onlineStatus,
+            firstName,
+            lastName,
+            userType,
+            id,
+            fullName,
+          } = user
           return (
             <Grid item xs={6} sm={4} key={id} className={itemBottomMargin}>
               <Badge
@@ -96,8 +104,11 @@ const PersonIconList: React.FC<IOwnProps> = ({
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 variant="dot"
                 classes={{
-                  badge: loggedIn ? loggedInBadge : loggedOutBadge,
-                  dot
+                  badge:
+                    onlineStatus !== OnlineStatuses.OFFLINE
+                      ? loggedInBadge
+                      : loggedOutBadge,
+                  dot,
                 }}
               >
                 <Avatar className={avatarColor}>

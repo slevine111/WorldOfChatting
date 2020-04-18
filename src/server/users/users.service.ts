@@ -3,14 +3,9 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'
 import { IReduxStoreUserFields } from '../../types-for-both-server-and-client'
-import { OnlineStatusesEnum } from '../../entities/User'
+import { OnlineStatuses } from '../../entities/User'
 import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
 import { compare, hash } from 'bcrypt'
-
-export enum EntityGetUsersLinkedTo {
-  NOTIFICATION = 'notification',
-  USER_LANGUAGE = 'user_language',
-}
 
 @Injectable()
 export default class UserService {
@@ -32,7 +27,7 @@ export default class UserService {
           'lastName',
           'email',
           'password',
-          'loggedIn',
+          'onlineStatus',
         ],
         where: { email },
       })
@@ -54,7 +49,7 @@ export default class UserService {
   loginUser(email: string, inputPassword: string): Promise<User> {
     return this.findSingleUser(email, inputPassword, true).then(
       async (user: User) => {
-        user.loggedIn = true
+        user.onlineStatus = OnlineStatuses.ONLINE
         const { password, ...otherUserFields } = await this.userRepository.save(
           user
         )
@@ -97,46 +92,14 @@ JOIN
     )
   }
 
-  getUsersLinkedhtr(
-    entityValue: string,
-    entity: EntityGetUsersLinkedTo
-  ): Promise<IReduxStoreUserFields[]> {
-    let endQuery: string = ''
-    if (entity === EntityGetUsersLinkedTo.NOTIFICATION) {
-      endQuery = `JOIN (SELECT DISTINCT "sendersUserIds"[1] AS "senderUserId" FROM notification
-      WHERE "targetUserId" = $1
-      UNION
-      SELECT DISTINCT "senderUserId" FROM chat_group_invite A
-      JOIN chat_group_invite_recipient B ON A.id=B."chatGroupInviteId" WHERE "targetUserId" = $1) B ON A.id = B."senderUserId"`
-    } else {
-      endQuery = `JOIN user_language B ON A.id = B."userId"
-                 WHERE language = $1`
-    }
-
-    return this.userRepository.query(
-      `SELECT A.id,
-              A."firstName",
-              A."lastName",
-              CONCAT(A."firstName",' ',A."lastName") as "fullName",
-              A.email,
-              A."loggedIn",
-              CASE WHEN A."loggedIn" = true THEN '${OnlineStatusesEnum.ONLINE}'
-                   ELSE '${OnlineStatusesEnum.OFFLINE}' END AS "loggedInAsString"
-       FROM "user" A
-       ${endQuery}
-      `,
-      [entityValue]
-    )
-  }
-
   async addNewUser(user: IUserPostDTO): Promise<User> {
     const { password, ...otherUserFields } = user
     const hashedPassword: string = await hash(password, 5)
-    const { id, loggedIn } = await this.userRepository.save({
+    const { id, onlineStatus } = await this.userRepository.save({
       ...otherUserFields,
       password: hashedPassword,
     })
-    return { ...otherUserFields, id, loggedIn }
+    return { ...otherUserFields, id, onlineStatus }
   }
 
   updateUser(userId: string, updatedUser: IUserUpdateDTO): Promise<User> {

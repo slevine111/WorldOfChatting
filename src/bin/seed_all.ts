@@ -31,6 +31,7 @@ import scrapeAndProcessLanguageData, {
 import { Connection, createConnection } from 'typeorm'
 import { hash } from 'bcrypt'
 import { name, internet, lorem } from 'faker'
+import { OnlineStatuses } from '../entities/User'
 
 interface IFirstAndLastName {
   firstName: string
@@ -56,6 +57,7 @@ const createLanguages = async (): Promise<ILanguageSubset[]> => {
 createLanguages.isAsync = true
 
 export const createUsers = async (connectionName: string): Promise<User[]> => {
+  const { ONLINE, OFFLINE } = OnlineStatuses
   let usersArray: IUserSubset[] = []
   const numberOfRandomUsers = <const>500
 
@@ -76,7 +78,7 @@ export const createUsers = async (connectionName: string): Promise<User[]> => {
       lastName,
       email: internet.email(firstName, lastName),
       password: otherHashedPasswords[i],
-      loggedIn: Math.random() <= 0.5,
+      onlineStatus: Math.random() <= 0.5 ? ONLINE : OFFLINE,
     })
   }
   return returnRepository((User as unknown) as User, connectionName).save(

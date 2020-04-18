@@ -1,6 +1,6 @@
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
 import { IReduxStoreUserFields } from '../../../types-for-both-server-and-client'
-import { OnlineStatusesEnum } from '../../../entities/User'
+import { OnlineStatuses } from '../../../entities/User'
 
 export type LanguageTypesCombos = 'LL' | 'LT' | 'TL' | 'TT'
 
@@ -9,18 +9,18 @@ export interface IUserWithLanguageFields extends IReduxStoreUserFields {
   userAndAuthUserLanguageTypes: LanguageTypesCombos
   language: string
   inSoloChat: boolean
-  [key: string]: string | boolean | undefined
+  //[key: string]: string | boolean | undefined
 }
 
 export type IOnlineStatusesChecked = {
-  [key in OnlineStatusesEnum]: boolean
+  [key in OnlineStatuses]: boolean
 }
 
 export type IUserLangsTypesChecked = {
   [key in UserLanguageTypeFieldOptions]: boolean
 }
 
-type OrderColumns = 'fullName' | 'loggedInAsString' | 'userType'
+type OrderColumns = 'fullName' | 'onlineStatus' | 'userType'
 type OrderDirections = 'asc' | 'desc'
 
 export interface IOrderDirectionAndColumn {

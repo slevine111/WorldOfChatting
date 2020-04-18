@@ -25,28 +25,6 @@ export default class UserController {
     return this.userService.getUsersLinked(userId)
   }
 
-  /* @Get('/:userId/notifications/received')
-  @UseGuards(AuthGuard)
-  getUsersLinkedToNotification(
-    @Param('userId') userId: string
-  ): Promise<IReduxStoreUserFields[]> {
-    return this.userService.getUsersLinked(
-      userId,
-      EntityGetUsersLinkedTo.NOTIFICATION
-    )
-  }
-
-  @Get('/linked/language/:language')
-  @UseGuards(AuthGuard)
-  getUsersLinkedToLanguage(
-    @Param('language') language: string
-  ): Promise<IReduxStoreUserFields[]> {
-    return this.userService.getUsersLinked(
-      language,
-      EntityGetUsersLinkedTo.USER_LANGUAGE
-    )
-  }*/
-
   @Post()
   addNewUser(@Body() user: IUserPostDTO): Promise<User> {
     return this.userService.addNewUser(user)

@@ -9,7 +9,7 @@ import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 import { IOnlineStatusesChecked, IUserLangsTypesChecked } from './shared-types'
 import { UserLanguageTypeFieldOptions } from '../../../entities/UserLanguage'
-import { OnlineStatusesEnum } from '../../../entities/User'
+import { OnlineStatuses } from '../../../entities/User'
 import styles from './styles'
 
 enum DisplayFilters {
@@ -18,7 +18,7 @@ enum DisplayFilters {
 }
 
 interface IOwnPropsSidebarSingleColumn<
-  T extends UserLanguageTypeFieldOptions | OnlineStatusesEnum
+  T extends UserLanguageTypeFieldOptions | OnlineStatuses
 > {
   filterHeading: DisplayFilters
   checkedOptions: T[]
@@ -28,7 +28,7 @@ interface IOwnPropsSidebarSingleColumn<
 }
 
 const SidebarSingleColumn = <
-  T extends UserLanguageTypeFieldOptions | OnlineStatusesEnum
+  T extends UserLanguageTypeFieldOptions | OnlineStatuses
 >({
   filterHeading,
   checkedOptions,
@@ -100,7 +100,7 @@ const UsersFilterSidebar: React.FC<IOwnProps> = ({
 }) => {
   const { langTypeBottomMargin } = styles()
   const { ONLINE_STATUS, USER_LANG_TYPE } = DisplayFilters
-  const { ONLINE: Online, OFFLINE: Offline } = OnlineStatusesEnum
+  const { ONLINE: Online, OFFLINE: Offline } = OnlineStatuses
   const { LEARNER, TEACHER } = UserLanguageTypeFieldOptions
 
   return (

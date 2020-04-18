@@ -1,6 +1,7 @@
 import { Message, UserChatGroup, User, ChatGroup } from '../entities'
 import { Repository, getConnection } from 'typeorm'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
+import { OnlineStatuses } from '../entities/User'
 import { NotificationTypes } from '../entities/Notification'
 import { ChatGroupInviteStatusOptions } from '../entities/ChatGroupInviteRecipient'
 import { hashSync } from 'bcrypt'
@@ -33,7 +34,7 @@ export interface IUserSubset {
   lastName: string
   email: string
   password: string
-  loggedIn: boolean
+  onlineStatus: OnlineStatuses
 }
 
 export interface IChatGroupSubset {
@@ -86,21 +87,21 @@ export const MANUAL_USERS_ARRAY: IUserSubset[] = [
     lastName: 'Roberts',
     email: 'jroberts@gmail.com',
     password: hashSync('12345', 5),
-    loggedIn: false,
+    onlineStatus: OnlineStatuses.OFFLINE,
   },
   {
     firstName: 'Kim',
     lastName: 'Levine',
     email: 'klevine@gmail.com',
     password: hashSync('1234', 5),
-    loggedIn: false,
+    onlineStatus: OnlineStatuses.OFFLINE,
   },
   {
     firstName: 'Mike',
     lastName: 'Anderson',
     email: 'manderson@gmail.com',
     password: hashSync('123', 5),
-    loggedIn: false,
+    onlineStatus: OnlineStatuses.OFFLINE,
   },
 ]
 

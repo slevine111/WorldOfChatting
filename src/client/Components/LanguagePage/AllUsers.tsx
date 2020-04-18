@@ -5,12 +5,12 @@ import {
   IUserWithLanguageFields,
   IOnlineStatusesChecked,
   IUserLangsTypesChecked,
-  IOrderDirectionAndColumn
+  IOrderDirectionAndColumn,
 } from './shared-types'
 import {
   getAllUsersOfLanguage,
   filterUsers,
-  getUsersToDisplayFromFilteredUsers
+  getUsersToDisplayFromFilteredUsers,
 } from './helperfunctions'
 import PersonIconList from './PersonIconList'
 import TableList from './TableList'
@@ -30,7 +30,7 @@ const AllUsers: React.FC<IOwnProps> = ({ language }) => {
     (state: ReduxState) => {
       const {
         auth: { user },
-        userLanguages
+        userLanguages,
       } = state
 
       return userLanguages.subGroupings[language] !== undefined
@@ -101,7 +101,7 @@ const AllUsers: React.FC<IOwnProps> = ({ language }) => {
                 onlineStatusesChecked,
                 setOnlineStatusesChecked,
                 userLangsTypesChecked,
-                setUserLangsTypesChecked
+                setUserLangsTypesChecked,
               }}
             />{' '}
           </Grid>
@@ -115,8 +115,8 @@ const AllUsers: React.FC<IOwnProps> = ({ language }) => {
                     rowsToDisplay,
                     setSelectedUser,
                     searchUserText,
-                    setSearchUserText
-                  }
+                    setSearchUserText,
+                  },
                 }}
               />
             )}
@@ -127,8 +127,8 @@ const AllUsers: React.FC<IOwnProps> = ({ language }) => {
                     orderDirectionAndColumn,
                     setOrderDirectionAndColumn,
                     rowsToDisplay,
-                    setSelectedUser
-                  }
+                    setSelectedUser,
+                  },
                 }}
               />
             )}
@@ -140,7 +140,7 @@ const AllUsers: React.FC<IOwnProps> = ({ language }) => {
             page={page}
             rowsPerPage={rowsPerPage}
             onChangePage={(_event, page) => setPage(page)}
-            onChangeRowsPerPage={event => {
+            onChangeRowsPerPage={(event) => {
               setRowsPerPage(Number(event.target.value))
               setPage(0)
             }}

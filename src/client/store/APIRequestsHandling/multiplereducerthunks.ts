@@ -14,7 +14,6 @@ import {
   IThunkReturnObject,
 } from './types'
 import { respondToChatInviteBase } from './helperfunctions'
-import { IUserUpdateDTO } from '../../../server/users/users.dto'
 import { IChatGroupPostDTO } from '../../../server/chatgroups/chatgroups.dto'
 import { IUserChatGroupPostDTO } from '../../../server/userchatgroups/userchatgroups.dto'
 import {
@@ -24,16 +23,18 @@ import {
 import { User, UserLanguage, UserChatGroup } from '../../../entities'
 import { ChatGroupInviteStatusOptions } from '../../../entities/ChatGroupInviteRecipient'
 import { NotificationTypes } from '../../../entities/Notification'
+import { OnlineStatuses } from '../../../entities/User'
 import axios, { AxiosResponse } from 'axios'
 
 export const logoutUserProcessThunk = (
-  userId: string,
-  partialUpdatedUser: IUserUpdateDTO
+  userId: string
 ): IThunkReturnObject<[]> => {
   return {
     requestDataActionType: RequestDataConstants.USER_LOGGING_OUT_REQUEST,
     apiCall: async (): Promise<AxiosResponse> => {
-      await axios.put(`/api/user/${userId}`, partialUpdatedUser)
+      await axios.put(`/api/user/${userId}`, {
+        onlineStatus: OnlineStatuses.OFFLINE,
+      })
       return axios.delete('/api/auth')
     },
     dispatchActionOnSuccess: userLoggedOut,
@@ -51,7 +52,7 @@ export const userLoggedInDataRetrivalThunk = (
     apiCall: (): Promise<AxiosResponse[]> => {
       return Promise.all([
         axios.get(`/api/chatgroup/${user.id}`),
-        axios.get(`/api/userlanguage/linked/${user.id}`),
+        axios.get(`/api/userlanguage/${user.id}/linkedto`),
         axios.get(`/api/user/${user.id}/linkedto`),
         axios.get(`/api/userchatgroup/${user.id}/linkedto`),
         axios.get(`/api/chatgroupinvite/${user.id}`),

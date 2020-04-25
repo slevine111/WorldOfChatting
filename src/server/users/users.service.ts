@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../entities'
 import { IReduxStoreUserFields } from '../../types-for-both-server-and-client'
 import { OnlineStatuses } from '../../entities/User'
-import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
+import { IUserPostDTO } from './users.dto'
 import { compare, hash } from 'bcrypt'
 
 @Injectable()
@@ -74,8 +74,9 @@ export default class UserService {
        A."lastName",
        CONCAT(A."firstName",' ',A."lastName") as "fullName",
  	   A.email,
- 	   A."loggedIn",
- 	   B."similarityScore"
+ 	   A."onlineStatus",
+      ROUND(B."similarityScore",1) AS "similarityScore",
+      CASE WHEN C."userId" IS NOT NULL THEN true ELSE false END AS "directChat"
 FROM "user" A
 JOIN
 (SELECT A."userId",
@@ -86,9 +87,17 @@ JOIN
  ON A.language = B.language
  WHERE A."userId" != $2
  GROUP BY A."userId") B ON A.id = B."userId"
+ LEFT JOIN
+(
+SELECT DISTINCT "userId"
+FROM chat_group A
+JOIN (SELECT "chatGroupId" FROM user_chat_group WHERE "userId" = $3) B
+ON A.id = B."chatGroupId"
+JOIN user_chat_group C ON A.id = C."chatGroupId"
+WHERE "directChat" = true) C ON A.id = C."userId"
  ORDER BY "similarityScore" DESC
     `,
-      [userId, userId]
+      [userId, userId, userId]
     )
   }
 
@@ -102,7 +111,7 @@ JOIN
     return { ...otherUserFields, id, onlineStatus }
   }
 
-  updateUser(userId: string, updatedUser: IUserUpdateDTO): Promise<User> {
+  updateUser(userId: string, updatedUser: Partial<User>): Promise<User> {
     return this.findSingleUserById(userId).then((user: User | undefined) => {
       if (user === undefined)
         throw new HttpException('username invalid', HttpStatus.BAD_REQUEST)

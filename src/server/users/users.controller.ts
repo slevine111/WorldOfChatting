@@ -10,7 +10,7 @@ import {
 import UserService from './users.service'
 import AuthGuard from '../auth/auth.guard'
 import { User } from '../../entities'
-import { IUserPostDTO, IUserUpdateDTO } from './users.dto'
+import { IUserPostDTO } from './users.dto'
 import { IReduxStoreUserFields } from '../../types-for-both-server-and-client'
 
 @Controller('/api/user')
@@ -34,7 +34,7 @@ export default class UserController {
   @UseGuards(AuthGuard)
   updateUser(
     @Param('userId') userId: string,
-    @Body() updatedUser: IUserUpdateDTO
+    @Body() updatedUser: Partial<User>
   ): Promise<User | undefined> {
     return this.userService.updateUser(userId, updatedUser)
   }

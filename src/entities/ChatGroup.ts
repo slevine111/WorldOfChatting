@@ -15,6 +15,9 @@ export default class ChatGroup {
   @Column({ type: 'varchar', length: 100, nullable: true, unique: true })
   name: string
 
+  @Column('boolean')
+  directChat: boolean
+
   @ManyToOne(() => Language)
   @JoinColumn({ name: 'language' })
   language?: string

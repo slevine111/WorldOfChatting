@@ -3,7 +3,7 @@ import {
   User,
   UserLanguage,
   UserChatGroup,
-  Language
+  Language,
 } from '../entities'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
 import {
@@ -15,7 +15,7 @@ import {
   ILanguageSubset,
   ILanguageAndCountries,
   ISeedDataManualReturn,
-  returnRepository
+  returnRepository,
 } from './seed_common'
 import { Connection, createConnection } from 'typeorm'
 
@@ -29,7 +29,8 @@ const createChatGroupsManually = (): IChatGroupSubset[] => {
   let chatGroupsArray: IChatGroupSubset[] = []
   for (let i = 0; i < CHAT_GROUP_LANGUAGES_MANUALLY.length; ++i) {
     let createdChatGroup: IChatGroupSubset = {
-      language: CHAT_GROUP_LANGUAGES_MANUALLY[i]
+      directChat: i >= 1,
+      language: CHAT_GROUP_LANGUAGES_MANUALLY[i],
     }
     if (i == 0) createdChatGroup.name = "Mama Alice's Gang"
     if (i == 3) createdChatGroup.name = 'Vamos a la playa'
@@ -57,7 +58,7 @@ const createUserChatGroupsManully = (
     users,
     [joe, kim],
     [kim, mike],
-    [joe, mike]
+    [joe, mike],
   ]
 
   if (usersInEachGroup.length !== chatGroups.length) {
@@ -73,7 +74,7 @@ const createUserChatGroupsManully = (
       userChatGroupsArray.push({
         favorite,
         userId: currentUsers[j].id,
-        chatGroupId: chatGroups[i].id
+        chatGroupId: chatGroups[i].id,
       })
     }
   }
@@ -104,7 +105,7 @@ const createUserLanguagesManually = (users: User[]): IUserLanguageInterface => {
   const languagesArray: string[][] = [
     ['English', 'Swahili', 'Spanish', 'French', 'Czech'],
     ['French', 'Swahili', 'Mandarin', 'Japanese', 'Woleaian'],
-    ['Japanese', 'Turkish', 'Spanish', 'Swahili', 'Dutch']
+    ['Japanese', 'Turkish', 'Spanish', 'Swahili', 'Dutch'],
   ]
 
   if (languagesArray.length !== users.length) {
@@ -119,7 +120,7 @@ const createUserLanguagesManually = (users: User[]): IUserLanguageInterface => {
       let createdUserLanguage: IUserLanguageSubset = {
         type: j <= 2 ? LEARNER : TEACHER,
         language: languagesArray[i][j],
-        userId: currentUser.id
+        userId: currentUser.id,
       }
       if (Math.random() <= 0.5) {
         createdUserLanguage.numberOfYears = 1
@@ -184,7 +185,7 @@ export default async (
       IULManualSaveDBReturn
     ] = await Promise.all([
       createAndSaveUserChatGroupsToDb(users, chatGroups, name),
-      createAndSaveUserLanguagesToDb(users, name)
+      createAndSaveUserLanguagesToDb(users, name),
     ])
     await connection.close()
     console.log('database successfully refreshed with non-random, manual data')

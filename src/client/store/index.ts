@@ -1,13 +1,14 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import languageReducer from './language/reducer'
 import userReducer from './user/reducer'
+import { NO_DIRECT_CHAT_WITH_KEY } from './user/constants'
 import userLanguageReducer, {
-  LOGGED_IN_USER_SUBGROUPING_KEY
+  LOGGED_IN_USER_SUBGROUPING_KEY,
 } from './userlanguage/reducer'
 import chatGroupReducer from './chatgroup/reducer'
 import {
   FAVORITE_CHAT_GROUPS_KEY,
-  CHAT_GROUPS_WITH_MESSAGES_KEY
+  CHAT_GROUPS_WITH_MESSAGES_KEY,
 } from './chatgroup/helperfunctions'
 import userChatGroupReducer from './userchatgroup/reducer'
 import chatGroupInviteReducer from './chatgroupinvite/reducer'
@@ -20,28 +21,28 @@ import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 import {
   refreshTokenMiddleware,
-  callAPIMiddleware
+  callAPIMiddleware,
 } from './APIRequestsHandling/apiMiddleware'
 import socketMiddleware from './socket/middleware'
 import { createReducerSlice } from './utilityfunctions'
 
 const rootReducer = combineReducers({
   languages: languageReducer,
-  users: createReducerSlice(userReducer),
+  users: createReducerSlice(userReducer, NO_DIRECT_CHAT_WITH_KEY),
   userLanguages: createReducerSlice(
     userLanguageReducer,
     LOGGED_IN_USER_SUBGROUPING_KEY
   ),
   chatGroups: createReducerSlice(chatGroupReducer, [
     FAVORITE_CHAT_GROUPS_KEY,
-    CHAT_GROUPS_WITH_MESSAGES_KEY
+    CHAT_GROUPS_WITH_MESSAGES_KEY,
   ]),
   userChatGroups: createReducerSlice(userChatGroupReducer),
   auth: authReducer,
   notifications: createReducerSlice(notificationReducer, NOT_SEEN),
   chatGroupInvites: createReducerSlice(chatGroupInviteReducer),
   messages: createReducerSlice(messageReducer),
-  ui: uiReducer
+  ui: uiReducer,
 })
 
 export type ReduxState = ReturnType<typeof rootReducer>
@@ -52,7 +53,7 @@ const getMiddlewareArray = (environmentMode: string | undefined): any[] => {
     callAPIMiddleware,
     thunk,
     socketMiddleware,
-    ...(environmentMode === 'development' ? [logger] : [])
+    ...(environmentMode === 'development' ? [logger] : []),
   ]
 }
 

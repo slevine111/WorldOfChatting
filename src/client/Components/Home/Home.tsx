@@ -1,12 +1,12 @@
 import React from 'react'
-import FavoriteChats from './FavoriteChats'
 import MyLanguages from './MyLanguages'
+import ChattingSection from './ChattingSection'
 
 const Home: React.FC<{}> = () => {
   return (
     <div>
-      <FavoriteChats />
-      <MyLanguages />
+      <ChattingSection />
+      {/*<MyLanguages />*/}
     </div>
   )
 }

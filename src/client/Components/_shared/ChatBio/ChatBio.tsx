@@ -1,12 +1,10 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
+import PersonCircle from '../PersonCircle'
 import Typography from '@material-ui/core/Typography'
-import Badge from '@material-ui/core/Badge'
-import Avatar from '@material-ui/core/Avatar'
-import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
-import styles from './styles'
+import { makeStyles } from '@material-ui/core/styles'
 import { ReduxState } from '../../../store'
 import { OnlineStatuses } from '../../../../entities/User'
 import { IReduxStoreUserFields } from '../../../../types-for-both-server-and-client'
@@ -16,6 +14,15 @@ interface IOwnProps {
   chatGroupId: string
   displayLanguage: boolean
 }
+
+const styles = makeStyles({
+  itemBottomMargin: {
+    marginBottom: '10px',
+  },
+  badgeRightMargin: {
+    marginRight: '5px',
+  },
+})
 
 const ChatBio: React.FC<IOwnProps & RouteComponentProps> = ({
   chatGroupId,
@@ -28,14 +35,7 @@ const ChatBio: React.FC<IOwnProps & RouteComponentProps> = ({
   const { language, name } = useSelector(
     (state: ReduxState) => state.chatGroups.byId[chatGroupId]
   )
-  const {
-    loggedInBadge,
-    loggedOutBadge,
-    dot,
-    avatarColor,
-    itemBottomMargin,
-    badgeRightMargin,
-  } = styles()
+  const { itemBottomMargin, badgeRightMargin } = styles()
   const groupChat: boolean = users.length > 1
   const numberUsersOnline: number = users.reduce(
     (sum, user) => sum + Number(user.onlineStatus !== OnlineStatuses.OFFLINE),
@@ -43,30 +43,14 @@ const ChatBio: React.FC<IOwnProps & RouteComponentProps> = ({
   )
   return (
     <Grid item xs={6} sm={4} className={itemBottomMargin}>
-      {users.slice(0, 3).map((user, idx) => {
-        const { onlineStatus, firstName, lastName, id } = user
-        const userNotOffline: boolean = onlineStatus !== OnlineStatuses.OFFLINE
+      {users.slice(0, 3).map((user) => {
         return (
-          <Badge
-            key={id}
-            overlap="circle"
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            variant="dot"
+          <PersonCircle
+            user={user}
+            key={user.id}
+            onButtonClick={() => history.push('/about')}
             className={badgeRightMargin}
-            classes={{
-              badge: userNotOffline ? loggedInBadge : loggedOutBadge,
-              dot,
-            }}
-          >
-            <Avatar className={avatarColor}>
-              {idx === 0 && (
-                <Button onClick={() => history.push('/about')}>
-                  {`${firstName[0]}${lastName[0]}`}
-                </Button>
-              )}
-              {idx !== 0 && `${firstName[0]}${lastName[0]}`}
-            </Avatar>{' '}
-          </Badge>
+          />
         )
       })}
 

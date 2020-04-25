@@ -38,7 +38,7 @@ const LoggedInUserHeadings: React.FC<{}> = () => {
     (state: ReduxState) => state.notifications
   )
   const {
-    subGroupings: { [NOT_SEEN]: notSeenNts }
+    subGroupings: { [NOT_SEEN]: notSeenNts },
   } = notificationsState
 
   const onChatGroupInviteIconClicked = (event: any): void => {
@@ -74,9 +74,7 @@ const LoggedInUserHeadings: React.FC<{}> = () => {
 
       <Button
         className={buttonStyle}
-        onClick={() =>
-          dispatch(logoutUserProcessThunk(userId, { loggedIn: false }))
-        }
+        onClick={() => dispatch(logoutUserProcessThunk(userId))}
       >
         Logout
       </Button>

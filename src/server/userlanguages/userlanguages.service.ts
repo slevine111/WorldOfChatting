@@ -20,11 +20,15 @@ export default class UserLanguageService {
     )
   }
 
-  getUserLanguagesOfUser(userId: string): Promise<UserLanguage[]> {
+  getUserLanguagesLinkedToUser(userId: string): Promise<UserLanguage[]> {
     return this.userLanguageRepository.query(
-      `SELECT *
-       FROM user_language
-       WHERE active = true AND "userId" = $1`,
+      `SELECT A.*
+       FROM user_language A
+       JOIN (SELECT language
+             FROM user_language
+             WHERE "userId" = $1 AND active = true) B
+       ON A.language = B.language
+       WHERE active = true`,
       [userId]
     )
   }

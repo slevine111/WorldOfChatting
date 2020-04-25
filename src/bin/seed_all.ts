@@ -99,6 +99,7 @@ export const createChatGroups = (
   ]
   for (let i = 0; i < 120 - CHAT_GROUP_LANGUAGES_MANUALLY.length; ++i) {
     let createdChatGroup: IChatGroupSubset = {
+      directChat: i < 60 - CHAT_GROUP_LANGUAGES_MANUALLY.length,
       language: languages[Math.floor(5 * Math.random())],
     }
     if (Math.random() <= 0.3)

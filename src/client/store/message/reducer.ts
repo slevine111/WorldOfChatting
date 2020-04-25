@@ -3,7 +3,10 @@ import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceraction
 import { createInitialState, normalizeData } from '../utilityfunctions'
 import { INormalizedReducerShape } from '../reducer.base'
 import { Message } from '../../../entities'
-import { addIdToChatGroupSubGrouping } from '../common'
+import {
+  CHAT_GROUP_KEY_PREFIX,
+  makeFunctionToAddIdToForeignKeySubGrouping,
+} from '../common'
 const {
   HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
 } = RequestDataSuccessConstants
@@ -17,7 +20,10 @@ export default (
   switch (action.type) {
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
       return normalizeData(action.messages, state, {
-        subGroupingFunction: addIdToChatGroupSubGrouping,
+        subGroupingFunction: makeFunctionToAddIdToForeignKeySubGrouping(
+          CHAT_GROUP_KEY_PREFIX,
+          'chatGroupId'
+        ),
       })
     default:
       return state

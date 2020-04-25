@@ -38,6 +38,7 @@ export interface IUserSubset {
 }
 
 export interface IChatGroupSubset {
+  directChat: boolean
   language?: string
   name?: string
 }

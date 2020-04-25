@@ -9,6 +9,7 @@ export interface IChatGroupAPIReturn extends ChatGroup {
 
 export interface IReduxStoreUserFields extends User {
   fullName: string
+  directChat: boolean
   similarityScore: number
 }
 

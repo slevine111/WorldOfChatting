@@ -3,7 +3,10 @@ import { INormalizedReducerShape } from '../reducer.base'
 import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import { UserChatGroup } from '../../../entities'
 import { createInitialState, normalizeData } from '../utilityfunctions'
-import { CHAT_GROUP_KEY_PREFIX, addIdToChatGroupSubGrouping } from '../common'
+import {
+  CHAT_GROUP_KEY_PREFIX,
+  makeFunctionToAddIdToForeignKeySubGrouping,
+} from '../common'
 const {
   HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS,
   CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS,
@@ -18,7 +21,10 @@ export default (
   switch (action.type) {
     case HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST_SUCCESS:
       return normalizeData(action.userChatGroups, state, {
-        subGroupingFunction: addIdToChatGroupSubGrouping,
+        subGroupingFunction: makeFunctionToAddIdToForeignKeySubGrouping(
+          CHAT_GROUP_KEY_PREFIX,
+          'chatGroupId'
+        ),
       })
     case CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS:
       return normalizeData(action.newUserChatGroups, state, {

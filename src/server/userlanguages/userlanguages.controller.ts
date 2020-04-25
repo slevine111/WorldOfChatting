@@ -16,12 +16,12 @@ export default class UserLanguageController {
     return this.userLanguageService.getUserLanguagesOfLanguage(language)
   }
 
-  @Get('/linked/:userId')
+  @Get('/:userId/linkedto')
   @UseGuards(AuthGuard)
-  getUserCountByLanguage(
+  getUserLanguagesLinkedToUser(
     @Param('userId') userId: string
   ): Promise<UserLanguage[]> {
-    return this.userLanguageService.getUserLanguagesOfUser(userId)
+    return this.userLanguageService.getUserLanguagesLinkedToUser(userId)
   }
 
   @Post()

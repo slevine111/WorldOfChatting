@@ -35,7 +35,7 @@ const ChatGroupSidebar: React.FC<{}> = () => {
           const { fullName, firstName, lastName } = users[userId]
 
           return (
-            <div key={id} style={{ display: 'flex' }}>
+            <div key={id} style={{ display: 'flex', marginBottom: '5%' }}>
               <Avatar
                 className={SMALL_AVATAR}
               >{`${firstName[0]}${lastName[0]}`}</Avatar>{' '}

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { ReduxState } from '../../store'
-import ChatBio from '../_shared/ChatBio'
+import ChatBio from '../_shared/SingleChatOverview'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 

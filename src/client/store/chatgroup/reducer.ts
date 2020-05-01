@@ -25,9 +25,7 @@ export default (
         subGroupingFunction: addIdToSubgroupingsOnLogin,
       })
     case CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS:
-      return normalizeData(action.newChatGroup, state, {
-        subGroupingKey: action.language,
-      })
+      return normalizeData(action.newChatGroup, state)
     default:
       return state
   }

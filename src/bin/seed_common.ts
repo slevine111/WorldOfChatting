@@ -64,7 +64,6 @@ export interface IMessageSubset {
 
 export interface IChatGroupInviteSubset {
   senderUserId: string
-  language: string
 }
 
 export interface IChatGroupInviteRecipientSubset {

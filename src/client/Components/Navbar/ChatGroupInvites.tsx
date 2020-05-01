@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { ReduxState } from '../../store/index'
 import {
   chatGroupRequestAcceptedThunk,
-  chatGroupRequestDeclinedThunk
+  chatGroupRequestDeclinedThunk,
 } from '../../store/APIRequestsHandling/multiplereducerthunks'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
@@ -19,14 +19,14 @@ const ChatGroupInvites: React.FC<{}> = () => {
     ({ chatGroupInvites, users, auth }: ReduxState) => ({
       chatGroupInvites,
       users,
-      loggedInUserId: auth.user.id
+      loggedInUserId: auth.user.id,
     })
   )
   const { byId, allIds } = chatGroupInvites
   return (
     <List>
-      {allIds.map(id => {
-        const { language, senderUserId } = byId[id]
+      {allIds.map((id) => {
+        const { senderUserId } = byId[id]
         const { fullName } = users.byId[senderUserId]
 
         return (
@@ -35,7 +35,7 @@ const ChatGroupInvites: React.FC<{}> = () => {
               <div className={chatGroupInvite}>
                 <div>
                   <Typography variant="body1">{fullName}</Typography>
-                  <Typography variant="caption">{language}</Typography>
+                  <Typography variant="caption">Language</Typography>
                 </div>
                 <div>
                   <Button
@@ -47,11 +47,10 @@ const ChatGroupInvites: React.FC<{}> = () => {
                     onClick={() =>
                       dispatch(
                         chatGroupRequestAcceptedThunk(
-                          { language },
+                          { directChat: true },
                           senderUserId,
                           loggedInUserId,
-                          id,
-                          language
+                          id
                         )
                       )
                     }

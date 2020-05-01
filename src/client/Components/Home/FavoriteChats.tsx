@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { ReduxState } from '../../store'
 import { FAVORITE_CHAT_GROUPS_KEY } from '../../store/chatgroup/helperfunctions'
-import ChatBio from '../_shared/ChatBio'
+import ChatBio from '../_shared/SingleChatOverview'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 
@@ -20,13 +20,7 @@ const FavoriteChats: React.FC<{}> = ({}) => {
       )}
       {!!favoriteChatGroupIds.length &&
         favoriteChatGroupIds.map((chatGroupId: string) => {
-          return (
-            <ChatBio
-              key={chatGroupId}
-              chatGroupId={chatGroupId}
-              displayLanguage={true}
-            />
-          )
+          return <ChatBio key={chatGroupId} chatGroupId={chatGroupId} />
         })}
     </Grid>
   )

@@ -97,8 +97,7 @@ export const chatGroupRequestAcceptedThunk = (
   newChatGroup: IChatGroupPostDTO,
   userIdSentRequest: string,
   loggedInUserId: string,
-  chatGroupInviteRecipientId: string,
-  language: string
+  chatGroupInviteRecipientId: string
 ): IThunkReturnObject<IChatGroupRequestAcceptedData> => {
   return {
     requestDataActionType:
@@ -128,7 +127,6 @@ export const chatGroupRequestAcceptedThunk = (
         newUserChatGroups: apiReturn[0].data.filter(
           (ucg: UserChatGroup) => ucg.userId !== loggedInUserId
         ),
-        language,
         newChatGroupId: data.id,
         ...apiReturn[1],
       }

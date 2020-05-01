@@ -3,10 +3,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   ManyToOne,
-  JoinColumn
+  JoinColumn,
 } from 'typeorm'
 import User from './User'
-import Language from './Language'
 
 @Entity()
 export default class ChatGroupInvite {
@@ -19,8 +18,4 @@ export default class ChatGroupInvite {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'senderUserId' })
   senderUserId: string
-
-  @ManyToOne(() => Language)
-  @JoinColumn({ name: 'language' })
-  language: string
 }

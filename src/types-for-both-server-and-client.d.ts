@@ -16,7 +16,6 @@ export interface IReduxStoreUserFields extends User {
 export interface IChatGroupInviteReducerFields {
   id: string
   createdAt: Date
-  language: string
   status: ChatGroupInviteStatusOptions
   senderUserId: string
   targetUserId: string

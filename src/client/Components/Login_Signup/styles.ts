@@ -1,31 +1,30 @@
 import { makeStyles } from '@material-ui/core/styles'
-import { Style } from 'jss'
 
-const useStyles: Style = makeStyles({
+const useStyles = makeStyles({
   flexSpaceBetween: {
     display: 'flex',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   formContainer: {
     justifyContent: 'center',
-    margin: '5vh auto 0'
+    margin: '5vh auto 0',
   },
   paperPadding: { padding: '20px' },
   firstNameInput: {
-    marginRight: '15px'
+    marginRight: '15px',
   },
   signupButton: {
-    width: '30%'
+    width: '30%',
   },
   topMargin: {
-    marginTop: '16px'
+    marginTop: '16px',
   },
   topMarginButton: {
-    marginTop: '10px'
+    marginTop: '10px',
   },
   centerText: {
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 })
 
 export default useStyles

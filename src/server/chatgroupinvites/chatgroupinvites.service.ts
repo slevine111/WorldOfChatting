@@ -49,18 +49,17 @@ export default class ChatGroupInviteService {
     return this.inviteRecipientRepository
       .save({
         targetUserId,
-        chatGroupInviteId: newChatGroupInvite.id
+        chatGroupInviteId: newChatGroupInvite.id,
       })
-      .then(cgInviteRecipient => {
+      .then((cgInviteRecipient) => {
         const { id, status, targetUserId } = cgInviteRecipient
-        const { createdAt, senderUserId, language } = newChatGroupInvite
+        const { createdAt, senderUserId } = newChatGroupInvite
         return {
           id,
           createdAt,
           status,
           senderUserId,
           targetUserId,
-          language
         }
       })
   }
@@ -71,10 +70,10 @@ export default class ChatGroupInviteService {
   ): Promise<ChatGroupInviteRecipient> {
     return this.inviteRecipientRepository
       .findOneOrFail({ where: { id: cgInviteRecipientid } })
-      .then(cgInviteRecipient => {
+      .then((cgInviteRecipient) => {
         return this.inviteRecipientRepository.save({
           ...cgInviteRecipient,
-          ...updatedCgInviteRecipient
+          ...updatedCgInviteRecipient,
         })
       })
   }

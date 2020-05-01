@@ -1,4 +1,4 @@
 export interface IChatGroupPostDTO {
-  language: string
+  directChat: boolean
   name?: string
 }

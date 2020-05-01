@@ -251,13 +251,11 @@ const createChatGroupInvites = (
     for (let l = 0; l < userLangsByUserAndLang[i].length; ++l) {
       const currentUserLangs: IUserLanguageSubset[] =
         userLangsByUserAndLang[i][l]
-      const { language } = currentUserLangs[0]
       for (let j = 0; j < 6; ++j) {
         const { userId } = currentUserLangs[j]
         chatGroupInvitesArr.push({
           senderUserId:
             (l === 0 && j !== 2) || (l === 1 && j >= 2) ? userId : manualUserId,
-          language,
         })
       }
     }

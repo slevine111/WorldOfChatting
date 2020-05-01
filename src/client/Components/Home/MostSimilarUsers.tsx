@@ -1,16 +1,21 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { withRouter } from 'react-router-dom'
+import { History } from 'history'
 import { getMostSimilarUsers } from './helperfunctions'
 import { ReduxState } from '../../store'
-import PersonCircle from '../_shared/PersonCircle'
+import { chatGroupInviteThunk } from '../../store/chatgroupinvite/actions'
+import AvatarTooltip from '../_shared/AvatarTooltip'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 
-const SimilarUsers = () => {
+const MostSimilarUsers: React.FC<{ history: History }> = ({ history }) => {
+  const dispatch = useDispatch()
   const [usersChattingWithShown, setUsersChattingWithShown] = useState(true)
   const userReducerState = useSelector((state: ReduxState) => state.users)
+  const loggedInUserId = useSelector((state: ReduxState) => state.auth.user.id)
   let userIdsDisplay: string[] = getMostSimilarUsers(
     userReducerState,
     usersChattingWithShown
@@ -29,14 +34,24 @@ const SimilarUsers = () => {
       <Grid container>
         {userIdsDisplay.map((id) => {
           const user = userReducerState.byId[id]
+          const { directChat, similarityScore, fullName } = user
           return (
-            <Grid item xs={6} sm={4} key={id}>
-              <PersonCircle
-                user={user}
-                onButtonClick={() => console.log('hello')}
+            <Grid item xs={6} sm={4} key={id} style={{ marginBottom: '10px' }}>
+              <AvatarTooltip
+                userSingleOrArray={user}
+                onButtonClick={() => {
+                  if (directChat) {
+                    history.push('/chat')
+                  } else {
+                    dispatch(
+                      chatGroupInviteThunk({ senderUserId: loggedInUserId }, id)
+                    )
+                  }
+                }}
               />
+              <Typography variant="body1">{fullName}</Typography>
               <Typography variant="body1">
-                <em>{user.similarityScore}</em>
+                <em>{similarityScore}</em>
               </Typography>
             </Grid>
           )
@@ -46,4 +61,4 @@ const SimilarUsers = () => {
   )
 }
 
-export default SimilarUsers
+export default withRouter(MostSimilarUsers)

@@ -5,10 +5,10 @@ import Grid from '@material-ui/core/Grid'
 const ChatPage: React.FC<{}> = () => {
   return (
     <Grid container>
-      <Grid item xs={2}>
+      <Grid item xs={3}>
         <ChatGroupSidebar />
       </Grid>
-      <Grid item xs={10} style={{ backgroundColor: 'rgba(211,211,211,.3)' }}>
+      <Grid item xs={9} style={{ backgroundColor: 'rgba(211,211,211,.3)' }}>
         <div>23</div>
       </Grid>
     </Grid>

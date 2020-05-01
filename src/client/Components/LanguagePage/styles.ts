@@ -1,7 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles'
-import { Style } from 'jss'
 
-const styles: Style = makeStyles((theme) => {
+const styles = makeStyles((theme) => {
   const paddingTop: string = '8px'
   return {
     maxTableWidth: {

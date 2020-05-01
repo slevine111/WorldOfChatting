@@ -1,9 +1,9 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { ReduxState } from '../../store'
-import { USER_KEY_PREFIX } from '../../store/userlanguage/constants'
-import { IReduxStoreUserFields } from '../../../types-for-both-server-and-client'
-import { UserLanguage } from '../../../entities'
+import { ReduxState } from '../../../store'
+import { USER_KEY_PREFIX } from '../../../store/userlanguage/constants'
+import { IReduxStoreUserFields } from '../../../../types-for-both-server-and-client'
+import { UserLanguage } from '../../../../entities'
 import Button from '@material-ui/core/Button'
 import Typgraphy from '@material-ui/core/Typography'
 import Table from '@material-ui/core/Table'
@@ -11,8 +11,16 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
+import { makeStyles } from '@material-ui/core/styles'
 
-const ProfileSnippet: React.FC<{
+const TableCellNoBorder: React.FC<{ text?: string }> = ({ text = '' }) => {
+  const { root } = makeStyles({
+    root: { border: 'none', fontSize: '.75rem' },
+  })()
+  return <TableCell classes={{ root }}>{text}</TableCell>
+}
+
+const SnippetDirectChat: React.FC<{
   user: IReduxStoreUserFields
   userChattingWithLoggedInUser: boolean
   onButtonClick: () => void
@@ -35,14 +43,17 @@ const ProfileSnippet: React.FC<{
 
   const { id, firstName, fullName, similarityScore } = user
   return (
-    <div>
+    <div style={{ textAlign: 'center' }}>
       <Typgraphy variant="h6">{fullName}</Typgraphy>
-      <Typgraphy variant="body1">{`Similarity Score: ${similarityScore}`}</Typgraphy>
+      <Typgraphy
+        variant="body2"
+        style={{ fontStyle: 'italic' }}
+      >{`Similarity Score: ${similarityScore}`}</Typgraphy>
 
-      <Table stickyHeader>
-        <TableHead>
+      <Table style={{ fontSize: '.95rem', margin: '5px 0 11px' }} size="small">
+        <TableHead style={{ fontStyle: 'italic' }}>
           <TableRow>
-            <TableCell>Language</TableCell>
+            <TableCell></TableCell>
             <TableCell>You</TableCell>
             <TableCell>{firstName}</TableCell>
           </TableRow>
@@ -52,18 +63,23 @@ const ProfileSnippet: React.FC<{
             const { language, type } = userLangsById[id]
             return (
               <TableRow key={id}>
-                <TableCell>{language}</TableCell>
-                <TableCell>
-                  {langToUserLangMappingLoggedInUser[language].type}
-                </TableCell>
-                <TableCell>{type}</TableCell>
+                <TableCellNoBorder text={language} />
+                <TableCellNoBorder
+                  text={langToUserLangMappingLoggedInUser[language].type}
+                />
+                <TableCellNoBorder text={type} />
               </TableRow>
             )
           })}
         </TableBody>
       </Table>
-
-      <Button onClick={() => onButtonClick()}>
+      <Button
+        onClick={() => onButtonClick()}
+        size="small"
+        variant="contained"
+        color="primary"
+        style={{ fontSize: '.7rem' }}
+      >
         {userChattingWithLoggedInUser
           ? 'Continue Chatting!'
           : 'Invite to Chat!'}
@@ -72,4 +88,4 @@ const ProfileSnippet: React.FC<{
   )
 }
 
-export default ProfileSnippet
+export default SnippetDirectChat

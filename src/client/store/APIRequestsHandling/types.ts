@@ -100,7 +100,6 @@ export interface IChatGroupRequestBase {
 export interface IChatGroupRequestAcceptedData extends IChatGroupRequestBase {
   newChatGroup: IChatGroupAPIReturn
   newUserChatGroups: UserChatGroup[]
-  language: string
   newChatGroupId: string
 }
 

@@ -74,7 +74,7 @@ const SnippetDirectChat: React.FC<{
         </TableBody>
       </Table>
       <Button
-        onClick={() => onButtonClick()}
+        onClick={onButtonClick}
         size="small"
         variant="contained"
         color="primary"

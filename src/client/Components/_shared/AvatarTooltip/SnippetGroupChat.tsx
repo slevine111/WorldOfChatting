@@ -11,7 +11,8 @@ import { getCountsByCommonLanguages } from './helperfunctions'
 
 const SnippetGroupChat: React.FC<{
   chatGroupId: string
-}> = ({ chatGroupId }) => {
+  onButtonClick: () => void
+}> = ({ chatGroupId, onButtonClick }) => {
   const { primary, dense, listItemRoot, listItemTextRoot } = makeStyles({
     primary: { fontSize: '.8rem' },
     dense: { paddingTop: '2px', paddingBottom: '2px' },
@@ -68,7 +69,7 @@ const SnippetGroupChat: React.FC<{
         })}
       </List>
       <Button
-        onClick={() => console.log('hello')}
+        onClick={onButtonClick}
         size="small"
         variant="contained"
         color="primary"

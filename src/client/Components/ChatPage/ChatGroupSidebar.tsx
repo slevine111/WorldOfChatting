@@ -5,6 +5,7 @@ import { CHAT_GROUP_KEY_PREFIX } from '../../store/common'
 import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
 import globalstyles, { SMALL_AVATAR } from '../globalstyles'
+import { getDatetimeToDisplayInSidebar } from './helperfunctions'
 
 const ChatGroupSidebar: React.FC<{}> = () => {
   globalstyles()
@@ -21,6 +22,8 @@ const ChatGroupSidebar: React.FC<{}> = () => {
     <div>
       <Typography variant="h5">Chats</Typography>
       {chatGroupState.allIds.map((id) => {
+        const { name: chatGroupName } = chatGroupState.byId[id]
+        console.log(chatGroupName)
         const subGroupingPrefix: string = `${CHAT_GROUP_KEY_PREFIX}${id}`
         const chatGroupMessageIds: string[] | undefined =
           messageState.subGroupings[subGroupingPrefix]
@@ -29,25 +32,48 @@ const ChatGroupSidebar: React.FC<{}> = () => {
           const chatGroupUserIds: string[] =
             userCGState.subGroupings[userCGPrefix]
           const { userId } = userCGState.byId[chatGroupUserIds[0]]
-          const { body: messageText } = messageState.byId[
+          const { body: messageText, createdAt } = messageState.byId[
             chatGroupMessageIds[0]
           ]
           const { fullName, firstName, lastName } = users[userId]
-
           return (
-            <div key={id} style={{ display: 'flex', marginBottom: '5%' }}>
-              <Avatar
-                className={SMALL_AVATAR}
-              >{`${firstName[0]}${lastName[0]}`}</Avatar>{' '}
+            <div
+              key={id}
+              style={{
+                display: 'flex',
+                marginBottom: '5%',
+                marginRight: '15px',
+              }}
+            >
+              <Avatar className={SMALL_AVATAR}>
+                {`${firstName[0]}${lastName[0]}`}
+              </Avatar>
               <div
                 style={{
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
+                  flexGrow: 1.5,
                 }}
               >
-                <Typography variant="body2">{fullName}</Typography>
-                <Typography variant="caption">{`${
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <Typography variant="body2">
+                    {chatGroupUserIds.length > 1
+                      ? chatGroupName ||
+                        `${firstName} & ${chatGroupUserIds.length - 1} more`
+                      : fullName}
+                  </Typography>
+                  <Typography variant="body2" style={{ fontSize: '.8rem' }}>
+                    <em>{getDatetimeToDisplayInSidebar(createdAt)}</em>
+                  </Typography>
+                </div>
+                <Typography variant="caption" style={{ color: 'gray' }}>{`${
                   chatGroupUserIds.length > 1 ? `${firstName}: ` : ''
                 }${messageText}`}</Typography>
               </div>

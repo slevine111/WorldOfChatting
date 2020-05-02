@@ -23,7 +23,10 @@ const AvatarTooltip: React.FC<{
             onButtonClick={onButtonClick}
           />
         ) : (
-          <SnippetGroupChat chatGroupId={chatGroupId!} />
+          <SnippetGroupChat
+            chatGroupId={chatGroupId!}
+            onButtonClick={onButtonClick}
+          />
         )
       }
       arrow

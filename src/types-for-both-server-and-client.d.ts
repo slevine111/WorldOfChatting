@@ -3,8 +3,8 @@ import { ChatGroupInviteStatusOptions } from './entities/ChatGroupInviteRecipien
 
 export interface IChatGroupAPIReturn extends ChatGroup {
   favorite: boolean
-  lastMessageSeenTimeStamp: Date | null
-  datetimeLastMessage: Date | null
+  seenLastMessage: boolean
+  hasMessages: boolean
 }
 
 export interface IReduxStoreUserFields extends User {

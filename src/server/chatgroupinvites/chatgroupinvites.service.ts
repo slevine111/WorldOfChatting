@@ -23,7 +23,7 @@ export default class ChatGroupInviteService {
     return this.inviteRepository.query(
       `SELECT B.id,
               A."createdAt",
-              A.language,
+              --A.language,
               B.status,
               A."senderUserId",
               B."targetUserId"

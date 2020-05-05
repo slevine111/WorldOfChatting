@@ -14,7 +14,10 @@ export default class ChatGroupService {
 
   getChatGroupsOfSingleUser(userId: string): Promise<IChatGroupAPIReturn[]> {
     return this.chatGroupRepository.query(
-      `SELECT A.*, favorite, "lastMessageSeenTimeStamp"
+      `SELECT A.*,
+              favorite,
+              "lastMessageSeenTimeStamp" = "datetimeLastMessage" IS TRUE AS "seenLastMessage",
+              C."chatGroupId" IS NOT NULL AS "hasMessages"
          FROM chat_group A
          JOIN user_chat_group B ON A.id = B."chatGroupId"
          LEFT JOIN (SELECT "chatGroupId", MAX("createdAt") AS "datetimeLastMessage"  FROM message GROUP BY "chatGroupId") C ON A.id = C."chatGroupId"
@@ -27,13 +30,11 @@ export default class ChatGroupService {
   createChatGroup(
     newChatGroup: IChatGroupPostDTO
   ): Promise<IChatGroupAPIReturn> {
-    return this.chatGroupRepository
-      .save(newChatGroup)
-      .then(cg => ({
-        ...cg,
-        favorite: false,
-        lastMessageSeenTimeStamp: null,
-        datetimeLastMessage: null
-      }))
+    return this.chatGroupRepository.save(newChatGroup).then((cg) => ({
+      ...cg,
+      favorite: false,
+      seenLastMessage: true,
+      hasMessages: false,
+    }))
   }
 }

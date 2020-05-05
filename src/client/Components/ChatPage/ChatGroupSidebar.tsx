@@ -1,14 +1,66 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { ReduxState } from '../../store'
-import { CHAT_GROUP_KEY_PREFIX } from '../../store/common'
+import {
+  CHAT_GROUPS_NOT_SEEN_LAST_MESSAGE_KEY,
+  CHAT_GROUPS_WITH_MESSAGES_KEY,
+  CHAT_GROUPS_NO_MESSAGES_KEY,
+} from '../../store/chatgroup/helperfunctions'
 import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
+import SettingsIcon from '@material-ui/icons/Settings'
+import IconButton from '@material-ui/core/IconButton'
+import Popover from '@material-ui/core/Popover'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
 import globalstyles, { SMALL_AVATAR } from '../globalstyles'
-import { getDatetimeToDisplayInSidebar } from './helperfunctions'
+import { ITextFields } from './shared-types'
+import {
+  getTextDisplayChatGroupWithMessage,
+  getTextDisplayChatGroupNoMessage,
+} from './helperfunctions'
+import { sidebarStyles } from './styles'
 
-const ChatGroupSidebar: React.FC<{}> = () => {
+const sidebarDisplayOptions: Record<
+  string,
+  { header: string; noMatchingGroupText: string }
+> = {
+  ALL_CHATS: {
+    header: 'All Chats',
+    noMatchingGroupText: 'You are not chatting with nyone. Go start chatting!',
+  },
+  UNREAD_CHATS: {
+    header: 'Unread Chats',
+    noMatchingGroupText: 'You have no unread chats!',
+  },
+  ACCEPTED: {
+    header: 'Accepted',
+    noMatchingGroupText:
+      'You have no accepted group chats with the conversation not started!',
+  },
+}
+
+const ChatGroupSidebar: React.FC<{
+  currentChat: string
+  setCurrentChat: (id: string) => void
+}> = ({ currentChat, setCurrentChat }) => {
   globalstyles()
+  const {
+    top: sidebarTop,
+    singleChatGroup,
+    selectedChatGroup,
+    singleChatGroupTextItem,
+    singleChatGroupTextItemTop,
+    sidebarDense,
+    iconButtonRoot,
+    svgIconRoot,
+  } = sidebarStyles()
+
+  const [currentOption, setOption] = useState('ALL_CHATS')
+  const [anchorEl, setAnchorEl] = useState<
+    null | (EventTarget & HTMLButtonElement)
+  >(null)
   const { chatGroupState, messageState, userCGState, users } = useSelector(
     (state: ReduxState) => ({
       chatGroupState: state.chatGroups,
@@ -17,70 +69,107 @@ const ChatGroupSidebar: React.FC<{}> = () => {
       users: state.users.byId,
     })
   )
+  let chatGroupsDisplay: string[]
+  if (currentOption === 'ALL_CHATS') {
+    chatGroupsDisplay =
+      chatGroupState.subGroupings[CHAT_GROUPS_WITH_MESSAGES_KEY]
+  } else if (currentOption === 'UNREAD_CHATS') {
+    chatGroupsDisplay =
+      chatGroupState.subGroupings[CHAT_GROUPS_NOT_SEEN_LAST_MESSAGE_KEY]
+  } else {
+    chatGroupsDisplay = chatGroupState.subGroupings[CHAT_GROUPS_NO_MESSAGES_KEY]
+  }
 
   return (
     <div>
-      <Typography variant="h5">Chats</Typography>
-      {chatGroupState.allIds.map((id) => {
-        const { name: chatGroupName } = chatGroupState.byId[id]
-        console.log(chatGroupName)
-        const subGroupingPrefix: string = `${CHAT_GROUP_KEY_PREFIX}${id}`
-        const chatGroupMessageIds: string[] | undefined =
-          messageState.subGroupings[subGroupingPrefix]
-        if (chatGroupMessageIds !== undefined) {
-          const userCGPrefix: string = `${CHAT_GROUP_KEY_PREFIX}${id}`
-          const chatGroupUserIds: string[] =
-            userCGState.subGroupings[userCGPrefix]
-          const { userId } = userCGState.byId[chatGroupUserIds[0]]
-          const { body: messageText, createdAt } = messageState.byId[
-            chatGroupMessageIds[0]
-          ]
-          const { fullName, firstName, lastName } = users[userId]
+      <div className={sidebarTop}>
+        <Typography variant="h5">
+          {sidebarDisplayOptions[currentOption].header}
+        </Typography>
+        <IconButton
+          classes={{ root: iconButtonRoot }}
+          onClick={(event) =>
+            setAnchorEl(anchorEl === null ? event.currentTarget : null)
+          }
+        >
+          <SettingsIcon classes={{ root: svgIconRoot }} />
+        </IconButton>
+        <Popover
+          open={Boolean(anchorEl)}
+          anchorEl={anchorEl}
+          anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+          onClose={() => setAnchorEl(null)}
+        >
+          <List>
+            {Object.keys(sidebarDisplayOptions).map((option) => {
+              if (option !== currentOption) {
+                return (
+                  <ListItem
+                    button
+                    key={option}
+                    dense={true}
+                    classes={{ dense: sidebarDense }}
+                    onClick={() => setOption(option)}
+                  >
+                    <ListItemText>
+                      {sidebarDisplayOptions[option].header}
+                    </ListItemText>{' '}
+                  </ListItem>
+                )
+              }
+            })}
+          </List>
+        </Popover>
+      </div>
+
+      {chatGroupsDisplay.length === 0 && (
+        <Typography variant="body2">
+          {sidebarDisplayOptions[currentOption].noMatchingGroupText}
+        </Typography>
+      )}
+
+      {chatGroupsDisplay.length > 0 &&
+        chatGroupsDisplay.map((id) => {
+          let textFields: ITextFields
+          if (currentOption !== 'ACCEPTED') {
+            textFields = getTextDisplayChatGroupWithMessage(
+              id,
+              chatGroupState.byId,
+              messageState,
+              userCGState,
+              users
+            )
+          } else {
+            textFields = getTextDisplayChatGroupNoMessage(
+              id,
+              chatGroupState.byId,
+              userCGState,
+              users
+            )
+          }
           return (
             <div
               key={id}
-              style={{
-                display: 'flex',
-                marginBottom: '5%',
-                marginRight: '15px',
-              }}
+              className={`${singleChatGroup} ${
+                id === currentChat ? selectedChatGroup : ''
+              }`}
+              onClick={() => setCurrentChat(id)}
             >
-              <Avatar className={SMALL_AVATAR}>
-                {`${firstName[0]}${lastName[0]}`}
-              </Avatar>
-              <div
-                style={{
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  flexGrow: 1.5,
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                  }}
-                >
-                  <Typography variant="body2">
-                    {chatGroupUserIds.length > 1
-                      ? chatGroupName ||
-                        `${firstName} & ${chatGroupUserIds.length - 1} more`
-                      : fullName}
-                  </Typography>
+              <Avatar className={SMALL_AVATAR}>{textFields.avatar}</Avatar>
+              <div className={singleChatGroupTextItem}>
+                <div className={singleChatGroupTextItemTop}>
+                  <Typography variant="body2">{textFields.header}</Typography>
                   <Typography variant="body2" style={{ fontSize: '.8rem' }}>
-                    <em>{getDatetimeToDisplayInSidebar(createdAt)}</em>
+                    <em>{textFields.datetime}</em>
                   </Typography>
                 </div>
-                <Typography variant="caption" style={{ color: 'gray' }}>{`${
-                  chatGroupUserIds.length > 1 ? `${firstName}: ` : ''
-                }${messageText}`}</Typography>
+                <Typography variant="caption" style={{ color: 'gray' }}>
+                  {textFields.body}
+                </Typography>
               </div>
             </div>
           )
-        }
-      })}
+        })}
     </div>
   )
 }

@@ -5,6 +5,8 @@ import {
   addIdToSubgroupingsOnLogin,
   FAVORITE_CHAT_GROUPS_KEY,
   CHAT_GROUPS_WITH_MESSAGES_KEY,
+  CHAT_GROUPS_NO_MESSAGES_KEY,
+  CHAT_GROUPS_NOT_SEEN_LAST_MESSAGE_KEY,
 } from './helperfunctions'
 import { createInitialState, normalizeData } from '../utilityfunctions'
 const {
@@ -16,6 +18,8 @@ export default (
   state: IChatGroupReducerState = createInitialState([
     FAVORITE_CHAT_GROUPS_KEY,
     CHAT_GROUPS_WITH_MESSAGES_KEY,
+    CHAT_GROUPS_NO_MESSAGES_KEY,
+    CHAT_GROUPS_NOT_SEEN_LAST_MESSAGE_KEY,
   ]),
   action: SharedActionsTypes
 ): IChatGroupReducerState => {

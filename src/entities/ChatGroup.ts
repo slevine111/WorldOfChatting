@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
 } from 'typeorm'
 import Language from './Language'
 
@@ -11,6 +12,9 @@ import Language from './Language'
 export default class ChatGroup {
   @PrimaryGeneratedColumn('uuid')
   id: string
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date
 
   @Column({ type: 'varchar', length: 100, nullable: true, unique: true })
   name: string

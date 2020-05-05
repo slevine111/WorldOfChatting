@@ -9,6 +9,8 @@ import chatGroupReducer from './chatgroup/reducer'
 import {
   FAVORITE_CHAT_GROUPS_KEY,
   CHAT_GROUPS_WITH_MESSAGES_KEY,
+  CHAT_GROUPS_NOT_SEEN_LAST_MESSAGE_KEY,
+  CHAT_GROUPS_NO_MESSAGES_KEY,
 } from './chatgroup/helperfunctions'
 import userChatGroupReducer from './userchatgroup/reducer'
 import chatGroupInviteReducer from './chatgroupinvite/reducer'
@@ -36,6 +38,8 @@ const rootReducer = combineReducers({
   chatGroups: createReducerSlice(chatGroupReducer, [
     FAVORITE_CHAT_GROUPS_KEY,
     CHAT_GROUPS_WITH_MESSAGES_KEY,
+    CHAT_GROUPS_NO_MESSAGES_KEY,
+    CHAT_GROUPS_NOT_SEEN_LAST_MESSAGE_KEY,
   ]),
   userChatGroups: createReducerSlice(userChatGroupReducer),
   auth: authReducer,

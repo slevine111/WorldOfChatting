@@ -76,7 +76,7 @@ export default class UserService {
  	   A.email,
  	   A."onlineStatus",
       ROUND(B."similarityScore",1) AS "similarityScore",
-      CASE WHEN C."userId" IS NOT NULL THEN true ELSE false END AS "directChat"
+       C."userId" IS NOT NULL AS "directChat"
 FROM "user" A
 JOIN
 (SELECT A."userId",

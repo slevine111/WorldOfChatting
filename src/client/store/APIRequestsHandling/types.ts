@@ -1,6 +1,5 @@
 import {
   IReduxStoreUserFields,
-  IChatGroupInviteReducerFields,
   IChatGroupAPIReturn,
 } from '../../../types-for-both-server-and-client'
 import {
@@ -8,6 +7,7 @@ import {
   UserChatGroup,
   Notification,
   Message,
+  ChatGroupInvite,
 } from '../../../entities'
 import { AnyAction } from 'redux'
 import { AxiosResponse } from 'axios'
@@ -25,6 +25,7 @@ export enum RequestDataConstants {
   CHAT_GROUP_INVITE_DECLINED_REQUEST = 'CHAT_GROUP_INVITE_DECLINED_REQUEST',
   CLICKED_ON_NOTIFICATIONS_ICON_REQUEST = 'CLICKED_ON_NOTIFICATIONS_ICON_REQUEST',
   CLICKED_ON_SINGLE_NT_REQUEST = 'CLICKED_ON_SINGLE_NT_REQUEST',
+  CLICKED_ON_CHAT_GROUP = 'CLICKED_ON_CHAT_GROUP',
 }
 
 export enum RequestDataSuccessConstants {
@@ -40,6 +41,7 @@ export enum RequestDataSuccessConstants {
   CHAT_GROUP_INVITE_DECLINED_REQUEST_SUCCESS = 'CHAT_GROUP_INVITE_DECLINED_REQUEST_SUCCESS',
   CLICKED_ON_NOTIFICATIONS_ICON_REQUEST_SUCCESS = 'CLICKED_ON_NOTIFICATIONS_ICON_REQUEST_SUCCESS',
   CLICKED_ON_SINGLE_NT_REQUEST_SUCCESS = 'CLICKED_ON_SINGLE_NT_REQUEST_SUCCESS',
+  CLICKED_ON_CHAT_GROUP_SUCCESS = 'CLICKED_ON_CHAT_GROUP_SUCCESS',
 }
 
 interface ActionOnDataRequestSuccess {
@@ -77,7 +79,7 @@ export type UserLoggedInDataTransformationInput = [
   UserLanguage[],
   IReduxStoreUserFields[],
   UserChatGroup[],
-  IChatGroupInviteReducerFields[],
+  ChatGroupInvite[],
   Notification[],
   Message[]
 ]
@@ -87,14 +89,14 @@ export interface IUserLoggedInDataRetrival {
   chatGroups: IChatGroupAPIReturn[]
   users: IReduxStoreUserFields[]
   userChatGroups: UserChatGroup[]
-  chatGroupInvites: IChatGroupInviteReducerFields[]
+  chatGroupInvites: ChatGroupInvite[]
   notifications: Notification[]
   messages: Message[]
 }
 
 export interface IChatGroupRequestBase {
   newNotification: Notification
-  chatGroupInviteRecipientId: string
+  chatGroupInviteId: string
 }
 
 export interface IChatGroupRequestAcceptedData extends IChatGroupRequestBase {

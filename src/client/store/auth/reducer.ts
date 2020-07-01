@@ -8,7 +8,7 @@ const {
   CHECKING_IF_USER_LOGGED_IN_REQUEST_SUCCESS,
   AUTHENTICATING_USER_LOGIN_ATTEMPT_REQUEST_SUCCESS,
   REFRESHING_ACCESS_TOKEN_REQUEST_SUCCESS,
-  USER_LOGGING_OUT_REQUEST_SUCCESS
+  USER_LOGGING_OUT_REQUEST_SUCCESS,
 } = RequestDataSuccessConstants
 
 export interface IAuthReducerState {
@@ -17,14 +17,14 @@ export interface IAuthReducerState {
   postponnedActions: IThunkReturnObject[]
 }
 
-const initialState: IAuthReducerState = {
+export const authInitialState: IAuthReducerState = {
   user: {} as User,
   accessTokenExpireTime: Number.POSITIVE_INFINITY,
-  postponnedActions: []
+  postponnedActions: [],
 }
 
 export default (
-  state: IAuthReducerState = initialState,
+  state: IAuthReducerState = authInitialState,
   action: AuthActionReturns | SharedActionsTypes
 ): IAuthReducerState => {
   switch (action.type) {
@@ -34,22 +34,25 @@ export default (
       return {
         user: action.user,
         accessTokenExpireTime: action.tokenExpireTime,
-        postponnedActions: initialState.postponnedActions
+        postponnedActions: authInitialState.postponnedActions,
       }
     //refreshing token
     case REFRESHING_ACCESS_TOKEN_REQUEST_SUCCESS:
       return {
         ...state,
-        accessTokenExpireTime: action.accessTokenExpireTime
+        accessTokenExpireTime: action.accessTokenExpireTime,
       }
     //logging user out
     case USER_LOGGING_OUT_REQUEST_SUCCESS:
-      return { ...initialState }
+      return { ...authInitialState }
     //adding postponned action (when api call is made and token being refreshed)
     case ADD_POSTPONNED_ACTION:
       return {
         ...state,
-        postponnedActions: [...state.postponnedActions, action.postponnedAction]
+        postponnedActions: [
+          ...state.postponnedActions,
+          action.postponnedAction,
+        ],
       }
     default:
       return state

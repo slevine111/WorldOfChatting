@@ -4,6 +4,7 @@ import {
   wentToLanguagePageView,
   chatGroupRequestAccepted,
   chatGroupRequestDeclined,
+  chatGroupClickedOn,
 } from './multiplereduceractions'
 import {
   LanguagePageDataRetrivalArrayDataTypes,
@@ -13,6 +14,7 @@ import {
   RequestDataConstants,
   IThunkReturnObject,
 } from './types'
+import { wentToChatPage, WentToChatPageActionReturn } from '../ui/actions'
 import { respondToChatInviteBase } from './helperfunctions'
 import { IChatGroupPostDTO } from '../../../server/chatgroups/chatgroups.dto'
 import { IUserChatGroupPostDTO } from '../../../server/userchatgroups/userchatgroups.dto'
@@ -21,10 +23,12 @@ import {
   IReduxStoreUserFields,
 } from '../../../types-for-both-server-and-client'
 import { User, UserLanguage, UserChatGroup } from '../../../entities'
-import { ChatGroupInviteStatusOptions } from '../../../entities/ChatGroupInviteRecipient'
+import { ChatGroupInviteStatusOptions } from '../../../entities/ChatGroupInvite'
 import { NotificationTypes } from '../../../entities/Notification'
 import { OnlineStatuses } from '../../../entities/User'
 import axios, { AxiosResponse } from 'axios'
+import { CHAT_GROUP_KEY_PREFIX } from '../common'
+import { IMessageReducerState } from '../message/reducer'
 
 export const logoutUserProcessThunk = (
   userId: string
@@ -97,7 +101,7 @@ export const chatGroupRequestAcceptedThunk = (
   newChatGroup: IChatGroupPostDTO,
   userIdSentRequest: string,
   loggedInUserId: string,
-  chatGroupInviteRecipientId: string
+  chatGroupInviteId: string
 ): IThunkReturnObject<IChatGroupRequestAcceptedData> => {
   return {
     requestDataActionType:
@@ -117,7 +121,7 @@ export const chatGroupRequestAcceptedThunk = (
         respondToChatInviteBase(
           userIdSentRequest,
           loggedInUserId,
-          chatGroupInviteRecipientId,
+          chatGroupInviteId,
           ChatGroupInviteStatusOptions.ACCEPTED,
           NotificationTypes.CHAT_GROUP_INVITE_ACCEPTED
         ),
@@ -154,5 +158,36 @@ export const chatGroupRequestDeclinedThunk = (
       )
     },
     dispatchActionOnSuccess: chatGroupRequestDeclined,
+  }
+}
+
+export const chatGroupClickedOnThunk = (
+  loggedInUserId: string,
+  chatGroupId: string,
+  messageReducerState: IMessageReducerState,
+  currentChatGroup: IChatGroupAPIReturn
+): IThunkReturnObject<IChatGroupAPIReturn> | WentToChatPageActionReturn => {
+  if (currentChatGroup.seenLastMessage) {
+    return wentToChatPage(chatGroupId)
+  }
+  const mostRecentMessageId: string =
+    messageReducerState.subGroupings[
+      `${CHAT_GROUP_KEY_PREFIX}${chatGroupId}`
+    ][0]
+  const { createdAt } = messageReducerState.byId[mostRecentMessageId]
+
+  return {
+    requestDataActionType: RequestDataConstants.CLICKED_ON_CHAT_GROUP,
+    apiCall: () =>
+      axios.put(
+        `/api/userchatgroup/user/${loggedInUserId}/chatgroup/${chatGroupId}`,
+        {
+          lastMessageSeenTimeStamp: createdAt,
+        }
+      ),
+    dataTransformationCall: (_data) => {
+      return { ...currentChatGroup, seenLastMessage: true }
+    },
+    dispatchActionOnSuccess: chatGroupClickedOn,
   }
 }

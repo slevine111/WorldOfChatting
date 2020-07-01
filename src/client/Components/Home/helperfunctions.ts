@@ -5,8 +5,10 @@ import {
   LOGGED_IN_USER_SUBGROUPING_KEY,
 } from '../../store/userlanguage/reducer'
 import { IChatGroupReducerState } from '../../store/chatgroup/helperfunctions'
-import { IUserReducerState } from '../../store/user/reducer'
+import { IUserReducerState } from '../../store/user/helperfunctions'
+import { IUserChatGroupReducerState } from '../../store/userchatgroup/reducer'
 import { NO_DIRECT_CHAT_WITH_KEY } from '../../store/user/constants'
+import { CHAT_GROUP_KEY_PREFIX } from '../../store/common'
 
 const MAX_NUMBER_MOST_SIMILAR_USERS_DISPLAY = <const>20
 
@@ -60,8 +62,13 @@ export const onMyLanguageClick = (
 
 export const getMostSimilarUsers = (
   userReducerState: IUserReducerState,
+  allChatGroupIds: string[],
+  userChatGroupReducerState: IUserChatGroupReducerState,
   usersChattingWithShown: boolean
-): string[] => {
+): {
+  userToChatGroupMap: Record<string, string>
+  userIdsDisplay: string[]
+} => {
   const {
     byId: usersById,
     allIds: usersAllIds,
@@ -95,5 +102,20 @@ export const getMostSimilarUsers = (
       userIdsDisplay = [...userIdsDisplay, ...userIdsCurrentSimilarityScore]
     }
   }
-  return userIdsDisplay
+
+  let userToChatGroupMap: Record<string, string> = {}
+  if (usersChattingWithShown) {
+    for (let i = 0; i < allChatGroupIds.length; ++i) {
+      const userChatGroupIds =
+        userChatGroupReducerState.subGroupings[
+          `${CHAT_GROUP_KEY_PREFIX}${allChatGroupIds[i]}`
+        ]
+      const { userId } = userChatGroupReducerState.byId[userChatGroupIds[0]]
+      if (userChatGroupIds.length === 1 && userIdsDisplay.includes(userId)) {
+        userToChatGroupMap[userId] = allChatGroupIds[i]
+      }
+    }
+  }
+
+  return { userToChatGroupMap, userIdsDisplay }
 }

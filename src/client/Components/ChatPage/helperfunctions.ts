@@ -8,6 +8,21 @@ import {
   IReduxStoreUserFields,
 } from '../../../types-for-both-server-and-client'
 
+export const getDatetimeToDisplayInChat = (messageDt: Moment): string => {
+  const currentDateTime: Moment = moment()
+  if (currentDateTime.isSame(messageDt, 'day')) {
+    return `Today, ${messageDt.format('LT')}`
+  } else if (
+    currentDateTime.clone().subtract(1, 'days').isSame(messageDt, 'day')
+  ) {
+    return `Yesterday, ${messageDt.format('LT')}`
+  } else if (currentDateTime.clone().isSame(messageDt, 'year')) {
+    return messageDt.format('MMMM D, LT')
+  } else {
+    return messageDt.format('l, LT')
+  }
+}
+
 const getDatetimeToDisplayInSidebar = (messageDatetime: Date): string => {
   const messageMoment: Moment = moment(messageDatetime)
   const currentDateTime: Moment = moment()

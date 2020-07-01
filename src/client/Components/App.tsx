@@ -9,8 +9,9 @@ import { checkIfUserLoggedInProcess } from '../store/auth/thunks'
 //Components imports
 import Signup from './Login_Signup/Signup'
 import Login from './Login_Signup/Login'
-import Navbar from './Navbar/index'
+import Navbar from './Navbar/Navbar'
 import LoggedInUserController from './LoggedInUserController'
+import CssBaseline from '@material-ui/core/CssBaseline'
 
 interface IOwnProps {
   redirectAfterLogin: string
@@ -27,13 +28,14 @@ const App: React.FC<IOwnProps> = ({ redirectAfterLogin }): ReactElement => {
       .then(() => {
         window.location.hash = redirectAfterLogin
       })
-      .catch(err => {
+      .catch((err) => {
         websiteLoadError = err.response.status !== 401
       })
   }, [])
 
   return (
     <div>
+      <CssBaseline />
       <HashRouter>
         <Fragment>
           <Route component={Navbar} />

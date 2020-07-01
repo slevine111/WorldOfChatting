@@ -1,12 +1,16 @@
+import { WENT_TO_CHAT_PAGE } from './types'
+import { UIActionReturns } from './actions'
 import { ReducerErrorProperty } from '../reducer.base'
+import { SharedActionsTypes } from '../APIRequestsHandling/multiplereduceractions'
 import {
   UIAPICallingActionReturns,
   RequestDataConstants,
   RequestDataSuccessConstants,
   TRIGGER_DATA_REQUEST,
-  DATA_REQUEST_FAILURE
+  DATA_REQUEST_FAILURE,
 } from '../APIRequestsHandling/types'
 const { REFRESHING_ACCESS_TOKEN_REQUEST } = RequestDataConstants
+const { CLICKED_ON_CHAT_GROUP_SUCCESS } = RequestDataSuccessConstants
 
 export interface UIReducerState {
   apiCalling: {
@@ -15,20 +19,22 @@ export interface UIReducerState {
     event: RequestDataConstants | ''
     accessTokenBeingRefreshed: boolean
   }
+  currentChatId: string
 }
 
-const initialState: UIReducerState = {
+export const uiInitialState: UIReducerState = {
   apiCalling: {
     dataLoading: false,
     error: null,
     event: '',
-    accessTokenBeingRefreshed: false
-  }
+    accessTokenBeingRefreshed: false,
+  },
+  currentChatId: '',
 }
 
 export default (
-  state: UIReducerState = { ...initialState },
-  action: UIAPICallingActionReturns
+  state: UIReducerState = { ...uiInitialState },
+  action: UIAPICallingActionReturns | SharedActionsTypes | UIActionReturns
 ): UIReducerState => {
   if (
     RequestDataSuccessConstants[
@@ -37,7 +43,11 @@ export default (
   ) {
     return {
       ...state,
-      apiCalling: initialState.apiCalling
+      apiCalling: uiInitialState.apiCalling,
+      currentChatId:
+        action.type === CLICKED_ON_CHAT_GROUP_SUCCESS
+          ? action.updatedChatGroup.id
+          : state.currentChatId,
     }
   }
 
@@ -49,13 +59,13 @@ export default (
           dataLoading: true,
           error: null,
           event: action.eventTriggeringDataRequest,
-          accessTokenBeingRefreshed: false
-        }
+          accessTokenBeingRefreshed: false,
+        },
       }
     case REFRESHING_ACCESS_TOKEN_REQUEST:
       return {
         ...state,
-        apiCalling: { ...state.apiCalling, accessTokenBeingRefreshed: true }
+        apiCalling: { ...state.apiCalling, accessTokenBeingRefreshed: true },
       }
     case DATA_REQUEST_FAILURE:
       return {
@@ -64,9 +74,11 @@ export default (
           dataLoading: false,
           error: action.error,
           event: action.event,
-          accessTokenBeingRefreshed: false
-        }
+          accessTokenBeingRefreshed: false,
+        },
       }
+    case WENT_TO_CHAT_PAGE:
+      return { ...state, currentChatId: action.chatGroupId }
     default:
       return state
   }

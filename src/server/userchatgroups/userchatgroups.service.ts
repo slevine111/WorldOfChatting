@@ -29,4 +29,19 @@ export default class UserChatGroupService {
   ): Promise<UserChatGroup[]> {
     return this.userChatGroupRepository.save(newUserChatGroups)
   }
+
+  updateUserChatGroup(
+    userId: string,
+    chatGroupId: string,
+    updatedUserChatGroup: Partial<UserChatGroup>
+  ): Promise<UserChatGroup> {
+    return this.userChatGroupRepository
+      .findOneOrFail({ where: { userId, chatGroupId } })
+      .then((userChatGroup) => {
+        return this.userChatGroupRepository.save({
+          ...userChatGroup,
+          ...updatedUserChatGroup,
+        })
+      })
+  }
 }

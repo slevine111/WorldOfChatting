@@ -6,6 +6,7 @@ import {
   IChatGroupRequestAcceptedData,
   IChatGroupRequestBase,
 } from './types'
+import { IChatGroupAPIReturn } from '../../../types-for-both-server-and-client'
 
 export const userLoggedOut = () => ({
   type: <const>RequestDataSuccessConstants.USER_LOGGING_OUT_REQUEST_SUCCESS,
@@ -51,10 +52,17 @@ export const chatGroupRequestDeclined = (data: IChatGroupRequestBase) => ({
   ...data,
 })
 
+export const chatGroupClickedOn = (updatedChatGroup: IChatGroupAPIReturn) => ({
+  type: <const>RequestDataSuccessConstants.CLICKED_ON_CHAT_GROUP_SUCCESS,
+  updatedChatGroup,
+})
+export type ChatGroupClickedOnActionType = ReturnType<typeof chatGroupClickedOn>
+
 export type SharedActionsTypes =
   | ReturnType<typeof userLoggedOut>
   | ReturnType<typeof userLoggedIn>
   | ReturnType<typeof wentToLanguagePageView>
   | ReturnType<typeof chatGroupRequestAccepted>
   | ReturnType<typeof chatGroupRequestDeclined>
+  | ChatGroupClickedOnActionType
   | ActionOnDataRequestFailure

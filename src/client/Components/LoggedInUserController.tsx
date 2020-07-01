@@ -18,6 +18,7 @@ const LoggedInUserController: React.FC<{}> = () => {
       apiCalling.event === HAVE_LOGGEDIN_USER_GET_THEIR_BASE_DATA_REQUEST &&
       apiCalling.dataLoading
   )
+
   const user = useSelector(({ auth }: ReduxState) => auth.user)
   useEffect(() => {
     dispatch(userLoggedInDataRetrivalThunk(user))
@@ -34,7 +35,8 @@ const LoggedInUserController: React.FC<{}> = () => {
       <Switch>
         <Route path="/home" exact component={Home} />
         <Route path="/language/:language" exact component={LanguagePage} />
-        <Route path="/chat" component={ChatPage} />
+        <Route path="/chat/:chatGroupId?" component={ChatPage} />
+
         <Redirect to="/home" />
       </Switch>
     </div>

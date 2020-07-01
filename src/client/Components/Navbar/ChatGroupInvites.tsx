@@ -26,8 +26,8 @@ const ChatGroupInvites: React.FC<{}> = () => {
   return (
     <List>
       {allIds.map((id) => {
-        const { senderUserId } = byId[id]
-        const { fullName } = users.byId[senderUserId]
+        const { senderId } = byId[id]
+        const { fullName } = users.byId[senderId]
 
         return (
           <Fragment key={id}>
@@ -48,7 +48,7 @@ const ChatGroupInvites: React.FC<{}> = () => {
                       dispatch(
                         chatGroupRequestAcceptedThunk(
                           { directChat: true },
-                          senderUserId,
+                          senderId,
                           loggedInUserId,
                           id
                         )
@@ -64,7 +64,7 @@ const ChatGroupInvites: React.FC<{}> = () => {
                     onClick={() =>
                       dispatch(
                         chatGroupRequestDeclinedThunk(
-                          senderUserId,
+                          senderId,
                           loggedInUserId,
                           id
                         )

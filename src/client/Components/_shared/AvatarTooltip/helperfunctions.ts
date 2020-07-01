@@ -2,7 +2,7 @@ import { CHAT_GROUP_KEY_PREFIX } from '../../../store/common'
 import { USER_KEY_PREFIX } from '../../../store/userlanguage/constants'
 import { IUserLanguageReducerState } from '../../../store/userlanguage/reducer'
 import { IUserChatGroupReducerState } from '../../../store/userchatgroup/reducer'
-import { IUserReducerState } from '../../../store/user/reducer'
+import { IUserReducerState } from '../../../store/user/helperfunctions'
 import { OnlineStatuses } from '../../../../entities/User'
 
 export const getCountsByCommonLanguages = (

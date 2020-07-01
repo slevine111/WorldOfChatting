@@ -15,14 +15,14 @@ export default class ChatGroupService {
   getChatGroupsOfSingleUser(userId: string): Promise<IChatGroupAPIReturn[]> {
     return this.chatGroupRepository.query(
       `SELECT A.*,
-              favorite,
-              "lastMessageSeenTimeStamp" = "datetimeLastMessage" IS TRUE AS "seenLastMessage",
-              C."chatGroupId" IS NOT NULL AS "hasMessages"
-         FROM chat_group A
-         JOIN user_chat_group B ON A.id = B."chatGroupId"
-         LEFT JOIN (SELECT "chatGroupId", MAX("createdAt") AS "datetimeLastMessage"  FROM message GROUP BY "chatGroupId") C ON A.id = C."chatGroupId"
-         WHERE "userId" = $1
-         ORDER BY "datetimeLastMessage" DESC`,
+      favorite,
+      "lastMessageSeenTimeStamp" = "datetimeLastMessage" IS TRUE AS "seenLastMessage",
+      C."chatGroupId" IS NOT NULL AS "hasMessages"
+      FROM chat_group A
+      JOIN user_chat_group B ON A.id = B."chatGroupId"
+      LEFT JOIN (SELECT "chatGroupId", MAX("createdAt") AS "datetimeLastMessage"  FROM message GROUP BY "chatGroupId") C ON A.id = C."chatGroupId"
+      WHERE B."userId" = $1
+      ORDER BY "datetimeLastMessage" DESC`,
       [userId]
     )
   }

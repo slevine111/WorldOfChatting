@@ -5,11 +5,10 @@ import {
   UserChatGroup,
   Notification,
   ChatGroupInvite,
-  ChatGroupInviteRecipient,
 } from '../entities'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
 import { NotificationTypes } from '../entities/Notification'
-import { ChatGroupInviteStatusOptions } from '../entities/ChatGroupInviteRecipient'
+import { ChatGroupInviteStatusOptions } from '../entities/ChatGroupInvite'
 import seedManualData from './seed_manual'
 import {
   CHAT_GROUP_LANGUAGES_MANUALLY,
@@ -18,7 +17,6 @@ import {
   IUserChatGroupSubset,
   IUserLanguageSubset,
   IChatGroupInviteSubset,
-  IChatGroupInviteRecipientSubset,
   INotificationSubset,
   ILanguageSubset,
   ICountriesByLanguageObject,
@@ -245,6 +243,7 @@ const createChatGroupInvites = (
   userLangsByUserAndLang: IUserLanguageSubset[][][],
   connectionName: string
 ): Promise<ChatGroupInvite[]> => {
+  const { PENDING, ACCEPTED, DECLINED } = ChatGroupInviteStatusOptions
   let chatGroupInvitesArr: IChatGroupInviteSubset[] = []
   for (let i = 0; i < userLangsByUserAndLang.length; ++i) {
     const manualUserId: string = manualUsers[i].id
@@ -254,8 +253,11 @@ const createChatGroupInvites = (
       for (let j = 0; j < 6; ++j) {
         const { userId } = currentUserLangs[j]
         chatGroupInvitesArr.push({
-          senderUserId:
+          senderId:
             (l === 0 && j !== 2) || (l === 1 && j >= 2) ? userId : manualUserId,
+          targetUserId:
+            (l === 0 && j !== 2) || (l === 1 && j >= 2) ? manualUserId : userId,
+          status: j === 0 || j > 2 ? PENDING : j === 1 ? ACCEPTED : DECLINED,
         })
       }
     }
@@ -264,39 +266,6 @@ const createChatGroupInvites = (
     (ChatGroupInvite as unknown) as ChatGroupInvite,
     connectionName
   ).save(chatGroupInvitesArr)
-}
-
-const createChatGroupInviteRecipients = (
-  manualUsers: User[],
-  userLangsByUserAndLang: IUserLanguageSubset[][][],
-  chatGroupInvites: ChatGroupInvite[],
-  connectionName: string
-): Promise<ChatGroupInviteRecipient[]> => {
-  const { PENDING, ACCEPTED, DECLINED } = ChatGroupInviteStatusOptions
-  let cgInviteRecipientsArr: IChatGroupInviteRecipientSubset[] = []
-  let count: number = 0
-  for (let i = 0; i < userLangsByUserAndLang.length; ++i) {
-    const manualUserId: string = manualUsers[i].id
-
-    for (let l = 0; l < userLangsByUserAndLang[i].length; ++l) {
-      const currentUserLangs: IUserLanguageSubset[] =
-        userLangsByUserAndLang[i][l]
-      for (let j = 0; j < 6; ++j) {
-        const { userId } = currentUserLangs[j]
-        cgInviteRecipientsArr.push({
-          targetUserId:
-            (l === 0 && j !== 2) || (l === 1 && j >= 2) ? manualUserId : userId,
-          chatGroupInviteId: chatGroupInvites[count].id,
-          status: j === 0 || j > 2 ? PENDING : j === 1 ? ACCEPTED : DECLINED,
-        })
-        ++count
-      }
-    }
-  }
-  return returnRepository(
-    (ChatGroupInviteRecipient as unknown) as ChatGroupInviteRecipient,
-    connectionName
-  ).save(cgInviteRecipientsArr)
 }
 
 const createNotiifcations = async (
@@ -372,16 +341,10 @@ const refreshDbWithSeedData = async (): Promise<void> => {
       ),
       createMessages(allUserChatGroups, name),
     ])
-    const [chatGroupInvites] = await Promise.all([
+    await Promise.all([
       createChatGroupInvites(users, userLangsForChatGroupInvites, name),
       createNotiifcations(users, userLangsForChatGroupInvites, name),
     ])
-    await createChatGroupInviteRecipients(
-      users,
-      userLangsForChatGroupInvites,
-      chatGroupInvites,
-      name
-    )
     console.log('database successfully refreshed with all seed data')
     await connection.close()
   } catch (err) {

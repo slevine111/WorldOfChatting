@@ -21,22 +21,29 @@ const IconHeaderHOC = (
     onIconClick,
     iconCurrentlyClickedOn,
     onCloseDisplay,
-    displayElement
+    displayElement,
   }) => {
-    const { inheritColor, defaultColor, modals } = styles()
+    const {
+      inheritColor,
+      defaultColor,
+      modals,
+      iconButtonRoot,
+      badge,
+    } = styles()
     return (
       <Fragment>
         <IconButton
-          onClick={event => onIconClick(event)}
+          onClick={(event) => onIconClick(event)}
+          classes={{ root: iconButtonRoot }}
           className={iconCurrentlyClickedOn ? inheritColor : defaultColor}
         >
-          {numberDisplay > 0 ? (
-            <Badge badgeContent={numberDisplay} color="secondary">
-              <IconComponent />
-            </Badge>
-          ) : (
+          <Badge
+            classes={{ badge: badge }}
+            badgeContent={numberDisplay}
+            color="secondary"
+          >
             <IconComponent />
-          )}
+          </Badge>
         </IconButton>
         <Popover
           classes={{ paper: modals }}

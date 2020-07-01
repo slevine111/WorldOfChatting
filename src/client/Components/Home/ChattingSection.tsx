@@ -9,7 +9,7 @@ const ChattingSection = () => {
   const [tabIndex, setTabIndex] = useState(0)
 
   return (
-    <div>
+    <div style={{ textAlign: 'center' }}>
       <Typography variant="h4">Chatting Section</Typography>
       <Tabs
         value={tabIndex}
@@ -17,6 +17,7 @@ const ChattingSection = () => {
         indicatorColor="primary"
         textColor="primary"
         style={{ marginBottom: '10px' }}
+        centered={true}
       >
         <Tab label="Favorite Chats" />
         <Tab label="Most Similar Users" />

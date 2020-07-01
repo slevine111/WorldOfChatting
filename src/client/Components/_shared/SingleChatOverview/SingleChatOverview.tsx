@@ -30,7 +30,7 @@ const SingleChatOverview: React.FC<
     <Grid item xs={6} sm={4} className={itemBottomMargin}>
       <AvatarTooltip
         userSingleOrArray={users.length === 1 ? users[0] : users}
-        onButtonClick={() => history.push('/chat')}
+        onButtonClick={() => history.push(`/chat/${chatGroupId}`)}
         chatGroupId={chatGroupId}
       />
       <Typography variant="body1">

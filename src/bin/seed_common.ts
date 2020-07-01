@@ -3,7 +3,7 @@ import { Repository, getConnection } from 'typeorm'
 import { UserLanguageTypeFieldOptions } from '../entities/UserLanguage'
 import { OnlineStatuses } from '../entities/User'
 import { NotificationTypes } from '../entities/Notification'
-import { ChatGroupInviteStatusOptions } from '../entities/ChatGroupInviteRecipient'
+import { ChatGroupInviteStatusOptions } from '../entities/ChatGroupInvite'
 import { hashSync } from 'bcrypt'
 
 export interface ILanguageAndCountries {
@@ -63,12 +63,8 @@ export interface IMessageSubset {
 }
 
 export interface IChatGroupInviteSubset {
-  senderUserId: string
-}
-
-export interface IChatGroupInviteRecipientSubset {
   status: ChatGroupInviteStatusOptions
-  chatGroupInviteId: string
+  senderId: string
   targetUserId: string
 }
 
@@ -141,19 +137,50 @@ export const returnRepository = <T>(
   }
 }
 
-export const createMessages = (
+export const createMessages = async (
   userChatGroups: UserChatGroup[],
   connectionName: string
-): Promise<Message[]> => {
-  const messages: IMessageSubset[] = []
-  userChatGroups.forEach((userChatGroup: UserChatGroup) => {
-    messages.push({
-      body: 'this is the best app ever :)',
-      userId: userChatGroup.userId,
-      chatGroupId: userChatGroup.chatGroupId,
-    })
-  })
-  return returnRepository((Message as unknown) as Message, connectionName).save(
-    messages
+): Promise<void> => {
+  let messages: IMessageSubset[] = []
+  let count: number = 1
+  let messagesUserAndChatGroupId: { userId: string; chatGroupId: string }[] = []
+  for (let i = 0; i < userChatGroups.length; ++i) {
+    const numberMessages: number = 1 + Math.round(Math.random() * 9)
+    for (let j = 0; j < numberMessages; ++j) {
+      const { userId, chatGroupId } = userChatGroups[i]
+      messagesUserAndChatGroupId.push({ userId, chatGroupId })
+    }
+  }
+  const numberGroups: number = Math.ceil(
+    messagesUserAndChatGroupId.length / 100
   )
+  for (let j = 0; j < numberGroups; ++j) {
+    const arrSlice = messagesUserAndChatGroupId.slice(100 * j, 100 * (j + 1))
+    for (let i = 0; i < arrSlice.length; ++i) {
+      const switchIndex: number =
+        i + Math.floor(Math.random() * (arrSlice.length - i))
+      messages.push({
+        body: `this is the best app ever :) ${count}`,
+        ...arrSlice[switchIndex],
+      })
+      arrSlice[switchIndex] = arrSlice[i]
+      ++count
+    }
+  }
+
+  const messageRepo = returnRepository(
+    (Message as unknown) as Message,
+    connectionName
+  )
+  await messageRepo.save(messages)
+  await messageRepo.query(`
+  UPDATE message
+SET "createdAt" = A."newCreatedAt"
+FROM
+(SELECT A.id, a."createdAt" - interval '20' minute * rownum AS "newCreatedAt"
+FROM message a
+JOIN (SELECT id, ROW_NUMBER() OVER () as rownum FROM message) b ON a.id = b.id) A
+WHERE A.id = message.id
+
+  `)
 }

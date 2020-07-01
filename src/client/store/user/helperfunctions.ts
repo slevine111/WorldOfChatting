@@ -1,17 +1,20 @@
 import { NO_DIRECT_CHAT_WITH_KEY } from './constants'
 import { SubGroupingFunctionType } from '../../store/utilityfunctions'
 import { IReduxStoreUserFields } from '../../../types-for-both-server-and-client'
+import { INormalizedReducerShape } from '../reducer.base'
+
+export type IUserReducerState = INormalizedReducerShape<IReduxStoreUserFields>
 
 export const addIdToSubGroupingFromSimilarityScore: SubGroupingFunctionType<IReduxStoreUserFields> = (
-  subGroupings,
+  normalizedData,
   user
 ) => {
-  let updatedSubGroupings: Record<string, string[]> = JSON.parse(
-    JSON.stringify(subGroupings)
+  let updatedNormalizedData: IUserReducerState = JSON.parse(
+    JSON.stringify(normalizedData)
   )
   const { id, directChat } = user
   if (!directChat) {
-    updatedSubGroupings[NO_DIRECT_CHAT_WITH_KEY].push(id)
+    updatedNormalizedData.subGroupings[NO_DIRECT_CHAT_WITH_KEY].push(id)
   }
-  return updatedSubGroupings
+  return updatedNormalizedData
 }

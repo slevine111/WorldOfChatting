@@ -12,10 +12,14 @@ const {
   CHAT_GROUP_INVITE_ACCEPTED_REQUEST_SUCCESS,
 } = RequestDataSuccessConstants
 
+export const UCG_LOGGED_IN_USER_KEY = <const>'loggedInUser'
+
 export type IUserChatGroupReducerState = INormalizedReducerShape<UserChatGroup>
 
 export default (
-  state: IUserChatGroupReducerState = createInitialState(),
+  state: IUserChatGroupReducerState = createInitialState(
+    UCG_LOGGED_IN_USER_KEY
+  ),
   action: SharedActionsTypes
 ): IUserChatGroupReducerState => {
   switch (action.type) {

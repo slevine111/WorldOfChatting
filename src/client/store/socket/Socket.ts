@@ -2,15 +2,15 @@ import io from 'socket.io-client'
 import { MyStoreType } from '../index'
 import { chatGroupInviteReceived } from '../chatgroupinvite/actions'
 import { notificationReceived } from '../notification/actions'
-import { IChatGroupInviteReducerFields } from '../../../types-for-both-server-and-client'
+import { ChatGroupInvite } from '../../../entities'
 import {
   SocketEventsFromClient,
-  SocketEventsFromServer
+  SocketEventsFromServer,
 } from '../../../socket-events'
 import { Notification } from '../../../entities'
 const {
   CHAT_GROUP_INVITE_RECEIVED,
-  CHAT_GROUP_INVITE_RESPONSE_RECEIVED
+  CHAT_GROUP_INVITE_RESPONSE_RECEIVED,
 } = SocketEventsFromServer
 
 export default class MySocket {
@@ -23,13 +23,13 @@ export default class MySocket {
 
   connect(loggedInUserId: string): void {
     this.socket = io(window.location.origin, {
-      query: { loggedInUserId }
+      query: { loggedInUserId },
     })
     console.log('two-way connection has been made!')
 
     this.socket.on(
       CHAT_GROUP_INVITE_RECEIVED,
-      (chatGroupInviteReducerItem: IChatGroupInviteReducerFields) => {
+      (chatGroupInviteReducerItem: ChatGroupInvite) => {
         this.store.dispatch(chatGroupInviteReceived(chatGroupInviteReducerItem))
       }
     )
@@ -47,7 +47,7 @@ export default class MySocket {
   }
 
   sendInviteToChatGroupRequest(
-    chatGroupInviteReducerItem: IChatGroupInviteReducerFields
+    chatGroupInviteReducerItem: ChatGroupInvite
   ): void {
     this.socket.emit(
       SocketEventsFromClient.CHAT_GROUP_INVITE_SENT,

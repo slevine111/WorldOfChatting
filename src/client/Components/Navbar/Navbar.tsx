@@ -3,38 +3,43 @@ import { useSelector } from 'react-redux'
 import { ReduxState } from '../../store/index'
 import { History } from 'history'
 import LoggedInUserHeadings from './LoggedInUserHeadings'
+import { NAVBAR_HEIGHT } from '../globalstyles'
 
 //Material-UI components
 import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 import styles from './styles'
 
-const Navbar: React.FC<{ history: History }> = ({ history }) => {
+const Navbar: React.FC<{
+  history: History
+}> = ({ history }) => {
+  const width410OrMore = useMediaQuery('(min-width:410px)')
   const user = useSelector((state: ReduxState) => state.auth.user)
+
   const classes = styles()
   return (
-    <div>
-      <AppBar position="fixed">
-        <Toolbar>
-          <Button
-            className={classes.buttonStyle}
-            onClick={() => history.push(user.id ? '/home' : '/')}
-          >
-            <Typography variant="h6">World of Chatting</Typography>
-          </Button>
-          <Button
-            className={`${classes.aboutButton} ${classes.buttonStyle}`}
-            onClick={() => history.push('/about')}
-          >
-            About
-          </Button>
-          {!!user.id && <LoggedInUserHeadings />}
-        </Toolbar>
-      </AppBar>
-      <div className={classes.toolbar} />
-    </div>
+    <AppBar
+      position="sticky"
+      style={{ height: NAVBAR_HEIGHT, flexDirection: 'row' }}
+    >
+      <Button
+        className={classes.buttonStyle}
+        onClick={() => history.push(user.id ? '/home' : '/')}
+      >
+        <Typography variant="h6">World of Chatting</Typography>
+      </Button>
+      {(!user.id || width410OrMore) && (
+        <Button
+          className={`${classes.aboutButton} ${classes.buttonStyle}`}
+          onClick={() => history.push('/about')}
+        >
+          About
+        </Button>
+      )}
+      {!!user.id && <LoggedInUserHeadings />}
+    </AppBar>
   )
 }
 

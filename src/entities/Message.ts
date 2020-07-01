@@ -4,7 +4,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   ManyToOne,
-  JoinColumn
+  JoinColumn,
 } from 'typeorm'
 import User from './User'
 import ChatGroup from './ChatGroup'
@@ -17,7 +17,7 @@ export default class Message {
   @Column('varchar')
   body: string
 
-  @CreateDateColumn({ type: 'timestamptz' })
+  @CreateDateColumn({ type: 'timestamptz', precision: 3 })
   createdAt: Date
 
   @ManyToOne(() => User)

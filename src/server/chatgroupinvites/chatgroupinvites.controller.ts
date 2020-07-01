@@ -5,12 +5,11 @@ import {
   Param,
   Post,
   Body,
-  Put
+  Put,
 } from '@nestjs/common'
 import ChatGroupInviteService from './chatgroupinvites.service'
-import { IChatGroupInviteReducerFields } from '../../types-for-both-server-and-client'
 import { IChatGroupInvitePostDTO } from './chatgroupinvites.dto'
-import { ChatGroupInvite, ChatGroupInviteRecipient } from '../../entities'
+import { ChatGroupInvite } from '../../entities'
 import AuthGuard from '../auth/auth.guard'
 
 @Controller('/api/chatgroupinvite')
@@ -21,7 +20,7 @@ export default class ChatGroupController {
   @Get('/:targetUserId')
   getChatGroupInvitesSentToSingleUser(
     @Param('targetUserId') targetUserId: string
-  ): Promise<IChatGroupInviteReducerFields[]> {
+  ): Promise<ChatGroupInvite[]> {
     return this.chatgroupinviteService.getChatGroupInvitesSentToSingleUser(
       targetUserId
     )
@@ -34,7 +33,7 @@ export default class ChatGroupController {
     return this.chatgroupinviteService.createChatGroupInvite(newChatGroupInvite)
   }
 
-  @Post('/chatgroupinviteRecipient/single')
+  /*@Post('/chatgroupinviteRecipient/single')
   createNewChatGroupInviteRecipient(
     @Body()
     newChatGroupInviteObject: {
@@ -47,16 +46,16 @@ export default class ChatGroupController {
       targetUserId,
       newChatGroupInvite
     )
-  }
+  }*/
 
-  @Put('/recipient/:cgInviteRecipientId')
+  @Put('/:id')
   updateChatGroupInviteRecipent(
-    @Param('cgInviteRecipientId') cgInviteRecipientId: string,
-    @Body() updatedCgInviteRecipientFields: Partial<ChatGroupInviteRecipient>
-  ): Promise<ChatGroupInviteRecipient> {
-    return this.chatgroupinviteService.updateChatGroupInviteRecipent(
-      cgInviteRecipientId,
-      updatedCgInviteRecipientFields
+    @Param('id') id: string,
+    @Body() updatedCgInviteFields: Partial<ChatGroupInvite>
+  ): Promise<ChatGroupInvite> {
+    return this.chatgroupinviteService.updateChatGroupInvite(
+      id,
+      updatedCgInviteFields
     )
   }
 }

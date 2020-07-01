@@ -12,8 +12,9 @@ export default class MessageService {
 
   getMessagesLinkedToUser(userId: string): Promise<Message[]> {
     return this.messageRepository.query(
-      `SELECT * FROM message A
-      WHERE "userId" = $1`,
+      `SELECT A.* FROM message A
+       JOIN (SELECT "chatGroupId" FROM user_chat_group WHERE "userId" = $1) B
+       ON A."chatGroupId" = B."chatGroupId"`,
       [userId]
     )
   }

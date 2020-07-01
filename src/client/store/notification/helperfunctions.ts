@@ -3,17 +3,17 @@ import { NOT_SEEN, INotificationReducerState } from './types'
 import { SubGroupingFunctionType, normalizeData } from '../utilityfunctions'
 
 export const addNotSeenNt: SubGroupingFunctionType<Notification> = (
-  currentSubGroupings,
+  currentData,
   notification
 ) => {
   const { seen, id } = notification
-  let updatedSubGroupings: Record<string, string[]> = JSON.parse(
-    JSON.stringify(currentSubGroupings)
+  let updatedData: INotificationReducerState = JSON.parse(
+    JSON.stringify(currentData)
   )
   if (!seen) {
-    updatedSubGroupings[NOT_SEEN].push(id)
+    updatedData.subGroupings[NOT_SEEN].push(id)
   }
-  return updatedSubGroupings
+  return updatedData
 }
 
 export const normalizeAndMakeNotificationFirst = (
@@ -35,7 +35,7 @@ export const normalizeAndMakeNotificationFirst = (
     updatedState.allIds = [
       id,
       ...allIds.slice(0, idIndex),
-      ...allIds.slice(idIndex + 1)
+      ...allIds.slice(idIndex + 1),
     ]
   }
   updatedState.byId[id] = notificationReceived

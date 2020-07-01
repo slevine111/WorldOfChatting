@@ -1,6 +1,6 @@
 import { IChatGroupRequestBase } from './types'
 import { Notification } from '../../../entities'
-import { ChatGroupInviteStatusOptions } from '../../../entities/ChatGroupInviteRecipient'
+import { ChatGroupInviteStatusOptions } from '../../../entities/ChatGroupInvite'
 import { NotificationTypes } from '../../../entities/Notification'
 import axios, { AxiosResponse } from 'axios'
 
@@ -37,18 +37,18 @@ const notificationAPICall = async (
 export const respondToChatInviteBase = async (
   userIdSentRequest: string,
   loggedInUserId: string,
-  chatGroupInviteRecipientId: string,
+  chatGroupInviteId: string,
   status: ChatGroupInviteStatusOptions,
   notificationType: NotificationTypes
 ): Promise<IChatGroupRequestBase> => {
   const apiReturn = await Promise.all([
     notificationAPICall(notificationType, userIdSentRequest, loggedInUserId),
-    axios.put(`/api/chatgroupinvite/recipient/${chatGroupInviteRecipientId}`, {
+    axios.put(`/api/chatgroupinvite/${chatGroupInviteId}`, {
       status,
     }),
   ])
   return {
     newNotification: apiReturn[0].data,
-    chatGroupInviteRecipientId,
+    chatGroupInviteId,
   }
 }

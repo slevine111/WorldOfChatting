@@ -4,13 +4,13 @@ import {
   WebSocketGateway,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  SubscribeMessage
+  SubscribeMessage,
 } from '@nestjs/websockets'
 import { RedisClient, createClient, ClientOpts } from 'redis'
-import { IChatGroupInviteReducerFields } from '../../types-for-both-server-and-client'
+import { ChatGroupInvite } from '../../entities'
 import {
   SocketEventsFromClient,
-  SocketEventsFromServer
+  SocketEventsFromServer,
 } from '../../socket-events'
 import { Notification } from '../../entities'
 
@@ -28,7 +28,7 @@ export default class EventGateway
     const options: ClientOpts = {
       host: process.env.REDIS_SERVICE_SERVICE_HOST,
       port: Number(process.env.REDIS_SERVICE_SERVICE_PORT),
-      password: process.env.REDIS_PASSWORD
+      password: process.env.REDIS_PASSWORD,
     }
     this.redisSubscriber = createClient(options)
     this.redisPublisher = createClient(options)
@@ -86,7 +86,7 @@ export default class EventGateway
       const message: string = JSON.stringify({
         userIdEmitTarget: userId,
         data: dataSend,
-        event
+        event,
       })
       this.redisPublisher.publish(`notifications${userId[0]}`, message, () => {
         console.log(`published message ${message}`)
@@ -97,7 +97,7 @@ export default class EventGateway
   @SubscribeMessage(SocketEventsFromClient.CHAT_GROUP_INVITE_SENT)
   chatGroupInviteHasBeenSent(
     socket: Socket,
-    chatGroupInviteReducerItem: IChatGroupInviteReducerFields
+    chatGroupInviteReducerItem: ChatGroupInvite
   ): void {
     this.emitOrPublishEventToSingleUser(
       socket,

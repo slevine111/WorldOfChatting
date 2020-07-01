@@ -15,9 +15,17 @@ const MostSimilarUsers: React.FC<{ history: History }> = ({ history }) => {
   const dispatch = useDispatch()
   const [usersChattingWithShown, setUsersChattingWithShown] = useState(true)
   const userReducerState = useSelector((state: ReduxState) => state.users)
+  const chatGroupAllIds = useSelector(
+    (state: ReduxState) => state.chatGroups.allIds
+  )
+  const userChatGroupReducerState = useSelector(
+    (state: ReduxState) => state.userChatGroups
+  )
   const loggedInUserId = useSelector((state: ReduxState) => state.auth.user.id)
-  let userIdsDisplay: string[] = getMostSimilarUsers(
+  let { userToChatGroupMap, userIdsDisplay } = getMostSimilarUsers(
     userReducerState,
+    chatGroupAllIds,
+    userChatGroupReducerState,
     usersChattingWithShown
   )
   return (
@@ -41,10 +49,13 @@ const MostSimilarUsers: React.FC<{ history: History }> = ({ history }) => {
                 userSingleOrArray={user}
                 onButtonClick={() => {
                   if (directChat) {
-                    history.push('/chat')
+                    history.push(`/chat/${userToChatGroupMap[id]}`)
                   } else {
                     dispatch(
-                      chatGroupInviteThunk({ senderUserId: loggedInUserId }, id)
+                      chatGroupInviteThunk({
+                        senderUserId: loggedInUserId,
+                        targetUserId: id,
+                      })
                     )
                   }
                 }}

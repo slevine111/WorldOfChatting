@@ -10,7 +10,7 @@ import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import styles from './styles'
-import WillNameLaterHOC from '../WillNameLaterHOC'
+import WillNameLaterHOC from '../../shared/components/WillNameLaterHOC'
 import { RequestDataConstants } from '../../store/APIRequestsHandling/types'
 const { WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST } = RequestDataConstants
 
@@ -20,15 +20,15 @@ interface IMatchParams {
 
 const LanguagePage: React.FC<RouteComponentProps<IMatchParams>> = ({
   match: {
-    params: { language }
-  }
+    params: { language },
+  },
 }) => {
   const dispatch = useDispatch()
   const dataLoading = useSelector(
     ({
       ui: {
-        apiCalling: { event, dataLoading }
-      }
+        apiCalling: { event, dataLoading },
+      },
     }: ReduxState) =>
       event === WENT_TO_SINGLE_LANGUAGE_VIEW_REQUEST && dataLoading
   )

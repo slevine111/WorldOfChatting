@@ -1,5 +1,5 @@
 import React from 'react'
-import PersonCircle from '../_shared/AvatarTooltip/AvatarTooltip'
+import PersonCircle from '../../shared/components/AvatarTooltip/AvatarTooltip'
 import TextSearchField from './TextSearchField'
 import Typography from '@material-ui/core/Typography'
 import InputLabel from '@material-ui/core/InputLabel'

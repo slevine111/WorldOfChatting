@@ -1,21 +1,21 @@
-import { INormalizedReducerShape } from '../reducer.base'
-import { SubGroupingFunctionType } from '../utilityfunctions'
 import { IChatGroupAPIReturn } from '../../../types-for-both-server-and-client'
-
-export type IChatGroupReducerState = INormalizedReducerShape<
-  IChatGroupAPIReturn
->
-
-export const FAVORITE_CHAT_GROUPS_KEY = <const>'favorites'
-export const CHAT_GROUPS_WITH_MESSAGES_KEY = <const>'withMessages'
-export const CHAT_GROUPS_NO_MESSAGES_KEY = <const>'noMessages'
-export const CHAT_GROUPS_NOT_SEEN_LAST_MESSAGE_KEY = <const>'notSeenLastMessage'
+import { SubGroupingFunctionType } from '../../shared/store/store.types'
+import { INITIAL_SUBGROUPING_KEYS } from '../../shared/store/constants'
+import { ChatGroupReducerState } from '../../shared/store/reducers/chatgroup.reducer'
+const {
+  chatGroups: {
+    FAVORITE_CHAT_GROUPS_KEY,
+    CHAT_GROUPS_WITH_MESSAGES_KEY,
+    CHAT_GROUPS_NOT_SEEN_LAST_MESSAGE_KEY,
+    CHAT_GROUPS_NO_MESSAGES_KEY,
+  },
+} = INITIAL_SUBGROUPING_KEYS
 
 export const addIdToSubgroupingsOnLogin: SubGroupingFunctionType<IChatGroupAPIReturn> = (
   currentData,
   chatGroup
 ) => {
-  let updatedData: IChatGroupReducerState = JSON.parse(
+  let updatedData: ChatGroupReducerState = JSON.parse(
     JSON.stringify(currentData)
   )
   const { favorite, seenLastMessage, hasMessages, id } = chatGroup
@@ -37,7 +37,7 @@ export const removeChatGroupFromUnreadGrouping: SubGroupingFunctionType<IChatGro
   currentData,
   updatedChatGroup
 ) => {
-  let updatedData: IChatGroupReducerState = JSON.parse(
+  let updatedData: ChatGroupReducerState = JSON.parse(
     JSON.stringify(currentData)
   )
   const { id: chatGroupId } = updatedChatGroup

@@ -44,29 +44,26 @@ export enum RequestDataSuccessConstants {
   CLICKED_ON_CHAT_GROUP_SUCCESS = 'CLICKED_ON_CHAT_GROUP_SUCCESS',
 }
 
-interface ActionOnDataRequestSuccess {
-  type: RequestDataSuccessConstants
-  [key: string]: any
-}
-
 export const TRIGGER_DATA_REQUEST = <const>'TRIGGER_DATA_REQUEST'
 export type ActionOnTriggerDataRequest = {
   type: typeof TRIGGER_DATA_REQUEST
-  eventTriggeringDataRequest: RequestDataConstants
+  eventTriggeringDataRequest: string
 }
 
 export const DATA_REQUEST_FAILURE = <const>'DATA_REQUEST_FAILURE'
 export type ActionOnDataRequestFailure = {
   type: typeof DATA_REQUEST_FAILURE
   error: IAxiosErrorData
-  event: RequestDataConstants | ''
+  event: string
 }
+
+export const DATA_REQUEST_SUCCESS = <const>'DATA_REQUEST_SUCESS'
 
 export type UIAPICallingActionReturns =
   | ActionOnTriggerDataRequest
-  | ActionOnDataRequestSuccess
   | ActionOnDataRequestFailure
   | { type: RequestDataConstants.REFRESHING_ACCESS_TOKEN_REQUEST }
+  | { type: typeof DATA_REQUEST_SUCCESS }
 
 export type LanguagePageDataRetrivalArrayDataTypes = [
   UserLanguage[],

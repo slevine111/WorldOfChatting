@@ -28,7 +28,7 @@ import { NotificationTypes } from '../../../entities/Notification'
 import { OnlineStatuses } from '../../../entities/User'
 import axios, { AxiosResponse } from 'axios'
 import { CHAT_GROUP_KEY_PREFIX } from '../common'
-import { IMessageReducerState } from '../message/reducer'
+import { IMessageReducerState } from '../../shared/store/reducers/message.reducer'
 
 export const logoutUserProcessThunk = (
   userId: string
@@ -167,9 +167,6 @@ export const chatGroupClickedOnThunk = (
   messageReducerState: IMessageReducerState,
   currentChatGroup: IChatGroupAPIReturn
 ): IThunkReturnObject<IChatGroupAPIReturn> | WentToChatPageActionReturn => {
-  if (currentChatGroup.seenLastMessage) {
-    return wentToChatPage(chatGroupId)
-  }
   const mostRecentMessageId: string =
     messageReducerState.subGroupings[
       `${CHAT_GROUP_KEY_PREFIX}${chatGroupId}`

@@ -10,20 +10,20 @@ import {
 } from './shared-types'
 import { displayAndDataNames } from './constants'
 import {
-  IUserLanguageReducerState,
+  UserLanguageReducerState,
   LOGGED_IN_USER_SUBGROUPING_KEY,
-} from '../../store/userlanguage/reducer'
+} from '../../shared/store/reducers/userlanguage.reducer'
 import { IChatGroupReducerState } from '../../store/chatgroup/helperfunctions'
-import { IUserChatGroupReducerState } from '../../store/userchatgroup/reducer'
-import { IUserReducerState } from '../../store/user/reducer'
+import { UserChatGroupReducerState } from '../../shared/store/reducers/userchatgroup.reducer'
+import { IUserReducerState } from '../../shared/store/reducers/user.reducer'
 import { CHAT_GROUP_KEY_PREFIX } from '../../store/common'
 
 export const getAllUsersOfLanguage = (
   language: string,
   loggedInUserId: string,
-  userLanguages: IUserLanguageReducerState,
+  userLanguages: UserLanguageReducerState,
   chatGroups: IChatGroupReducerState,
-  userChatGroups: IUserChatGroupReducerState,
+  userChatGroups: UserChatGroupReducerState,
   users: IUserReducerState
 ): IUserWithLanguageFields[] => {
   const { byId, subGroupings } = userLanguages

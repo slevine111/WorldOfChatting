@@ -1,13 +1,18 @@
 import { Notification } from '../../../entities'
-import { NOT_SEEN, INotificationReducerState } from './types'
-import { SubGroupingFunctionType, normalizeData } from '../utilityfunctions'
+import { normalizeData } from '../../shared/store/utilityfunctions'
+import { SubGroupingFunctionType } from '../../shared/store/store.types'
+import { NotificationReducerState } from '../../shared/store/reducers/notification.reducer'
+import { INITIAL_SUBGROUPING_KEYS } from '../../shared/store/constants'
+const {
+  notifications: { NOT_SEEN },
+} = INITIAL_SUBGROUPING_KEYS
 
 export const addNotSeenNt: SubGroupingFunctionType<Notification> = (
   currentData,
   notification
 ) => {
   const { seen, id } = notification
-  let updatedData: INotificationReducerState = JSON.parse(
+  let updatedData: NotificationReducerState = JSON.parse(
     JSON.stringify(currentData)
   )
   if (!seen) {
@@ -16,11 +21,11 @@ export const addNotSeenNt: SubGroupingFunctionType<Notification> = (
   return updatedData
 }
 
-export const normalizeAndMakeNotificationFirst = (
-  notificationReceived: Notification,
-  currentState: INotificationReducerState
-): INotificationReducerState => {
-  let updatedState: INotificationReducerState = JSON.parse(
+export const normalizeAndMakeNotificationFirst: SubGroupingFunctionType<Notification> = (
+  currentState,
+  notificationReceived
+): NotificationReducerState => {
+  let updatedState: NotificationReducerState = JSON.parse(
     JSON.stringify(currentState)
   )
   const { allIds } = updatedState
@@ -30,7 +35,10 @@ export const normalizeAndMakeNotificationFirst = (
   } else {
     let idIndex: number = 0
     for (let i = 0; i < allIds.length; ++i) {
-      if (allIds[i] === id) idIndex = i
+      if (allIds[i] === id) {
+        idIndex = i
+        break
+      }
     }
     updatedState.allIds = [
       id,
@@ -44,9 +52,9 @@ export const normalizeAndMakeNotificationFirst = (
 
 export const normalizeAndEmptyNotSeenSubgrouping = (
   updatedNotifications: Notification[],
-  currentState: INotificationReducerState
-): INotificationReducerState => {
-  let updatedState: INotificationReducerState = JSON.parse(
+  currentState: NotificationReducerState
+): NotificationReducerState => {
+  let updatedState: NotificationReducerState = JSON.parse(
     JSON.stringify(currentState)
   )
   updatedState = normalizeData(updatedNotifications, updatedState)

@@ -3,15 +3,15 @@ import Tooltip from '@material-ui/core/Tooltip'
 import { IReduxStoreUserFields } from '../../../../types-for-both-server-and-client'
 import SnippetDirectChat from './SnippetDirectChat'
 import SnippetGroupChat from './SnippetGroupChat'
-import DotAvatar from '../BaseAvatar/AvatarDirectChat'
-import styles from './styles'
+import DotAvatar from './DotAvatar'
+import { avatarTooltipStyles } from './styles'
 
 const AvatarTooltip: React.FC<{
   userSingleOrArray: IReduxStoreUserFields | IReduxStoreUserFields[]
   onButtonClick: () => void
   chatGroupId?: string
 }> = ({ userSingleOrArray, onButtonClick, chatGroupId }) => {
-  const { toolTipDirectChat, toolTipGroupChat, arrow } = styles()
+  const { toolTipDirectChat, toolTipGroupChat, arrow } = avatarTooltipStyles()
   return (
     <Tooltip
       title={
@@ -44,8 +44,8 @@ const AvatarTooltip: React.FC<{
           <DotAvatar user={userSingleOrArray} />
         ) : (
           <span>
-            {userSingleOrArray.map((user) => (
-              <DotAvatar user={user} />
+            {userSingleOrArray.slice(0, 3).map((user) => (
+              <DotAvatar key={user.id} user={user} />
             ))}
           </span>
         )}

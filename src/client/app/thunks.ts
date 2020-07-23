@@ -5,7 +5,7 @@ import {
   UserLoggedInDataTransformationInput,
 } from './types'
 import { IThunkReturnObject } from '../shared/store/store.types'
-import { Language, User } from '../../entities'
+import { Language } from '../../entities'
 
 export const getAllLanguagesThunk = (): IThunkReturnObject<Language[]> => {
   return {
@@ -31,20 +31,20 @@ export const checkIfUserLoggedInProcess = (): IThunkReturnObject<
 }
 
 export const userLoggedInDataRetrivalThunk = (
-  user: User
+  userId: string
 ): IThunkReturnObject<UserLoggedInDataTransformationInput> => {
   return {
     requestDataActionType:
       REQUEST_ACTION_TYPES.GET_LOGGEDIN_USER_BASE_DATA_REQUEST,
     apiCall: (): Promise<AxiosResponse[]> => {
       return Promise.all([
-        axios.get(`/api/chatgroup/${user.id}`),
-        axios.get(`/api/userlanguage/${user.id}/linkedto`),
-        axios.get(`/api/user/${user.id}/linkedto`),
-        axios.get(`/api/userchatgroup/${user.id}/linkedto`),
-        axios.get(`/api/chatgroupinvite/${user.id}`),
-        axios.get(`/api/notification/${user.id}`),
-        axios.get(`/api/message/user/${user.id}`),
+        axios.get(`/api/chatgroup/${userId}`),
+        axios.get(`/api/userlanguage/${userId}/linkedto`),
+        axios.get(`/api/user/${userId}/linkedto`),
+        axios.get(`/api/userchatgroup/${userId}/linkedto`),
+        axios.get(`/api/chatgroupinvite/${userId}`),
+        axios.get(`/api/notification/${userId}`),
+        axios.get(`/api/message/user/${userId}`),
       ])
     },
     dispatchActionOnSuccess: actionCreators.userLoggedIn,

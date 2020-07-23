@@ -7,23 +7,9 @@ import ChatPage from '../ChatPage'
 import { userLoggedInDataRetrivalThunk } from './thunks'
 import { REQUEST_ACTION_TYPES } from './actions'
 import { ReduxState } from '../shared/store/store.types'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import WillNameLaterHOC from '../shared/components/WillNameLaterHOC'
+import WithDataLoadingChecksHOC from '../shared/components/WithDataLoadingChecksHOC'
 
-const LoggedInUserController: React.FC<{}> = () => {
-  const dispatch = useDispatch()
-  const dataLoading = useSelector(
-    ({ ui: { apiCalling } }: ReduxState) =>
-      apiCalling.event ===
-        REQUEST_ACTION_TYPES.GET_LOGGEDIN_USER_BASE_DATA_REQUEST &&
-      apiCalling.dataLoading
-  )
-
-  const user = useSelector(({ auth }: ReduxState) => auth.user)
-  useEffect(() => {
-    dispatch(userLoggedInDataRetrivalThunk(user))
-  }, [])
-  if (dataLoading) return <CircularProgress disableShrink />
+const LoggedInUserRoutes: React.FC<{}> = () => {
   return (
     <div>
       {/*auth.error !== null &&
@@ -43,4 +29,18 @@ const LoggedInUserController: React.FC<{}> = () => {
   )
 }
 
-export default WillNameLaterHOC(LoggedInUserController)
+const LoggedInUserRoutesHOC = WithDataLoadingChecksHOC(
+  LoggedInUserRoutes,
+  REQUEST_ACTION_TYPES.GET_LOGGEDIN_USER_BASE_DATA_REQUEST
+)
+
+const LoggedInUserController: React.FC<{}> = () => {
+  const userId = useSelector((state: ReduxState) => state.auth.user.id)
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(userLoggedInDataRetrivalThunk(userId))
+  }, [userId])
+  return <LoggedInUserRoutesHOC />
+}
+
+export default LoggedInUserController

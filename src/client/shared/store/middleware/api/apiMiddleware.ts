@@ -92,7 +92,6 @@ export const callAPIMiddleware = (store: MyStoreType) => {
       }
       if (dataTransformationCall) data = dataTransformationCall(data)
       next(dispatchActionOnSuccess(data))
-      next({ type: ACTION_TYPES.DATA_REQUEST_SUCCESS })
     } catch (error) {
       const errorTyped = error as AxiosError<IAxiosErrorData>
       let errorData: IAxiosErrorData

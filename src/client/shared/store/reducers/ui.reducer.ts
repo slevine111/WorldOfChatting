@@ -26,6 +26,13 @@ export const uiReducer = (
   state: UIReducerState = uiInitialState,
   action: APIMiddlewareActionReturns
 ): UIReducerState => {
+  if (action.type.endsWith('REQUEST_SUCCESS')) {
+    return {
+      ...state,
+      apiCalling: uiInitialState.apiCalling,
+    }
+  }
+
   switch (action.type) {
     case ACTION_TYPES.TRIGGER_DATA_REQUEST:
       return {

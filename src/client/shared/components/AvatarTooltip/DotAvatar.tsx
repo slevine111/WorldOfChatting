@@ -4,14 +4,14 @@ import { IReduxStoreUserFields } from '../../../../types-for-both-server-and-cli
 import { OnlineStatuses } from '../../../../entities/User'
 import Avatar from '@material-ui/core/Avatar'
 import Badge from '@material-ui/core/Badge'
-import styles from './styles'
+import { dotAvatarStyles } from './styles'
 
 const AvatarDirectChat: React.FC<{
   user: IReduxStoreUserFields | User
   className?: string
   ownStyles?: Record<string, string>
 }> = ({ user, className = '', ownStyles = {} }) => {
-  const { dot, loggedInBadge, loggedOutBadge, avatarColor } = styles()
+  const { dot, loggedInBadge, loggedOutBadge, avatarColor } = dotAvatarStyles()
   return (
     <Badge
       overlap="circle"

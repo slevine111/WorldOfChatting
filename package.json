@@ -57,7 +57,7 @@
     "redux-thunk": "^2.3.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.2",
-    "typeorm": "^0.2.18",
+    "typeorm": "^0.2.25",
     "typescript": "^3.6.3",
     "volleyball": "^1.5.1"
   },

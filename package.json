@@ -34,7 +34,7 @@
     "@material-ui/styles": "^4.4.1",
     "@nestjs/common": "^6.5.0",
     "@nestjs/core": "^6.5.0",
-    "@nestjs/jwt": "^6.1.1",
+    "@nestjs/jwt": "^10.0.1",
     "@nestjs/platform-express": "^6.5.2",
     "@nestjs/serve-static": "^1.0.1",
     "@nestjs/typeorm": "^6.1.3",
